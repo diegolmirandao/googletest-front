@@ -1,0 +1,1 @@
+export type FilterOperatorType = '=' | '!=' | '<' | '>' | '=<' | '=>' | 'contain' | 'startsWith' | 'endsWith' | 'is'

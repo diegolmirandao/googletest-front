@@ -1,0 +1,72 @@
+{
+    "spanish": "Español",
+    "english": "Inglés",
+
+    "home": "Inicio",
+    "users": "Usuarios",
+    
+    "id": "ID",
+    "name": "Nombre",
+    "username": "Usuario",
+    "user": "Usuario",
+    "email": "E-mail",
+    "password": "Contraseña",
+    "role": "Rol",
+    "status": "Estado",
+    "permissions": "Permisos",
+    "created_at": "Creado en",
+    "updated_at": "Modificado en",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    
+    "filters": "Filtros",
+    "add_filter": "Agregar filtro",
+    "search": "Buscar",
+    "export": "Exportar",
+    "columns": "Columnas",
+
+    "required_field": "Campo requerido",
+    "is_required_field": "es un campo requerido",
+
+    "add": "Agregar",
+    "save": "Guardar",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+
+    "sigin": "Iniciar Sesión",
+
+    "is_equal": "Es igual",
+    "is_not_equal": "No es igual",
+    "less": "Menor",
+    "greater": "Mayor",
+    "less_than": "Menor que",
+    "equal_or_less": "Igual o menor",
+    "equal_or_greater": "Igual o mayor",
+    "greater_than": "Mayor que",
+    "contains": "Contiene",
+    "starts_with": "Empieza con",
+    "ends_with": "Termina con",
+    
+    "user_successfully_added": "Usuario egregado correctamente",
+    "user_successfully_modified": "Usuario eodificado correctamente",
+    "user_successfully_deleted": "Usuario eliminado correctamente",
+    "unselected_user": "No se ha seleccionado ningún usuario",
+
+    "request_add_to_queue": "Solicitud agregada a la cola",
+    "initializing_data": "Inicializando datos",
+    "initialed_data": "Datos inicializados",
+    "initialed_data_failure": "Fallo de inicializacion de datos",
+
+    "add_user": "Agregar usuario",
+    "edit_user": "Editar usuario",
+    "user_data": "Datos del usuario",
+
+    "details": "Detalles",
+    
+    "confirm_action": "Confirmar acción",
+    "confirm_delete": "Confirmar eliminación",
+    "action_confirmation_question": "Estas seguro de que desea confirmar la acción?",
+    "delete_confirmation_question": "Estas seguro de que desea eliminar el registro? Esta acción no podrá ser revertida."
+}
