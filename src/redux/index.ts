@@ -3,7 +3,6 @@ import { AnyAction, Middleware } from '@reduxjs/toolkit';
 import {Provider} from 'react-redux';
 import {configureStore} from '@reduxjs/toolkit';
 import reducer from './reducers';
-import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import thunk, { ThunkDispatch } from 'redux-thunk';
 import rootReducer from '../redux/reducers'
@@ -37,7 +36,7 @@ const offlineMiddleware: Middleware = store => next => action => {
                 params: payload.config?.params,
             }}));
 
-            toast.success(i18n.t('Solicitud agregada a la cola'))
+            toast.success(i18n.t('request_added_to_queue'))
         }
     }
 

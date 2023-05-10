@@ -19,7 +19,7 @@ export const loginAction = createAsyncThunk(
 
             await axios.get('/sanctum/csrf-cookie');
 
-            const {data: userResponse}: AxiosResponse<IUser> = await axios.post('/api/login', body);
+            const {data: userResponse}: AxiosResponse<IUser> = await axios.post('/login', body);
 
             return userResponse;
         } catch (error) {
@@ -32,7 +32,7 @@ export const logoutAction = createAsyncThunk(
     'user/logout',
     async (params: undefined, {rejectWithValue}) => {
         try {
-            const userResponse = await axios.get('/api/logout');
+            const userResponse = await axios.get('/logout');
 
             return userResponse;   
         } catch (error) {

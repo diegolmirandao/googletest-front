@@ -2,7 +2,6 @@
 import { useContext, useEffect, useState } from "react";
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { useTranslation } from "react-i18next";
 
 // ** Actions and Reducers Imports
 import { addUserAction, deleteUserAction, getUsersAction, updateUserAction } from 'src/redux/actions/user';
@@ -10,16 +9,21 @@ import { setCurrentUser, setCursor } from 'src/redux/reducers/user';
 import { setUserVisibility, setUserFilters, setUserSorts, setUserExport } from 'src/redux/reducers/table';
 
 // ** Interfaces and Types Imports
+import { ACLObj } from 'src/config/acl';
+import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
+import { IAddUser } from "src/interfaces/user/add";
+import { IUpdateUser } from 'src/interfaces/user/update';
 import { IUser } from 'src/interfaces/user/user';
 import { ITableFilter } from 'src/interfaces/tableFilter';
 import { ITableExportColumn } from 'src/interfaces/tableExportColumn';
 
 // ** MUI Imports
-import { GridColDef, GridSortModel, GridRenderCellParams, GridValueGetterParams, GridRowParams, GridColumnVisibilityModel, DataGridPro, esES,  GridRowScrollEndParams, MuiEvent, GridCallbackDetails, GridColumnOrderChangeParams, GridValueFormatterParams } from '@mui/x-data-grid-pro';
+import { GridColDef, GridSortModel, GridRenderCellParams, GridValueGetterParams, GridRowParams, GridColumnVisibilityModel, DataGridPro,  GridRowScrollEndParams, MuiEvent, GridCallbackDetails, GridValueFormatterParams } from '@mui/x-data-grid-pro';
 import { Card, Grid, Box } from '@mui/material';
 import CustomChip from 'src/components/mui/chip';
 
 // ** Third Party Imports
+import { t } from "i18next";
 import { toast } from 'react-toastify';
 import { AbilityContext } from 'src/components/layout/acl/Can';
 import { displayErrors, generateFilterQueryParams, generateSortQueryParams, setDataGridLocale } from 'src/utils/common';
@@ -36,10 +40,6 @@ import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
-import { ACLObj } from 'src/config/acl';
-import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IAddUser } from "src/interfaces/user/add";
-import { IUpdateUser } from 'src/interfaces/user/update';
 
 /**
  * Export columns definition
@@ -82,7 +82,6 @@ const exportColumns: ITableExportColumn[] = [
 const User = () => {
   const dispatch = useAppDispatch();
   const ability = useContext(AbilityContext);
-  const { t } = useTranslation();
   const requestParams = useRequestParam('users');
 
   // ** Reducers
@@ -192,7 +191,6 @@ const User = () => {
   // ** DataGrid Vars
   const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 20);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [tableColumns, setTableColumns] = useState<GridColDef[]>(columns);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
@@ -282,13 +280,13 @@ const User = () => {
     setAddLoading(true);
     try {
       await dispatch(addUserAction(formFields)).then(unwrapResult);
-      toast.success(t('user_successfully_added'));
+      setOpenAddDialog(false);
+      toast.success(t('user_added_successfully'));
     } catch (error) {
       console.log('ADD USER ERROR: ', error);
       displayErrors(error);
     }
     setAddLoading(false);
-    setOpenAddDialog(false);
   }
 
   /**
@@ -299,13 +297,13 @@ const User = () => {
     setEditLoading(true);
     try {
       await dispatch(updateUserAction(formFields)).then(unwrapResult);
-      toast.success(t('user_successfully_modified'));
+      setOpenEditDialog(false);
+      toast.success(t('user_modified_successfully'));
     } catch (error) {
       console.log('EDIT USER ERROR: ', error);
       displayErrors(error);
     }
     setEditLoading(false);
-    setOpenEditDialog(false);
   }
 
   /**
@@ -316,16 +314,15 @@ const User = () => {
     if (currentUser) {
       try {
         await dispatch(deleteUserAction()).then(unwrapResult);
-        toast.success(t('user_successfully_deleted'));
+        handleDetailDialogClose();
+        toast.success(t('user_deleted_successfully'));
       } catch (error) {
         displayErrors(error);
       }
     } else {
-      toast.error(t('unselected_user'));
+      toast.error(t('no_user_selected'));
     }
-    handleDetailDialogClose();
     setDeleteLoading(false);
-    setOpenDeleteDialog(false);
   };
 
   /**
@@ -344,17 +341,6 @@ const User = () => {
     dispatch(setUserVisibility(model));
   }
 
-  const handleOnColumnOrderChange = (params: GridColumnOrderChangeParams) => {
-    const oldIndex = params.oldIndex;
-    const targetIndex = params.targetIndex;
-
-    const movedColumn = tableColumns[oldIndex];
-    const replacedColumn = tableColumns[targetIndex];
-
-    tableColumns[targetIndex] = movedColumn;
-    tableColumns[oldIndex] = replacedColumn;
-  }
-
   return (
     <Grid container spacing={6}>
       <TableFilter filters={filters} onSubmit={handleFilterSubmit} />
@@ -368,7 +354,7 @@ const User = () => {
           />
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
-              columns={tableColumns} 
+              columns={columns} 
               rows={filteredUsers ?? users} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
@@ -376,9 +362,9 @@ const User = () => {
               columnVisibilityModel={usersDefinition.visibility}
               onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
               onRowsScrollEnd={handleRowsScrollEnd}
-              onColumnOrderChange={handleOnColumnOrderChange}
-              hideFooterRowCount
+              disableColumnMenu={true}
               hideFooterSelectedRowCount
+              disableRowSelectionOnClick
             />
           </Box>
         </Card>

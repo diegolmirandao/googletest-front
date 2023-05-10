@@ -136,7 +136,7 @@ const UserAddDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          { t('add_user') }
+          { t('user_add') }
           <IconButton
             size='small'
             onClick={handleClose}

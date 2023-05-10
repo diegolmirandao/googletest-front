@@ -149,7 +149,7 @@ const UserEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          { t('edit_user') }
+          { t('user_edit') }
           <IconButton
             size='small'
             onClick={handleClose}

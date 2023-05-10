@@ -7,7 +7,7 @@ export const initAction = createAsyncThunk(
     'init/get',
     async (_, {rejectWithValue}) => {
         try {
-            const {data: response}: AxiosResponse<IInit> = await axios.get('/api/init');
+            const {data: response}: AxiosResponse<IInit> = await axios.get('/init');
 
             return response;
         } catch (error) {

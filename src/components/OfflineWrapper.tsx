@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import axios from "../config/axios";
 import { dequeue } from "../redux/reducers/offline";
 import { toast } from "react-toastify";
+import { t } from "i18next";
 
 interface IProps {
     children: JSX.Element
@@ -64,9 +65,9 @@ const OfflineWrapper = ({ children }: IProps) => {
             })
 
             if (someFailed) {
-                toast.error('Alguna de las solicitudes en cola no han sido procesadas');
+                toast.error(t('request_added_to_queue'));
             } else {
-                toast.success('Solicitudes en cola procesadas correctamente');
+                toast.success(t('requests_processed_succesfully'));
             }
         }
     }
