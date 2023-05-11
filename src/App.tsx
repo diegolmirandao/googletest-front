@@ -3,6 +3,7 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import User from "./pages/users";
 import CustomerCategory from "./pages/customer-categories";
+import AcquisitionChannel from "./pages/acquisition-channels";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <Route path="/login" element={ <Login/> } />
       <Route path="/users" element={ <User/> } />
       <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
+      <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
     </Routes>
   )
 }

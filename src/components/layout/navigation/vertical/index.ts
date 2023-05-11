@@ -35,6 +35,12 @@ const navigation = (): VerticalNavItemsType => {
               path: '/configuration/customers/categories',
               action: 'view',
               subject: 'customer_category',
+            },
+            {
+              title: i18n.t('acquisition_channels'),
+              path: '/configuration/customers/acquisition-channels',
+              action: 'view',
+              subject: 'acquisition_channel',
             }
           ]
         }

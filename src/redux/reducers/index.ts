@@ -6,6 +6,7 @@ import table from './table';
 import userSlice from './user';
 import roleSlice from './role';
 import customerCategorySlice from './customerCategory';
+import acquisitionChannelSlice from './acquisitionChannel';
 
 export default combineReducers({
     authReducer: authSlice.reducer,
@@ -15,4 +16,5 @@ export default combineReducers({
     userReducer: userSlice.reducer,
     roleReducer: roleSlice.reducer,
     customerCategoryReducer: customerCategorySlice.reducer,
+    acquisitionChannelReducer: acquisitionChannelSlice.reducer,
 });

@@ -8,6 +8,7 @@
     "customers": "Clientes",
     "configuration": "Configuración",
     "categories": "Categorías",
+    "acquisition_channels": "Canales de adquisición",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -77,5 +78,12 @@
     "category_deleted_successfully": "Categoría eliminada correctamente",
     "no_category_selected": "No se ha seleccionado ningúna categoría",
     "category_add": "Agregar categoría",
-    "category_edit": "Editar categoría"
+    "category_edit": "Editar categoría",
+
+    "channel_added_successfully": "Canal agregado correctamente",
+    "channel_modified_successfully": "Canal modificado correctamente",
+    "channel_deleted_successfully": "Canal eliminado correctamente",
+    "no_channel_selected": "No se ha seleccionado ningún canal",
+    "channel_add": "Agregar canal",
+    "channel_edit": "Editar canal"
 }
