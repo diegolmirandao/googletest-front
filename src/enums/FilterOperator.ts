@@ -7,7 +7,7 @@ export enum EFilterOperator {
     '>' = 'greater_than',
     '=<' = 'equal_or_less',
     '=>' = 'equal_or_greater',
-    'contain' = 'contains',
+    'contains' = 'contains',
     'startsWith' = 'starts_with',
     'endsWith' = 'ends_with',
     'is' = 'is',

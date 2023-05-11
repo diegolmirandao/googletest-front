@@ -1,13 +1,11 @@
 import { Grid, MenuItem, Card, CardHeader, CardContent, CardActions, Collapse, Select, FormControl, TextField, Button, IconButton } from '@mui/material'
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { EFilterOperator } from 'src/enums/FilterOperator';
-import { ITableFilter } from 'src/interfaces/tableFilter';
+import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
 import filterOperators, { FilterOperator } from 'src/config/filter';
 import LoadingButton from '@mui/lab/LoadingButton'
-import { FilterOperatorType } from 'src/types/FilterOperatorType';
 import { FilterType } from 'src/types/FilterType';
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from 'dayjs';
 
@@ -17,69 +15,87 @@ import ChevronDownIcon from 'mdi-material-ui/ChevronDown'
 import DeleteIcon from 'mdi-material-ui/Delete'
 import MagnifyIcon from 'mdi-material-ui/Magnify'
 import PlusIcon from 'mdi-material-ui/Plus'
-
-type TableFilterType = ITableFilter & {
-    operator: FilterOperatorType
-    value?: string | number | boolean | Dayjs
-}
+import { t } from 'i18next';
 
 export interface FiltersFormValues {
-    filters: TableFilterType[]
+    filters: ITableFilterApplied[]
 }
 
 interface IProps {
     filters: ITableFilter[],
-    onSubmit: (data: FiltersFormValues) => void
+    defaultFiltersApplied?: ITableFilterApplied[],
+    onSubmit: (filters: ITableFilterApplied[]) => void
 }
 
 const TableFilter = (props: IProps) => {
-    const { filters, onSubmit } = props
-    const [collapsed, setCollapsed] = useState<boolean>(true)
-    const { t } = useTranslation()
+    const { filters, defaultFiltersApplied, onSubmit } = props;
+    const [collapsed, setCollapsed] = useState<boolean>(true);
 
-    const firstFilter = filters[0]
+    const getFilterTypeOperators = (filterType: FilterType): FilterOperator[] => {
+        return filterOperators.filter(filterOperator => filterOperator.types.includes(filterType));
+    };
+
+    const defaultFilter: ITableFilterApplied = {
+        field: filters[0].field,
+        text: filters[0].text,
+        type: filters[0].type,
+        options: filters[0].options,
+        operator: getFilterTypeOperators(filters[0].type)[0].operator,
+        value: ''
+    };
+
+    const defaultValues: FiltersFormValues = defaultFiltersApplied ? { filters: defaultFiltersApplied } : { filters: [defaultFilter]};
+
     const {
         reset,
         control,
-        setValue,
-        getValues,
         handleSubmit,
         formState: { errors }
     } = useForm<FiltersFormValues>({
-        defaultValues: {
-            filters: []
-        },
+        defaultValues,
         mode: 'onChange',
-    })
-    const { fields, append, remove, update } = useFieldArray<FiltersFormValues>({
+    });
+
+    const {
+        fields,
+        append,
+        remove,
+        update
+    } = useFieldArray({
         control,
         name: "filters"
     });
 
-    useEffect(() => {
-        appendFilter()
-    }, [])
-
-    const appendFilter = () => {
-        append({
-            field: firstFilter.field,
-            text: firstFilter.text,
-            type: firstFilter.type,
-            operator: getFilterTypeOperators(firstFilter.type)[0].operator,
+    /**
+     * Filter field change handler
+     * @param value value of the new selected field
+     * @param index index of the filter
+     */
+    const handleFilterFieldChange = (value: string, index: number) => {
+        const newFilter = filters.find(filter => filter.field == value)!;
+        update(index, {
+            field: newFilter.field,
+            text: newFilter.text,
+            type: newFilter.type,
+            options: newFilter.options,
+            operator: getFilterTypeOperators(newFilter.type)[0].operator,
+            value: ''
         })
-    }
+    };
 
-    const getFilterTypeOperators = (filterType: FilterType): FilterOperator[] => {
-        return filterOperators.filter(filterOperator => filterOperator.types.includes(filterType))
-    }
-
-    const renderFilterFormControl = (filter: ITableFilter, fieldArrayIndex: number): React.ReactNode => {
+    /**
+     * Render filter value field
+     * @param filter Filter applied
+     * @param index index of filter
+     * @returns filter field component based on type
+     */
+    const renderFilterFormControl = (filter: ITableFilter, index: number): React.ReactNode => {
         switch (filter.type) {
             case 'string':
                 return (
                     <FormControl fullWidth size="small">
                         <Controller
-                            name={`filters.${fieldArrayIndex}.value`}
+                            name={`filters.${index}.value`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
                                 <TextField
@@ -90,12 +106,12 @@ const TableFilter = (props: IProps) => {
                             )}
                         />
                     </FormControl>
-                )
+                );
             case 'numeric':
                 return (
                     <FormControl fullWidth size="small">
                         <Controller
-                            name={`filters.${fieldArrayIndex}.value`}
+                            name={`filters.${index}.value`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
                                 <TextField
@@ -107,29 +123,48 @@ const TableFilter = (props: IProps) => {
                             )}
                         />
                     </FormControl>
-                )
+                );
             case 'boolean':
                 return (
                     <FormControl fullWidth size="small">
                         <Controller
-                            name={`filters.${fieldArrayIndex}.value`}
+                            name={`filters.${index}.value`}
                             control={control}
                             render={({ field }) => (
                                 <Select
                                     {...field}
                                 >
-                                    <MenuItem value='1'>Verdadero</MenuItem>
-                                    <MenuItem value='0'>Falso</MenuItem>
+                                    {filter.options?.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>{option.text}</MenuItem>
+                                    ))}
                                 </Select>
                             )}
                         />
                     </FormControl>
-                )
+                );
+            case 'select':
+                return (
+                    <FormControl fullWidth size="small">
+                        <Controller
+                            name={`filters.${index}.value`}
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                >
+                                    {filter.options?.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>{option.text}</MenuItem>
+                                    ))}
+                                </Select>
+                            )}
+                        />
+                    </FormControl>
+                );
             case 'date':
                 return (
                     <FormControl fullWidth size="small">
                         <Controller
-                            name={`filters.${fieldArrayIndex}.value`}
+                            name={`filters.${index}.value`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
                                 <DatePicker
@@ -141,19 +176,9 @@ const TableFilter = (props: IProps) => {
                             )}
                         />
                     </FormControl>
-                )
+                );
         }
-    }
-
-    const handleOnChangeFilter = (value: string, fieldArrayIndex: number) => {
-        const newFilter = filters.find(filter => filter.field == value)
-        update(fieldArrayIndex, {
-            field: newFilter?.field as string,
-            text: newFilter?.text as string,
-            type: newFilter?.type as FilterType,
-            operator: getFilterTypeOperators(newFilter?.type as FilterType)[0].operator
-        })
-    }
+    };
 
     return (
         <Grid item xs={12}>
@@ -173,7 +198,7 @@ const TableFilter = (props: IProps) => {
                     }
                 />
                 <Collapse in={collapsed}>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit((data) => onSubmit(data.filters))}>
                         <CardContent sx={{ pt: 0 }}>
                             {fields.map((item, index) => (
                                 <Grid container spacing={6} sx={{mb: 2}} key={item.id}>
@@ -184,7 +209,7 @@ const TableFilter = (props: IProps) => {
                                                 control={control}
                                                 render={({ field: { value } }) => (
                                                     <Select 
-                                                        onChange={(e) => handleOnChangeFilter(e.target.value, index)}
+                                                        onChange={(e) => handleFilterFieldChange(e.target.value, index)}
                                                         value={value}
                                                     >
                                                         {filters.map(filter => (
@@ -224,7 +249,7 @@ const TableFilter = (props: IProps) => {
                             ))}
                         </CardContent>
                         <CardActions sx={{ justifyContent: 'right' }}>
-                            <Button variant='outlined' onClick={appendFilter} startIcon={<PlusIcon fontSize='small' />}>
+                            <Button variant='outlined' onClick={() => append(defaultFilter)} startIcon={<PlusIcon fontSize='small' />}>
                                 {t('add_filter')}
                             </Button>
                             <LoadingButton type='submit' variant='contained' sx={{ mr: 3 }} loading={false} startIcon={<MagnifyIcon fontSize='small' />}>

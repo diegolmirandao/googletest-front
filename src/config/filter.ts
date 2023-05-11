@@ -8,7 +8,7 @@ export type FilterOperator = {
 
 const filterOperators: FilterOperator[] = [
     {
-        operator: 'contain',
+        operator: 'contains',
         types: [
             'string'
         ]
