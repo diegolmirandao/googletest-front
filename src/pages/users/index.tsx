@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 // ** Actions and Reducers Imports
 import { addUserAction, deleteUserAction, getUsersAction, updateUserAction } from 'src/redux/actions/user';
 import { setCurrentUser, setCursor } from 'src/redux/reducers/user';
-import { setUserVisibility, setUserFilters, setUserSorts, setUserExport, setUserColumns } from 'src/redux/reducers/table';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
@@ -42,6 +41,8 @@ import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
+import useTableState from "src/hooks/useTableState";
+import { ITableState } from "src/interfaces/tableState";
 
 /**
  * Export columns definition
@@ -85,14 +86,16 @@ const User = () => {
   const dispatch = useAppDispatch();
   const ability = useContext(AbilityContext);
   const requestParams = useRequestParam('users');
+  const [tableState, setTableState] = useTableState('users');
+  const [usersTableState, setUsersTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { userReducer: { users, currentUser, cursor, filteredUsers }, roleReducer: { roles }, tableReducer: { users: usersDefinition } } = useAppSelector((state) => state);
+  const { userReducer: { users, currentUser, cursor, filteredUsers }, roleReducer: { roles } } = useAppSelector((state) => state);
 
   /**
   * DataGrid Columns definition
   */
-  const columns: GridColDef[] = usersDefinition.columns ?? [
+  const columns: GridColDef[] = [
     {
       flex: 0.25,
       minWidth: 200,
@@ -152,7 +155,7 @@ const User = () => {
   /**
    * Datagrid default column visibility model
    */
-  const defaultColumnVisibility: GridColumnVisibilityModel = usersDefinition.visibility ?? {
+  const defaultColumnVisibility: GridColumnVisibilityModel = usersTableState.visibility ?? {
     id: false,
     name: true,
     username: true,
@@ -221,10 +224,10 @@ const User = () => {
   // ** DataGrid Vars
   const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 100);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(usersDefinition.filters);
-  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(usersDefinition.sorts);
+  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(usersTableState.filters);
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(usersTableState.sorts);
   const [visibilityModel, setVisibilityModel] = useState<GridColumnVisibilityModel>(defaultColumnVisibility);
-  const [exportData, setExportData] = useState<ITableExport | undefined>(usersDefinition.export);
+  const [exportData, setExportData] = useState<ITableExport | undefined>(usersTableState.export);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
@@ -244,17 +247,21 @@ const User = () => {
     if (!users.length || filters || sortModel) {
       getUsers();
     }
-    dispatch(setUserFilters(filters));
-    dispatch(setUserSorts(sortModel));
   }, [filters, sortModel]);
 
   useEffect(() => {
-    dispatch(setUserVisibility(visibilityModel));
-  }, [visibilityModel]);
+    setUsersTableState({
+      columns: undefined,
+      filters: filters,
+      sorts: sortModel,
+      visibility: visibilityModel,
+      export: exportData
+    });
+  }, [filters, sortModel, visibilityModel, exportData]);
 
   useEffect(() => {
-    dispatch(setUserExport(exportData));
-  }, [exportData]);
+    setTableState('users', usersTableState);
+  }, [usersTableState]);
 
   /**
    * Get a list of users filtered, sorted and paginated
@@ -404,8 +411,10 @@ const User = () => {
    * Export handler
    */
   const handleExport = (exportData: ITableExport) => {
+    setExportLoading(true);
     console.log(exportData);
     setExportData(exportData);
+    setExportLoading(false);
   };
 
   return (

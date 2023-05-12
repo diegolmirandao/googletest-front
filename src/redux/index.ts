@@ -36,7 +36,7 @@ const offlineMiddleware: Middleware = store => next => action => {
                 params: payload.config?.params,
             }}));
 
-            toast.success(i18n.t('request_added_to_queue'))
+            toast.warning(i18n.t('request_added_to_queue'))
         }
     }
 

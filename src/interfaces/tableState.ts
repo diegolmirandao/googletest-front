@@ -2,14 +2,10 @@ import { GridColDef, GridColumnVisibilityModel, GridSortModel } from "@mui/x-dat
 import { ITableExport } from "src/interfaces/tableExport";
 import { ITableFilterApplied } from "./tableFilter";
 
-type TableDefinition = {
+export interface ITableState {
     columns: GridColDef[] | undefined;
     visibility: GridColumnVisibilityModel | undefined;
     filters: ITableFilterApplied[] | undefined;
     sorts: GridSortModel | undefined;
     export: ITableExport | undefined;
-}
-
-export default interface ITableState {
-    users: TableDefinition
 }
