@@ -6,8 +6,8 @@ import { MUser } from '../../models/user/user';
 const initialState: IUserState = {
     users: [],
     filteredUsers: null,
-    currentUser: undefined,
-    cursor: null
+    cursor: null,
+    currentUser: undefined
 }
 
 const slice = createSlice({
@@ -48,6 +48,6 @@ const slice = createSlice({
     },
 })
 
-export const { setCurrentUser, setCursor } = slice.actions
+export const { setCursor, setCurrentUser } = slice.actions
 
 export default slice

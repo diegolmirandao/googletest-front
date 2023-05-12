@@ -17,6 +17,13 @@ const navigation = (): VerticalNavItemsType => {
       subject: 'home'
     },
     {
+      title: i18n.t('customers'),
+      icon: AccountIcon,
+      path: '/customers',
+      action: 'view',
+      subject: 'customer'
+    },
+    {
       title: i18n.t('users'),
       icon: AccountIcon,
       path: '/users',

@@ -98,7 +98,7 @@ const CustomerCategoryAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentCustomerCategory ? t('category_add') : t('category_add')}
+          {currentCustomerCategory ? t('category_edit') : t('category_add')}
           <IconButton
             size='small'
             onClick={handleClose}
