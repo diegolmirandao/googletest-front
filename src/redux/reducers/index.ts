@@ -8,6 +8,7 @@ import roleSlice from './role';
 import customerSlice from './customer';
 import customerCategorySlice from './customerCategory';
 import acquisitionChannelSlice from './acquisitionChannel';
+import customerReferenceTypeSlice from './customerReferenceType';
 
 export default combineReducers({
     authReducer: authSlice.reducer,
@@ -19,4 +20,5 @@ export default combineReducers({
     customerReducer: customerSlice.reducer,
     customerCategoryReducer: customerCategorySlice.reducer,
     acquisitionChannelReducer: acquisitionChannelSlice.reducer,
+    customerReferenceTypeReducer: customerReferenceTypeSlice.reducer,
 });

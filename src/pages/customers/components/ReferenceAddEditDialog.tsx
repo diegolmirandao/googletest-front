@@ -5,7 +5,7 @@ import { useAppSelector } from 'src/hooks/redux';
 import { IAddUpdateCustomerReference } from 'src/interfaces/customer/addUpdateReference';
 
 // ** MUI Imports
-import { Dialog, DialogContent, DialogActions, FormControl, FormHelperText, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, FormControl, FormHelperText, DialogTitle, Autocomplete } from '@mui/material';
 import { Button, IconButton, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
@@ -37,10 +37,11 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
   const { open, loading, defaultFormValues, onSubmit, onClose } = props;
 
   // ** Reducers
-  const { customerReducer: { currentCustomerReference } } = useAppSelector((state) => state);
+  const { customerReducer: { currentCustomerReference }, customerReferenceTypeReducer: { customerReferenceTypes } } = useAppSelector((state) => state);
 
   // ** Vars
   const defaultValues: IAddUpdateCustomerReference = defaultFormValues ?? {
+    customer_reference_type_id: currentCustomerReference?.customerReferenceTypeId ?? 1,
     name: currentCustomerReference?.name ?? '',
     identification_document: currentCustomerReference?.identificationDocument ?? '',
     phone: currentCustomerReference?.phone ?? '',
@@ -137,6 +138,25 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
               )}
             />
             {errors.identification_document && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.identification_document.message}`)}</FormHelperText>}
+          </FormControl>
+
+          <FormControl fullWidth sx={{ mb: 6 }} size='small'>
+            <Controller
+              name='customer_reference_type_id'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Autocomplete
+                  disableClearable
+                  id="select-type"
+                  options={customerReferenceTypes}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => <TextField {...params} size='small' label={t('reference_type')} />}
+                  onChange={(_, data) => {onChange(data?.id)}}
+                  value={customerReferenceTypes.find(type => type.id == value)}
+                />
+              )}
+            />
+            {errors.customer_reference_type_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.customer_reference_type_id.message}`)}</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>

@@ -9,6 +9,7 @@
     "configuration": "Configuración",
     "categories": "Categorías",
     "acquisition_channels": "Canales de adquisición",
+    "reference_types": "Tipos de referencia",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -74,12 +75,13 @@
     "address": "Dirección",
     "addresses": "Direcciones",
     "category": "Categoría",
-    "coutnry": "País",
+    "country": "País",
     "region": "Región",
     "city": "Ciudad",
     "zone": "Zona",
     "acquisition_channel": "Canal de adquisición",
     "billing_address": "Datos de facturación",
+    "reference_type": "Tipo de referencia",
     "references": "Referencias",
     
     "add_usered_successfully": "Usuario agregado correctamente",
@@ -128,5 +130,12 @@
     "channel_deleted_successfully": "Canal eliminado correctamente",
     "no_channel_selected": "No se ha seleccionado ningún canal",
     "channel_add": "Agregar canal",
-    "channel_edit": "Editar canal"
+    "channel_edit": "Editar canal",
+
+    "reference_type_added_successfully": "Tipo de referencia agregada correctamente",
+    "reference_type_modified_successfully": "Tipo de referencia modificada correctamente",
+    "reference_type_deleted_successfully": "Tipo de referencia eliminada correctamente",
+    "no_reference_type_selected": "No se ha seleccionado ningún tipo de referencia",
+    "reference_type_add": "Agregar tipo de referencia",
+    "reference_type_edit": "Editar tipo de referencia"
 }

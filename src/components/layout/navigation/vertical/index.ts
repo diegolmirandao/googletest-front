@@ -49,6 +49,12 @@ const navigation = (): VerticalNavItemsType => {
               path: '/configuration/customers/acquisition-channels',
               action: 'view',
               subject: 'acquisition_channel',
+            },
+            {
+              title: i18n.t('reference_types'),
+              path: '/configuration/customers/reference-types',
+              action: 'view',
+              subject: 'customer_reference_type',
             }
           ]
         }
