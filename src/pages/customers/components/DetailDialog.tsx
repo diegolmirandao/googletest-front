@@ -11,7 +11,7 @@ import { MCustomerAddress } from 'src/models/customer/address';
 import { Dialog, DialogContent, FormControl, DialogTitle, Box, Typography, Grid, InputLabel, Select, MenuItem, Autocomplete, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { Button, IconButton, TextField } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import Tab from 'src/components/mui/tab';
+import Tab from 'src/components/mui/Tab';
 
 // ** Icons Imports
 import CloseIcon from 'mdi-material-ui/Close';
@@ -27,6 +27,7 @@ import FileEditOutlineIcon from 'mdi-material-ui/FileEditOutline';
 import PencilIcon from 'mdi-material-ui/Pencil';
 import DeleteIcon from 'mdi-material-ui/Delete';
 import { t } from 'i18next';
+import { formatDate } from 'src/utils/format';
 
 // ** Third Party Imports
 
@@ -153,7 +154,7 @@ const CustomerDetailDialog = (props: IProps) => {
                   <Grid item xs={12} md={6}>
                     <FormControl fullWidth sx={{ mb: 6 }}>
                       <TextField
-                        value={currentCustomer?.name}
+                        value={currentCustomer?.name ?? ''}
                         label={t('name')}
                         size='small'
                       />
@@ -161,7 +162,7 @@ const CustomerDetailDialog = (props: IProps) => {
 
                     <FormControl fullWidth sx={{ mb: 6 }}>
                       <TextField
-                        value={currentCustomer?.identificationDocument}
+                        value={currentCustomer?.identificationDocument ?? ''}
                         label={t('identification_document')}
                         size='small'
                       />
@@ -181,7 +182,7 @@ const CustomerDetailDialog = (props: IProps) => {
 
                     <FormControl fullWidth sx={{ mb: 6 }}>
                       <TextField
-                        value={currentCustomer?.email}
+                        value={currentCustomer?.email ?? ''}
                         label={t('email')}
                         size='small'
                       />
@@ -189,7 +190,7 @@ const CustomerDetailDialog = (props: IProps) => {
 
                     <FormControl fullWidth sx={{ mb: 6 }}>
                       <TextField
-                        value={currentCustomer?.birthday}
+                        value={formatDate(currentCustomer?.birthday) ?? ''}
                         label={t('birthday')}
                         size='small'
                       />
@@ -225,7 +226,7 @@ const CustomerDetailDialog = (props: IProps) => {
 
                     <FormControl fullWidth sx={{ mb: 6 }}>
                       <TextField
-                        value={currentCustomer?.address}
+                        value={currentCustomer?.address ?? ''}
                         multiline
                         rows={3}
                         label={t('address')}

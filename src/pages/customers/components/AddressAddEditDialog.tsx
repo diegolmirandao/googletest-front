@@ -5,16 +5,18 @@ import { useAppSelector } from 'src/hooks/redux';
 import { IAddUpdateCustomerAddress } from 'src/interfaces/customer/addUpdateAddress';
 
 // ** MUI Imports
-import { Dialog, DialogContent, DialogActions, FormControl, FormHelperText, DialogTitle, styled } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, FormControl, FormHelperText, DialogTitle, Grid, Autocomplete } from '@mui/material';
 import { Button, IconButton, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import MuiTab, { TabProps } from '@mui/material/Tab';
 
 // ** Icons Imports
 import CloseIcon from 'mdi-material-ui/Close';
 
 // ** Third Party Imports
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { t } from 'i18next';
+import Map from 'src/components/misc/map';
+import { useEffect } from 'react';
 
 /**
  * Component props
@@ -22,7 +24,7 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 interface IProps {
   open: boolean;
   loading: boolean;
-  selectedAddress?: IAddUpdateCustomerAddress;
+  defaultFormValues?: IAddUpdateCustomerAddress;
   onSubmit: (formFields: IAddUpdateCustomerAddress) => void;
   onClose: () => void;
 }
@@ -34,18 +36,22 @@ interface IProps {
  */
 const CustomerAddressAddEditDialog = (props: IProps) => {
   // ** Props
-  const { open, loading, selectedAddress, onSubmit, onClose } = props;
+  const { open, loading, defaultFormValues, onSubmit, onClose } = props;
   // ** Reducers
-  const { customerReducer: { currentCustomerAddress } } = useAppSelector((state) => state);
+  const { customerReducer: { currentCustomerAddress }, countryReducer: { countries } } = useAppSelector((state) => state);
   // ** Vars
-  const defaultValues: IAddUpdateCustomerAddress = {
-    zone_id: selectedAddress?.zone_id ?? currentCustomerAddress?.zoneId ?? 1,
-    name: selectedAddress?.name ?? currentCustomerAddress?.name ?? '',
-    phone: selectedAddress?.phone ?? currentCustomerAddress?.phone ?? '',
-    address: selectedAddress?.address ?? currentCustomerAddress?.address ?? '',
-    reference: selectedAddress?.reference ?? currentCustomerAddress?.reference ?? '',
-    lat: selectedAddress?.lat ?? currentCustomerAddress?.lat ?? 0,
-    lng: selectedAddress?.lng ?? currentCustomerAddress?.lng ?? 0,
+  const regions = countries.map(country => country.regions).flat();
+  const cities = regions.map(region => region.cities).flat();
+  const zones = cities.map(city => city.zones).flat();
+  const defaultValues: IAddUpdateCustomerAddress = defaultFormValues ?? {
+    city_id: currentCustomerAddress?.city.id ?? 1,
+    zone_id: currentCustomerAddress?.zone.id ?? 1,
+    name: currentCustomerAddress?.name ?? '',
+    phone: currentCustomerAddress?.phone ?? '',
+    address: currentCustomerAddress?.address ?? '',
+    reference: currentCustomerAddress?.reference ?? '',
+    lat: currentCustomerAddress?.lat ?? -25.282109165529942,
+    lng: currentCustomerAddress?.lng ?? -57.63505156860886,
   };
 
   /**
@@ -57,11 +63,29 @@ const CustomerAddressAddEditDialog = (props: IProps) => {
     setValue,
     handleSubmit,
     getValues,
+    watch,
     formState: { errors }
   } = useForm<IAddUpdateCustomerAddress>({
     defaultValues,
     mode: 'onChange'
   });
+
+  let watchCity = watch('city_id');
+
+  useEffect(() => {
+    const newDefaultZone = zones.find(zone => zone.cityId === watchCity && zone.id === defaultValues.zone_id) ?? zones.find(zone => zone.cityId === watchCity);
+    setValue('zone_id', newDefaultZone!.id);
+  }, [watchCity]);
+
+  /**
+   * Map coordenades change event
+   * @param coords map new coordenades
+   */
+  const onCoordsChange = (coords: google.maps.LatLngLiteral) => {
+    console.log(coords);
+    setValue('lat', coords.lat);
+    setValue('lng', coords.lng);
+  };
 
   /**
    * Dialog handlers
@@ -96,7 +120,7 @@ const CustomerAddressAddEditDialog = (props: IProps) => {
       onClose={handleDialogClose}
     >
       <DialogTitle sx={{ position: 'relative' }}>
-        {selectedAddress || currentCustomerAddress ? 'EDITAR DIRECCIÓN' : 'AGREGAR DIRECCIÓN'}
+        {defaultFormValues || currentCustomerAddress ? t('edit_address') : t('add_address')}
         <IconButton
           size='small'
           onClick={handleClose}
@@ -107,82 +131,127 @@ const CustomerAddressAddEditDialog = (props: IProps) => {
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='name'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                label='Nombre'
-                size='small'
-                onChange={onChange}
-                error={Boolean(errors.name)}
-              />
-              )}
-            />
-            {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
-          </FormControl>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={4}>
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <Controller
+                  name='name'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    label={t('name')}
+                    size='small'
+                    onChange={onChange}
+                    error={Boolean(errors.name)}
+                  />
+                  )}
+                />
+                {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
+              </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='phone'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                label='Telefono'
-                size='small'
-                onChange={onChange}
-                error={Boolean(errors.phone)}
-              />
-              )}
-            />
-            {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{errors.phone.message}</FormHelperText>}
-          </FormControl>
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <Controller
+                  name='phone'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    label={t('phone')}
+                    size='small'
+                    onChange={onChange}
+                    error={Boolean(errors.phone)}
+                  />
+                  )}
+                />
+                {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.phone.message}`)}</FormHelperText>}
+              </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='address'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                multiline
-                rows={3}
-                label='Dirección'
-                onChange={onChange}
-                error={Boolean(errors.address)}
-              />
-              )}
-            />
-            {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{errors.address.message}</FormHelperText>}
-          </FormControl>
+              <FormControl fullWidth sx={{ mb: 3 }} size='small'>
+                <Controller
+                  name='city_id'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Autocomplete
+                      disableClearable
+                      id="select-city"
+                      options={cities}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => <TextField {...params} size='small' label={t('city')} />}
+                      onChange={(_, data) => {onChange(data?.id)}}
+                      value={cities.find(city => city.id == value)}
+                    />
+                  )}
+                />
+                {errors.city_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.city_id.message}`)}</FormHelperText>}
+              </FormControl>
 
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='reference'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                multiline
-                rows={3}
-                label='Referencias'
-                onChange={onChange}
-                error={Boolean(errors.address)}
-              />
-              )}
-            />
-            {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{errors.address.message}</FormHelperText>}
-          </FormControl>
+              <FormControl fullWidth sx={{ mb: 3 }} size='small'>
+                <Controller
+                  name='zone_id'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Autocomplete
+                      disableClearable
+                      id="select-zone"
+                      options={zones.filter(zone => zone.cityId == watchCity)}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => <TextField {...params} size='small' label={t('zone')} />}
+                      onChange={(_, data) => {onChange(data?.id)}}
+                      value={zones.find(zone => zone.id == value)}
+                    />
+                  )}
+                />
+                {errors.zone_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.zone_id.message}`)}</FormHelperText>}
+              </FormControl>
+
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <Controller
+                  name='address'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    multiline
+                    rows={2}
+                    label={t('address')}
+                    onChange={onChange}
+                    error={Boolean(errors.address)}
+                  />
+                  )}
+                />
+                {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.address.message}`)}</FormHelperText>}
+              </FormControl>
+
+              <FormControl fullWidth>
+                <Controller
+                  name='reference'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    multiline
+                    rows={2}
+                    label={t('references')}
+                    onChange={onChange}
+                    error={Boolean(errors.address)}
+                  />
+                  )}
+                />
+                {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.address.message}`)}</FormHelperText>}
+              </FormControl>
+            </Grid>
+            <Grid item  xs={12} md={6} lg={8}>
+              <Map position={{ lat: getValues('lat'), lng: getValues('lng') }} onCoordsChange={onCoordsChange}></Map>
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'right' }}>
           <LoadingButton size='large' type='submit' variant='contained' sx={{ mr: 3 }} loading={loading}>
-            Guardar
+            {t('save')}
           </LoadingButton>
           <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
-            Cancelar
+          { t('cancel')}
           </Button>
         </DialogActions>
       </form>

@@ -147,7 +147,7 @@ const Customer = () => {
       minWidth: 200,
       field: 'phone',
       headerName: String(t('phone')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.phones[0]?.name
+      valueGetter: ({ row }: GridValueGetterParams) => row.phones[0]
     },
     {
       flex: 0.25,
@@ -215,7 +215,7 @@ const Customer = () => {
       type: 'string'
     },
     {
-      field: 'category',
+      field: 'customer_category_id',
       text: String(t('category')),
       type: 'select',
       options: customerCategories.map((category) => ({
@@ -224,7 +224,7 @@ const Customer = () => {
       }))
     },
     {
-      field: 'acquisitionChannel',
+      field: 'acquisition_channel_id',
       text: String(t('acquisition_channel')),
       type: 'select',
       options: acquisitionChannels.map((acquisitionChannel) => ({
@@ -363,6 +363,7 @@ const Customer = () => {
    * @param row Row clicked information
    */
   const handleRowClick = (row: GridRowParams) => {
+    console.log(row.row);
     dispatch(setCurrentCustomer(row.row));
     setOpenDetailDialog(true);
   };

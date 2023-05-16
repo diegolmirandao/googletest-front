@@ -17,11 +17,13 @@ import FileDocumentOutlineIcon from 'mdi-material-ui/FileDocumentOutline';
 import FileCogOutlineIcon from 'mdi-material-ui/FileCogOutline';
 
 // ** Third Party Imports
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
-import Tab from 'src/components/mui/tab';
+import Tab from 'src/components/mui/Tab';
 import { t } from 'i18next';
+import { updateSchema } from 'src/schemes/customer';
+import { DatePicker } from '@mui/x-date-pickers-pro';
+import dayjs from 'dayjs';
 
 /**
  * Component props
@@ -56,23 +58,10 @@ const CustomerEditDialog = (props: IProps) => {
     name: currentCustomer!.name,
     identification_document: currentCustomer!.identificationDocument,
     email: currentCustomer!.email,
-    birthday: currentCustomer!.birthday,
+    birthday: dayjs(currentCustomer!.birthday),
     address: currentCustomer!.address,
-    phones: currentCustomer!.phones.map(phone => phone.phone)
+    phones: currentCustomer!.phones
   };
-
-  /**
-   * Form validation schema
-   */
-  const schema = yup.object().shape({
-    customer_category_id: yup.number().required(),
-    acquisition_channel_id: yup.number().required(),
-    name: yup.string().required(),
-    identification_document: yup.string().required(),
-    email: yup.string().nullable(),
-    birthday: yup.string().nullable(),
-    address: yup.string().nullable(),
-  });
 
   /**
    * Form
@@ -86,7 +75,7 @@ const CustomerEditDialog = (props: IProps) => {
   } = useForm<IUpdateCustomer>({
     defaultValues,
     mode: 'onChange',
-    resolver: yupResolver(schema)
+    resolver: yupResolver(updateSchema)
   });
 
   /**
@@ -232,61 +221,51 @@ const CustomerEditDialog = (props: IProps) => {
                       name='birthday'
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                      <TextField
-                        value={value}
-                        label={t('birthday')}
-                        size='small'
-                        onChange={onChange}
-                        error={Boolean(errors.birthday)}
-                      />
+                        <DatePicker
+                          label={t('birthday')}
+                          value={value}
+                          format='DD-MM-YYYY'
+                          onChange={onChange}
+                          slotProps={{ textField: { size: 'small' } }}
+                        />
                       )}
                     />
                     {errors.birthday && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.birthday.message}`)}</FormHelperText>}
                   </FormControl>
 
                   <FormControl fullWidth sx={{ mb: 6 }} size='small'>
-                    <InputLabel id='category-select'>{t('category')}</InputLabel>
                     <Controller
                       name='customer_category_id'
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <Select
-                          fullWidth
-                          id='select-category'
-                          label={t('category')}
-                          labelId='category-select'
-                          onChange={(e) => onChange(Number(e.target.value))}
-                          defaultValue={value}
-                          value={value}
-                        >
-                          {customerCategories.map(category => (
-                            <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
-                          ))}
-                        </Select>
+                        <Autocomplete
+                          disableClearable
+                          id="select-category"
+                          options={customerCategories}
+                          getOptionLabel={(option) => option.name}
+                          renderInput={(params) => <TextField {...params} size='small' label={t('category')} />}
+                          onChange={(_, data) => {onChange(data?.id)}}
+                          value={customerCategories.find(category => category.id == value)}
+                        />
                       )}
                     />
                     {errors.customer_category_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.customer_category_id.message}`)}</FormHelperText>}
                   </FormControl>
-
-                  <FormControl fullWidth sx={{ mb: 6 }} size='small'>
-                    <InputLabel id='acquisition-channel-select'>{t('acquisition_channel')}</InputLabel>
+                  
+                  <FormControl fullWidth sx={{ mb: 6 }}>
                     <Controller
                       name='acquisition_channel_id'
                       control={control}
                       render={({ field: { value, onChange } }) => (
-                        <Select
-                          fullWidth
-                          id='select-acquisition-channel'
-                          label={t('acquisition_channel')}
-                          labelId='acquisition-channel-select'
-                          onChange={(e) => onChange(Number(e.target.value))}
-                          defaultValue={value}
-                          value={value}
-                        >
-                          {acquisitionChannels.map(acquisitionChannel => (
-                            <MenuItem key={acquisitionChannel.id} value={acquisitionChannel.id}>{acquisitionChannel.name}</MenuItem>
-                          ))}
-                        </Select>
+                        <Autocomplete
+                          disableClearable
+                          id="select-acquisition-channel"
+                          options={acquisitionChannels}
+                          getOptionLabel={(option) => option.name}
+                          renderInput={(params) => <TextField {...params} size='small' label={t('acquisition_channel')} />}
+                          onChange={(_, data) => {onChange(data?.id)}}
+                          value={acquisitionChannels.find(acquisitionChannel => acquisitionChannel.id == value)}
+                        />
                       )}
                     />
                     {errors.acquisition_channel_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.acquisition_channel_id.message}`)}</FormHelperText>}

@@ -1,3 +1,6 @@
+import { ICity } from "../location/city";
+import { IZone } from "../location/zone";
+
 export interface ICustomerAddress {
     id: number;
     customer_id: number;
@@ -8,6 +11,8 @@ export interface ICustomerAddress {
     reference: string;
     lat: number;
     lng: number;
+    city: ICity;
+    zone: IZone;
     created_at: string;
     updated_at: string;
 }

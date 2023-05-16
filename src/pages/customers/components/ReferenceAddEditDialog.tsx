@@ -14,6 +14,7 @@ import CloseIcon from 'mdi-material-ui/Close';
 
 // ** Third Party Imports
 import { useForm, Controller } from 'react-hook-form';
+import { t } from 'i18next';
 
 /**
  * Component props
@@ -21,7 +22,7 @@ import { useForm, Controller } from 'react-hook-form';
 interface IProps {
   open: boolean;
   loading: boolean;
-  selectedReference?: IAddUpdateCustomerReference;
+  defaultFormValues?: IAddUpdateCustomerReference;
   onSubmit: (formFields: IAddUpdateCustomerReference) => void;
   onClose: () => void;
 }
@@ -33,18 +34,18 @@ interface IProps {
  */
 const CustomerReferenceAddEditDialog = (props: IProps) => {
   // ** Props
-  const { open, loading, selectedReference, onSubmit, onClose } = props;
+  const { open, loading, defaultFormValues, onSubmit, onClose } = props;
 
   // ** Reducers
   const { customerReducer: { currentCustomerReference } } = useAppSelector((state) => state);
-  
+
   // ** Vars
-  const defaultValues: IAddUpdateCustomerReference = {
-    name: selectedReference?.name ?? currentCustomerReference?.name ?? '',
-    identification_document: selectedReference?.identification_document ?? currentCustomerReference?.identificationDocument ?? '',
-    phone: selectedReference?.phone ?? currentCustomerReference?.phone ?? '',
-    email: selectedReference?.email ?? currentCustomerReference?.email ?? '',
-    address: selectedReference?.address ?? currentCustomerReference?.address ?? '',
+  const defaultValues: IAddUpdateCustomerReference = defaultFormValues ?? {
+    name: currentCustomerReference?.name ?? '',
+    identification_document: currentCustomerReference?.identificationDocument ?? '',
+    phone: currentCustomerReference?.phone ?? '',
+    email: currentCustomerReference?.email ?? '',
+    address: currentCustomerReference?.address ?? '',
   };
 
   /**
@@ -53,9 +54,7 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
   const {
     reset,
     control,
-    setValue,
     handleSubmit,
-    getValues,
     formState: { errors }
   } = useForm<IAddUpdateCustomerReference>({
     defaultValues,
@@ -95,7 +94,7 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
       onClose={handleDialogClose}
     >
       <DialogTitle sx={{ position: 'relative' }}>
-        {selectedReference || currentCustomerReference ? 'EDITAR REFERENCIA' : 'AGREGAR REFERENCIA'}
+        {defaultFormValues || currentCustomerReference ? t('edit_reference') : t('add_reference')}
         <IconButton
           size='small'
           onClick={handleClose}
@@ -113,14 +112,14 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
               render={({ field: { value, onChange } }) => (
               <TextField
                 value={value}
-                label='Nombre'
+                label={t('name')}
                 size='small'
                 onChange={onChange}
                 error={Boolean(errors.name)}
               />
               )}
             />
-            {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
+            {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -130,14 +129,14 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
               render={({ field: { value, onChange } }) => (
               <TextField
                 value={value}
-                label='RUC/CI'
+                label={t('identification_document')}
                 size='small'
                 onChange={onChange}
                 error={Boolean(errors.identification_document)}
               />
               )}
             />
-            {errors.identification_document && <FormHelperText sx={{ color: 'error.main' }}>{errors.identification_document.message}</FormHelperText>}
+            {errors.identification_document && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.identification_document.message}`)}</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -147,14 +146,14 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
               render={({ field: { value, onChange } }) => (
               <TextField
                 value={value}
-                label='Telefono'
+                label={t('phone')}
                 size='small'
                 onChange={onChange}
                 error={Boolean(errors.phone)}
               />
               )}
             />
-            {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{errors.phone.message}</FormHelperText>}
+            {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.phone.message}`)}</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -164,14 +163,14 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
               render={({ field: { value, onChange } }) => (
               <TextField
                 value={value}
-                label='Email'
+                label={t('email')}
                 size='small'
                 onChange={onChange}
                 error={Boolean(errors.email)}
               />
               )}
             />
-            {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+            {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.email.message}`)}</FormHelperText>}
           </FormControl>
 
           <FormControl fullWidth sx={{ mb: 6 }}>
@@ -183,21 +182,21 @@ const CustomerReferenceAddEditDialog = (props: IProps) => {
                 value={value}
                 multiline
                 rows={3}
-                label='Dirección'
+                label={t('address')}
                 onChange={onChange}
                 error={Boolean(errors.address)}
               />
               )}
             />
-            {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{errors.address.message}</FormHelperText>}
+            {errors.address && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.address.message}`)}</FormHelperText>}
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'right' }}>
           <LoadingButton size='large' type='submit' variant='contained' sx={{ mr: 3 }} loading={loading}>
-            Guardar
+            {t('save')}
           </LoadingButton>
           <Button size='large' variant='outlined' color='secondary' onClick={handleClose}>
-            Cancelar
+            {t('cancel')}
           </Button>
         </DialogActions>
       </form>

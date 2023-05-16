@@ -1,5 +1,6 @@
 // ** Icon imports
 import HomeOutline from 'mdi-material-ui/HomeOutline';
+import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
 import AccountIcon from 'mdi-material-ui/Account';
 import CogOutlineIcon from 'mdi-material-ui/CogOutline';
 import i18n from 'i18next';
@@ -18,7 +19,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: i18n.t('customers'),
-      icon: AccountIcon,
+      icon: AccountCircleIcon,
       path: '/customers',
       action: 'view',
       subject: 'customer'

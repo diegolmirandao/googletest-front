@@ -22,7 +22,7 @@ import { t } from 'i18next';
 interface IProps {
   open: boolean;
   loading: boolean;
-  selectedBillingAddress?: IAddUpdateCustomerBillingAddress;
+  defaultFormValues?: IAddUpdateCustomerBillingAddress;
   onSubmit: (formFields: IAddUpdateCustomerBillingAddress) => void;
   onClose: () => void;
 }
@@ -34,17 +34,17 @@ interface IProps {
  */
 const CustomerBillingAddressAddEditDialog = (props: IProps) => {
   // ** Props
-  const { open, loading, selectedBillingAddress, onSubmit, onClose } = props;
+  const { open, loading, defaultFormValues, onSubmit, onClose } = props;
 
   // ** Reducers
   const { customerReducer: { currentCustomerBillingAddress } } = useAppSelector((state) => state);
 
   // ** Vars
-  const defaultValues: IAddUpdateCustomerBillingAddress = {
-    name: selectedBillingAddress?.name ?? currentCustomerBillingAddress?.name ?? '',
-    identification_document: selectedBillingAddress?.identification_document ?? currentCustomerBillingAddress?.identificationDocument ?? '',
-    phone: selectedBillingAddress?.phone ?? currentCustomerBillingAddress?.phone ?? '',
-    address: selectedBillingAddress?.address ?? currentCustomerBillingAddress?.address ?? '',
+  const defaultValues: IAddUpdateCustomerBillingAddress = defaultFormValues ?? {
+    name: currentCustomerBillingAddress?.name ?? '',
+    identification_document: currentCustomerBillingAddress?.identificationDocument ?? '',
+    phone: currentCustomerBillingAddress?.phone ?? '',
+    address: currentCustomerBillingAddress?.address ?? '',
   };
 
   /**
@@ -93,7 +93,7 @@ const CustomerBillingAddressAddEditDialog = (props: IProps) => {
       onClose={handleDialogClose}
     >
       <DialogTitle sx={{ position: 'relative' }}>
-        {selectedBillingAddress || currentCustomerBillingAddress ? t('edit_billing_address') : t('add_billing_address')}
+        {defaultFormValues || currentCustomerBillingAddress ? t('edit_billing_address') : t('add_billing_address')}
         <IconButton
           size='small'
           onClick={handleClose}

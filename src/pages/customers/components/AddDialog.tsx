@@ -35,7 +35,9 @@ import { IAddUpdateCustomerAddress } from 'src/interfaces/customer/addUpdateAddr
 import CustomerAddressAddEditDialog from './AddressAddEditDialog';
 import { addSchema } from 'src/schemes/customer';
 import { t } from 'i18next';
-import Tab from 'src/components/mui/tab';
+import Tab from 'src/components/mui/Tab';
+import { DatePicker } from '@mui/x-date-pickers-pro';
+import { Dayjs } from 'dayjs';
 
 /**
  * Component props
@@ -77,7 +79,7 @@ const CustomerAddDialog = (props: IProps) => {
     name: '',
     identification_document: '',
     email: '',
-    birthday: '',
+    birthday: null,
     address: '',
     phones: [],
     billing_addresses: [],
@@ -380,61 +382,51 @@ const CustomerAddDialog = (props: IProps) => {
                           name='birthday'
                           control={control}
                           render={({ field: { value, onChange } }) => (
-                          <TextField
-                            value={value}
-                            label={t('birthday')}
-                            size='small'
-                            onChange={onChange}
-                            error={Boolean(errors.birthday)}
-                          />
+                            <DatePicker
+                              label={t('birthday')}
+                              value={value}
+                              format='DD-MM-YYYY'
+                              onChange={onChange}
+                              slotProps={{ textField: { size: 'small' } }}
+                            />
                           )}
                         />
                         {errors.birthday && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.birthday.message}`)}</FormHelperText>}
                       </FormControl>
 
                       <FormControl fullWidth sx={{ mb: 6 }} size='small'>
-                        <InputLabel id='category-select'>{t('category')}</InputLabel>
                         <Controller
                           name='customer_category_id'
                           control={control}
-                          render={({ field: { value } }) => (
-                            <Select
-                              fullWidth
-                              id='select-category'
-                              label={t('category')}
-                              labelId='category-select'
-                              onChange={(e) => {setValue("customer_category_id", Number(e.target.value))}}
-                              defaultValue={value}
-                              value={value}
-                            >
-                              {customerCategories.map(category => (
-                                <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
-                              ))}
-                            </Select>
+                          render={({ field: { value, onChange } }) => (
+                            <Autocomplete
+                              disableClearable
+                              id="select-category"
+                              options={customerCategories}
+                              getOptionLabel={(option) => option.name}
+                              renderInput={(params) => <TextField {...params} size='small' label={t('category')} />}
+                              onChange={(_, data) => {onChange(data?.id)}}
+                              value={customerCategories.find(category => category.id == value)}
+                            />
                           )}
                         />
                         {errors.customer_category_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.customer_category_id.message}`)}</FormHelperText>}
                       </FormControl>
-
-                      <FormControl fullWidth sx={{ mb: 6 }} size='small'>
-                        <InputLabel id='acquisition-channel-select'>{t('acquisition_channel')}</InputLabel>
+                      
+                      <FormControl fullWidth sx={{ mb: 6 }}>
                         <Controller
                           name='acquisition_channel_id'
                           control={control}
-                          render={({ field: { value } }) => (
-                            <Select
-                              fullWidth
-                              id='select-acquisition-channel'
-                              label={t('acquisition_channel')}
-                              labelId='acquisition-channel-select'
-                              onChange={(e) => {setValue("acquisition_channel_id", Number(e.target.value))}}
-                              defaultValue={value}
-                              value={value}
-                            >
-                              {acquisitionChannels.map(acquisitionChannel => (
-                                <MenuItem key={acquisitionChannel.id} value={acquisitionChannel.id}>{acquisitionChannel.name}</MenuItem>
-                              ))}
-                            </Select>
+                          render={({ field: { value, onChange } }) => (
+                            <Autocomplete
+                              disableClearable
+                              id="select-acquisition-channel"
+                              options={acquisitionChannels}
+                              getOptionLabel={(option) => option.name}
+                              renderInput={(params) => <TextField {...params} size='small' label={t('acquisition_channel')} />}
+                              onChange={(_, data) => {onChange(data?.id)}}
+                              value={acquisitionChannels.find(acquisitionChannel => acquisitionChannel.id == value)}
+                            />
                           )}
                         />
                         {errors.acquisition_channel_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.acquisition_channel_id.message}`)}</FormHelperText>}
@@ -462,7 +454,7 @@ const CustomerAddDialog = (props: IProps) => {
                       <Box sx={{ mx: 6 }}>
                         <Typography variant='h6'>{t('billing_address')}</Typography>
                         {billingAddressFields.map((billingAddress, index) => (
-                          <Box sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+                          <Box key={index} sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <BadgeAccountOutlineIcon fontSize='large' />
                               <Box sx={{ ml: 4 }}>
@@ -497,7 +489,7 @@ const CustomerAddDialog = (props: IProps) => {
                       <Box sx={{ mx: 6 }}>
                         <Typography variant='h6'>{t('references')}</Typography>
                         {referenceFields.map((reference, index) => (
-                          <Box sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+                          <Box key={index} sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <AccountMultipleOutlineIcon fontSize='large' />
                               <Box sx={{ ml: 4 }}>
@@ -532,7 +524,7 @@ const CustomerAddDialog = (props: IProps) => {
                       <Box sx={{ mx: 6 }}>
                         <Typography variant='h6'>{t('addresses')}</Typography>
                         {addressFields.map((address, index) => (
-                          <Box sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+                          <Box key={index} sx={{ my: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <MapMarkerIcon fontSize='large' />
                               <Box sx={{ ml: 4 }}>
@@ -588,7 +580,7 @@ const CustomerAddDialog = (props: IProps) => {
         <CustomerBillingAddressAddEditDialog
           open={openBillingAddressAddEditDialog}
           loading={false}
-          selectedBillingAddress={selectedBillingAddress}
+          defaultFormValues={selectedBillingAddress}
           onSubmit={handleBillingAddressAddEditSubmit}
           onClose={handleBillingAddressAddEditDialogClose}
         />
@@ -598,7 +590,7 @@ const CustomerAddDialog = (props: IProps) => {
         <CustomerReferenceAddEditDialog
           open={openReferenceAddEditDialog}
           loading={false}
-          selectedReference={selectedReference}
+          defaultFormValues={selectedReference}
           onSubmit={handleReferenceAddEditSubmit}
           onClose={handleReferenceAddEditDialogClose}
         />
@@ -608,7 +600,7 @@ const CustomerAddDialog = (props: IProps) => {
         <CustomerAddressAddEditDialog
           open={openAddressAddEditDialog}
           loading={false}
-          selectedAddress={selectedAddress}
+          defaultFormValues={selectedAddress}
           onSubmit={handleAddressAddEditSubmit}
           onClose={handleAddressAddEditDialogClose}
         />

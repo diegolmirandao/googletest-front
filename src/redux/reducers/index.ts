@@ -3,6 +3,7 @@ import authSlice from './auth';
 import offline from './offline';
 import init from './init';
 import userSlice from './user';
+import countrySlice from './country';
 import roleSlice from './role';
 import customerSlice from './customer';
 import customerCategorySlice from './customerCategory';
@@ -14,6 +15,7 @@ export default combineReducers({
     initReducer: init.reducer,
     userReducer: userSlice.reducer,
     roleReducer: roleSlice.reducer,
+    countryReducer: countrySlice.reducer,
     customerReducer: customerSlice.reducer,
     customerCategoryReducer: customerCategorySlice.reducer,
     acquisitionChannelReducer: acquisitionChannelSlice.reducer,
