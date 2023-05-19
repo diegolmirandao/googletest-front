@@ -8,10 +8,11 @@ import i18n from "i18next";
 import { esES } from '@mui/x-data-grid-pro';
 import FilterQueryType from "src/types/FilterQueryType";
 import SortQueryType from "src/types/SortQueryType";
+import { ITableFilterApplied } from "src/interfaces/tableFilter";
 
 export const displayErrors = (e: unknown) => {
     let errorMessage: JSX.Element | string | undefined;
-    const error = e as AxiosError<IResponseData>
+    const error = e as AxiosError<IResponseData>;
 
     switch (error.response?.status) {
         case 422:
@@ -35,60 +36,57 @@ export const displayErrors = (e: unknown) => {
     }
 
     if (error.code != 'ERR_NETWORK') {
-        toast.error(errorMessage, { style: { width: 'auto' }, autoClose: 5000 })
+        toast.error(errorMessage, { style: { width: 'auto' }, autoClose: 5000 });
     }
 };
 
-export const generateFilterQueryParams = (filterValues: FiltersFormValues): FilterQueryType => {
-    const { filters: filtersArray } = filterValues
-    console.log(filtersArray)
+export const generateFilterQueryParams = (filters: ITableFilterApplied[] | undefined): FilterQueryType | null => {
+    let queryParams: FilterQueryType = {};
 
-    let queryParams: FilterQueryType = {}
-
-    filtersArray.map(filter => {
+    filters?.map(filter => {
         let operatorParamKey = '';
         let filterValue = '';
 
         switch (filter.operator) {
             case 'is':
-                queryParams[`${filter.field}`] = filter.value ? 1 : 0
+                queryParams[`${filter.field}`] = filter.value ? 1 : 0;
                 break;
-            case 'contain':
-                filterValue = String(filter.value).replace(' ', '%')
-                operatorParamKey = `${filter.field}[like]`
-                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `%${filterValue}%`
+            case 'contains':
+                filterValue = String(filter.value).replace(' ', '%');
+                operatorParamKey = `${filter.field}[like]`;
+                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `%${filterValue}%`;
                 break;
             case 'startsWith':
-                filterValue = String(filter.value).replace(' ', '%')
-                operatorParamKey = `${filter.field}[like]`
-                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `${filter.value!}%`
+                filterValue = String(filter.value).replace(' ', '%');
+                operatorParamKey = `${filter.field}[like]`;
+                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `${filter.value!}%`;
                 break;
             case 'endsWith':
-                filterValue = String(filter.value).replace(' ', '%')
-                operatorParamKey = `${filter.field}[like]`
-                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `%${filter.value!}`
+                filterValue = String(filter.value).replace(' ', '%');
+                operatorParamKey = `${filter.field}[like]`;
+                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : `%${filter.value!}`;
                 break;
             default:
-                operatorParamKey = `${filter.field}[operator]`
+                operatorParamKey = `${filter.field}[operator]`;
 
-                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : filter.operator
-                queryParams[`${filter.field}[value]`] = filter.value!
+                queryParams[operatorParamKey] = operatorParamKey in queryParams ? queryParams[operatorParamKey] : filter.operator;
+                queryParams[`${filter.field}[value]`] = filter.value!;
                 break;
         }
-    })
+    });
 
-    return queryParams
+    return (filters && filters!.length > 0) ? queryParams : null;
 }
 
-export const generateSortQueryParams = (sortModel: GridSortModel): SortQueryType => {
+export const generateSortQueryParams = (sortModel: GridSortModel | undefined): SortQueryType | null => {
     let sortQueryParams: SortQueryType = {}
 
-    sortModel.map(sort => {
-        sortQueryParams[`f_params[orderBy][field]`] = sort.field,
-        sortQueryParams[`f_params[orderBy][type]`] = sort.sort
-    })
+    sortModel?.map(sort => {
+        sortQueryParams[`f_params[orderBy][field]`] = sort.field;
+        sortQueryParams[`f_params[orderBy][type]`] = sort.sort;
+    });
 
-    return sortQueryParams
+    return (sortModel && sortModel!.length > 0) ? sortQueryParams : null;
 }
 
 export const setDataGridLocale = () => {

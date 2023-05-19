@@ -12,7 +12,7 @@ export const getUsersAction = createAsyncThunk(
     'user/get',
     async (params: IListQueryParam, {rejectWithValue}) => {
         try {
-            const {data: userResponse}: AxiosResponse<IResponseCursorPagination<IUser>> = await axios.get(`/api/users`, {
+            const {data: userResponse}: AxiosResponse<IResponseCursorPagination<IUser>> = await axios.get(`/users`, {
                 params: {
                     cursor: params.cursor,
                     page_size: params.pageSize,
@@ -32,7 +32,7 @@ export const addUserAction = createAsyncThunk(
     'user/add',
     async (addData: IAddUser, {rejectWithValue}) => {
         try {
-            const {data: userResponse}: AxiosResponse<IUser> = await axios.post('/api/users', addData);
+            const {data: userResponse}: AxiosResponse<IUser> = await axios.post('/users', addData);
 
             return userResponse;
         } catch (error) {
@@ -46,7 +46,7 @@ export const updateUserAction = createAsyncThunk(
     async (updateData: IUpdateUser, {getState, rejectWithValue}) => {
         try {
             const { userReducer: { currentUser } } = getState() as RootState;
-            const {data: userResponse}: AxiosResponse<IUser> = await axios.put(`/api/users/${currentUser?.id}`, updateData);
+            const {data: userResponse}: AxiosResponse<IUser> = await axios.put(`/users/${currentUser?.id}`, updateData);
 
             return userResponse;
         } catch (error) {

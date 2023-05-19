@@ -26,12 +26,12 @@ const InitWrapper = ({ children }: IProps) => {
                 },
                 success: {
                     render(){
-                        return t('initialed_data')
+                        return t('initialized_data')
                     },
                 },
                 error: {
                     render(){
-                        return t('initialed_data_failure')
+                        return t('initialization_failed')
                     }
                 }
             });

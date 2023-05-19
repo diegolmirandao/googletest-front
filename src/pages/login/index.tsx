@@ -108,7 +108,7 @@ const Login = () => {
         <CardContent sx={{ p: theme => `${theme.spacing(13, 7, 6.5)} !important` }}>
           <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <img src='/images/logos/logo-blue-mini.png' alt='logo' width='64' height='56' />
-            <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>{t('sigin')}</Typography>
+            <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>{t('login')}</Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
@@ -171,7 +171,7 @@ const Login = () => {
                 </Link> */}
               </Box>
               <LoadingButton fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }} loading={loading}>
-                {t('sigin')}
+                {t('login')}
               </LoadingButton>
             </form>
         </CardContent>

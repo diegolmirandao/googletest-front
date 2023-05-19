@@ -1,0 +1,1 @@
+export type ExportFormatType = 'pdf' | 'excel';

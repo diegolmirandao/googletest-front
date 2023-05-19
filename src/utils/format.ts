@@ -29,8 +29,9 @@ export const formatMoney = (amount: string | number, currency: MCurrency):string
  * @param date date to format
  * @returns formatted date
  */
-export const formatDate = (date: string | undefined): string => {
+export const formatDate = (date: string | undefined): string | null => {
     let format = 'DD-MM-YYYY HH:mm:ss';
+    if (!date) return null;
     return dayjs((date)).format(format);
 };
 

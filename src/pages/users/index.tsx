@@ -2,24 +2,29 @@
 import { useContext, useEffect, useState } from "react";
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { useTranslation } from "react-i18next";
 
 // ** Actions and Reducers Imports
 import { addUserAction, deleteUserAction, getUsersAction, updateUserAction } from 'src/redux/actions/user';
 import { setCurrentUser, setCursor } from 'src/redux/reducers/user';
-import { setUserVisibility, setUserFilters, setUserSorts, setUserExport } from 'src/redux/reducers/table';
 
 // ** Interfaces and Types Imports
+import { ACLObj } from 'src/config/acl';
+import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
+import { IAddUser } from "src/interfaces/user/add";
+import { IUpdateUser } from 'src/interfaces/user/update';
 import { IUser } from 'src/interfaces/user/user';
-import { ITableFilter } from 'src/interfaces/tableFilter';
-import { ITableExportColumn } from 'src/interfaces/tableExportColumn';
+import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
+import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
+import FilterQueryType from "src/types/FilterQueryType";
+import SortQueryType from "src/types/SortQueryType";
 
 // ** MUI Imports
-import { GridColDef, GridSortModel, GridRenderCellParams, GridValueGetterParams, GridRowParams, GridColumnVisibilityModel, DataGridPro, esES,  GridRowScrollEndParams, MuiEvent, GridCallbackDetails, GridColumnOrderChangeParams, GridValueFormatterParams } from '@mui/x-data-grid-pro';
+import { GridColDef, GridSortModel, GridRenderCellParams, GridValueGetterParams, GridRowParams, GridColumnVisibilityModel, DataGridPro,  GridRowScrollEndParams, MuiEvent, GridCallbackDetails, GridValueFormatterParams, GridColumnOrderChangeParams } from '@mui/x-data-grid-pro';
 import { Card, Grid, Box } from '@mui/material';
 import CustomChip from 'src/components/mui/chip';
 
 // ** Third Party Imports
+import { t } from "i18next";
 import { toast } from 'react-toastify';
 import { AbilityContext } from 'src/components/layout/acl/Can';
 import { displayErrors, generateFilterQueryParams, generateSortQueryParams, setDataGridLocale } from 'src/utils/common';
@@ -36,10 +41,8 @@ import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
-import { ACLObj } from 'src/config/acl';
-import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IAddUser } from "src/interfaces/user/add";
-import { IUpdateUser } from 'src/interfaces/user/update';
+import useTableState from "src/hooks/useTableState";
+import { ITableState } from "src/interfaces/tableState";
 
 /**
  * Export columns definition
@@ -47,31 +50,31 @@ import { IUpdateUser } from 'src/interfaces/user/update';
 const exportColumns: ITableExportColumn[] = [
   {
     field: 'name',
-    text: 'Nombre'
+    text: 'name'
   },
   {
     field: 'username',
-    text: 'Usuario'
+    text: 'username'
   },
   {
     field: 'email',
-    text: 'E-mail'
+    text: 'email'
   },
   {
     field: 'roles',
-    text: 'Rol'
+    text: 'role'
   },
   {
     field: 'status',
-    text: 'Estado'
+    text: 'status'
   },
   {
     field: 'created_at',
-    text: 'Fecha de creación'
+    text: 'created_at'
   },
   {
     field: 'updated_at',
-    text: 'Fecha de modificación'
+    text: 'updated_at'
   }
 ];
 
@@ -82,11 +85,12 @@ const exportColumns: ITableExportColumn[] = [
 const User = () => {
   const dispatch = useAppDispatch();
   const ability = useContext(AbilityContext);
-  const { t } = useTranslation();
   const requestParams = useRequestParam('users');
+  const [tableState, setTableState] = useTableState('users');
+  const [usersTableState, setUsersTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { userReducer: { users, currentUser, cursor, filteredUsers }, tableReducer: { users: usersDefinition } } = useAppSelector((state) => state);
+  const { userReducer: { users, currentUser, cursor, filteredUsers }, roleReducer: { roles } } = useAppSelector((state) => state);
 
   /**
   * DataGrid Columns definition
@@ -149,9 +153,23 @@ const User = () => {
   ];
 
   /**
+   * Datagrid default column visibility model
+   */
+  const defaultColumnVisibility: GridColumnVisibilityModel = usersTableState.visibility ?? {
+    id: false,
+    name: true,
+    username: true,
+    email: true,
+    role: true,
+    status: true,
+    createdAt: false,
+    updatedAt: false,
+  };
+
+  /**
   * Filter fields definition
   */
-  const filters: ITableFilter[] = [
+  const filtersFields: ITableFilter[] = [
     {
       field: 'name',
       text: String(t('name')),
@@ -170,12 +188,26 @@ const User = () => {
     {
       field: 'roles',
       text: String(t('role')),
-      type: 'string'
+      type: 'select',
+      options: roles.map((role) => ({
+        value: role.id,
+        text: role.name
+      }))
     },
     {
       field: 'status',
       text: String(t('status')),
-      type: 'boolean'
+      type: 'boolean',
+      options: [
+        {
+          value: 1,
+          text: t('active')
+        },
+        {
+          value: 2,
+          text: t('inactive')
+        }
+      ]
     },
     {
       field: 'created_at',
@@ -190,9 +222,12 @@ const User = () => {
   ];
 
   // ** DataGrid Vars
-  const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 20);
+  const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 100);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [tableColumns, setTableColumns] = useState<GridColDef[]>(columns);
+  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(usersTableState.filters);
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(usersTableState.sorts);
+  const [visibilityModel, setVisibilityModel] = useState<GridColumnVisibilityModel>(defaultColumnVisibility);
+  const [exportData, setExportData] = useState<ITableExport | undefined>(usersTableState.export);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
@@ -203,27 +238,44 @@ const User = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   // ** Loading flags
+  const [exportLoading, setExportLoading] = useState<boolean>(false);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [editLoading, setEditLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!users.length || usersDefinition.filters) {
+    if (!users.length || filters || sortModel) {
       getUsers();
     }
-  }, [usersDefinition.filters, usersDefinition.sorts]);
+  }, [filters, sortModel]);
+
+  useEffect(() => {
+    setUsersTableState({
+      columns: undefined,
+      filters: filters,
+      sorts: sortModel,
+      visibility: visibilityModel,
+      export: exportData
+    });
+  }, [filters, sortModel, visibilityModel, exportData]);
+
+  useEffect(() => {
+    setTableState('users', usersTableState);
+  }, [usersTableState]);
 
   /**
    * Get a list of users filtered, sorted and paginated
    */
   const getUsers = async () => {
     setTableLoading(true);
+    const appliedFilters: FilterQueryType = generateFilterQueryParams(filters);
+    const appliedSortings: SortQueryType = generateSortQueryParams(sortModel);
     try {
-      const userResponse: IResponseCursorPagination<IUser> = await dispatch(getUsersAction({cursor: cursor, pageSize: pageSize, filters: usersDefinition.filters, sorts: usersDefinition.sorts})).then(unwrapResult);
+      const userResponse: IResponseCursorPagination<IUser> = await dispatch(getUsersAction({cursor: cursor, pageSize: pageSize, filters: appliedFilters, sorts: appliedSortings})).then(unwrapResult);
 
       dispatch(setCursor(userResponse.next_cursor));
     } catch (error) {
-      console.log('LIST ERROR:', error);
+      console.error('LIST ERROR:', error);
       displayErrors(error);
     }
     setTableLoading(false);
@@ -237,8 +289,9 @@ const User = () => {
    * Filter form submit handler
    * @param filters filters fields and values
    */
-  const handleFilterSubmit = (filters: FiltersFormValues) => {
-    dispatch(setUserFilters(generateFilterQueryParams(filters)));
+  const handleFilterSubmit = (filters: ITableFilterApplied[]) => {
+    console.log(filters);
+    setFilters(filters);
   };
 
   /**
@@ -246,7 +299,8 @@ const User = () => {
    * @param sortModel sorted columns
    */
   const handleSortModelChange = (sortModel: GridSortModel) => {
-    dispatch(setUserSorts(generateSortQueryParams(sortModel)));
+    console.log(sortModel);
+    setSortModel(sortModel);
   };
 
   /**
@@ -257,6 +311,32 @@ const User = () => {
     dispatch(setCurrentUser(row.row));
     setOpenDetailDialog(true);
   };
+
+  /**
+   * onRowsScrollEnd handler
+   */
+  const handleRowsScrollEnd = (params: GridRowScrollEndParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
+    if (cursor != null) {
+      getUsers();
+    }
+  }
+
+  /**
+   * ColumnVisibilityModelChange handler
+   */
+  const handleColumnVisibilityModelChange = (model: GridColumnVisibilityModel) => {
+    setVisibilityModel(model);
+  }
+
+  /**
+   * ColumnOrderChange handler
+   */
+  const handleColumnOrderChange = (params: GridColumnOrderChangeParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
+    let changedColumns: GridColDef[] = [...columns];
+    let movedColumn: GridColDef[] = changedColumns.splice(params.oldIndex, 1);
+    changedColumns.splice(params.targetIndex, 0, movedColumn[0]);
+    // dispatch(setUserColumns(changedColumns));
+  }
 
   /**
    * Dialog functions and handlers
@@ -282,13 +362,13 @@ const User = () => {
     setAddLoading(true);
     try {
       await dispatch(addUserAction(formFields)).then(unwrapResult);
-      toast.success(t('user_successfully_added'));
+      setOpenAddDialog(false);
+      toast.success(t('user_added_successfully'));
     } catch (error) {
       console.log('ADD USER ERROR: ', error);
       displayErrors(error);
     }
     setAddLoading(false);
-    setOpenAddDialog(false);
   }
 
   /**
@@ -299,13 +379,13 @@ const User = () => {
     setEditLoading(true);
     try {
       await dispatch(updateUserAction(formFields)).then(unwrapResult);
-      toast.success(t('user_successfully_modified'));
+      setOpenEditDialog(false);
+      toast.success(t('user_modified_successfully'));
     } catch (error) {
       console.log('EDIT USER ERROR: ', error);
       displayErrors(error);
     }
     setEditLoading(false);
-    setOpenEditDialog(false);
   }
 
   /**
@@ -316,48 +396,30 @@ const User = () => {
     if (currentUser) {
       try {
         await dispatch(deleteUserAction()).then(unwrapResult);
-        toast.success(t('user_successfully_deleted'));
+        handleDetailDialogClose();
+        toast.success(t('user_deleted_successfully'));
       } catch (error) {
         displayErrors(error);
       }
     } else {
-      toast.error(t('unselected_user'));
+      toast.error(t('no_user_selected'));
     }
-    handleDetailDialogClose();
     setDeleteLoading(false);
-    setOpenDeleteDialog(false);
   };
 
   /**
-   * onRowsScrollEnd handler
+   * Export handler
    */
-  const handleRowsScrollEnd = (params: GridRowScrollEndParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
-    if (cursor != null) {
-      getUsers();
-    }
-  }
-
-  /**
-   * ColumnVisibilityModelChange handler
-   */
-  const handleColumnVisibilityModelChange = (model: GridColumnVisibilityModel) => {
-    dispatch(setUserVisibility(model));
-  }
-
-  const handleOnColumnOrderChange = (params: GridColumnOrderChangeParams) => {
-    const oldIndex = params.oldIndex;
-    const targetIndex = params.targetIndex;
-
-    const movedColumn = tableColumns[oldIndex];
-    const replacedColumn = tableColumns[targetIndex];
-
-    tableColumns[targetIndex] = movedColumn;
-    tableColumns[oldIndex] = replacedColumn;
-  }
+  const handleExport = (exportData: ITableExport) => {
+    setExportLoading(true);
+    console.log(exportData);
+    setExportData(exportData);
+    setExportLoading(false);
+  };
 
   return (
     <Grid container spacing={6}>
-      <TableFilter filters={filters} onSubmit={handleFilterSubmit} />
+      <TableFilter filters={filtersFields} defaultFiltersApplied={filters} onSubmit={handleFilterSubmit} />
       <Grid item xs={12}>
         <Card>
           <TableHeader
@@ -368,17 +430,24 @@ const User = () => {
           />
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
-              columns={tableColumns} 
+              columns={columns} 
               rows={filteredUsers ?? users} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
               onRowClick={handleRowClick}
-              columnVisibilityModel={usersDefinition.visibility}
+              columnVisibilityModel={visibilityModel}
               onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
               onRowsScrollEnd={handleRowsScrollEnd}
-              onColumnOrderChange={handleOnColumnOrderChange}
-              hideFooterRowCount
+              onColumnOrderChange={handleColumnOrderChange}
+              onSortModelChange={handleSortModelChange}
+              initialState={{
+                sorting: {
+                  sortModel: sortModel,
+                },
+              }}
+              disableColumnMenu={true}
               hideFooterSelectedRowCount
+              disableRowSelectionOnClick
             />
           </Box>
         </Card>
@@ -419,8 +488,10 @@ const User = () => {
       {openTableExportDialog &&
         <TableExportDialog
           open={openTableExportDialog}
-          section={'users'}
+          loading={exportLoading}
           columns={exportColumns}
+          defaultExportData={exportData}
+          onSubmit={handleExport}
           onClose={() => setOpenTableExportDialog(false)}
         />
       }
@@ -428,7 +499,7 @@ const User = () => {
         <TableColumnVisibilityDialog
           open={openTableColumnVisibilityDialog}
           columns={columns}
-          columnVisibility={usersDefinition.visibility}
+          columnVisibility={visibilityModel}
           onSubmit={handleColumnVisibilityModelChange}
           onClose={() => setOpenTableColumnVisibilityDialog(false)}
         />

@@ -1,4 +1,4 @@
-import IInitState from 'src/interfaces/user/redux/initState';
+import IInitState from 'src/interfaces/initState';
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState: IInitState = {
