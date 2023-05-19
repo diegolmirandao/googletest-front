@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
 import { addCustomerAction, addCustomerAddressAction, addCustomerBillingAddressAction, addCustomerReferenceAction, deleteCustomerAction, deleteCustomerAddressAction, deleteCustomerBillingAddressAction, deleteCustomerReferenceAction, getCustomersAction, updateCustomerAction, updateCustomerAddressAction, updateCustomerBillingAddressAction, updateCustomerReferenceAction } from 'src/redux/actions/customer';
-import { setCurrentCustomer, setCursor, setCurrentCustomerAddress, setCurrentCustomerBillingAddress, setCurrentCustomerReference } from 'src/redux/reducers/customer';
+import { setCurrentCustomer, setCursor, setCurrentCustomerAddress, setCurrentCustomerBillingAddress, setCurrentCustomerReference, setFilteredCursor, resetFilteredCustomers } from 'src/redux/reducers/customer';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
@@ -110,7 +110,7 @@ const Customer = () => {
   const [customersTableState, setCustomersTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { customerReducer: { customers, currentCustomer, currentCustomerAddress, currentCustomerBillingAddress, currentCustomerReference, cursor, filteredCustomers }, customerCategoryReducer: { customerCategories }, acquisitionChannelReducer: { acquisitionChannels } } = useAppSelector((state) => state);
+  const { customerReducer: { customers, currentCustomer, currentCustomerAddress, currentCustomerBillingAddress, currentCustomerReference, cursor, filteredCursor, filteredCustomers }, customerCategoryReducer: { customerCategories }, acquisitionChannelReducer: { acquisitionChannels } } = useAppSelector((state) => state);
 
   /**
   * DataGrid Columns definition
@@ -147,6 +147,7 @@ const Customer = () => {
       minWidth: 200,
       field: 'phone',
       headerName: String(t('phone')),
+      filterable: false,
       valueGetter: ({ row }: GridValueGetterParams) => row.phones[0]
     },
     {
@@ -210,7 +211,7 @@ const Customer = () => {
       type: 'string'
     },
     {
-      field: 'identificationDocument',
+      field: 'identification_document',
       text: String(t('identification_document')),
       type: 'string'
     },
@@ -299,8 +300,11 @@ const Customer = () => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!customers.length || filters || sortModel) {
+    if (!customers.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
       getCustomers();
+    } else {
+      dispatch(setFilteredCursor(null));
+      dispatch(resetFilteredCustomers());
     }
   }, [filters, sortModel]);
 
@@ -323,12 +327,13 @@ const Customer = () => {
    */
   const getCustomers = async () => {
     setTableLoading(true);
-    const appliedFilters: FilterQueryType = generateFilterQueryParams(filters);
-    const appliedSortings: SortQueryType = generateSortQueryParams(sortModel);
+    const appliedFilters: FilterQueryType | null = generateFilterQueryParams(filters);
+    const appliedSortings: SortQueryType | null = generateSortQueryParams(sortModel) ?? generateSortQueryParams([{field: 'created_at', sort: 'desc'}]);
     try {
-      const customerResponse: IResponseCursorPagination<ICustomer> = await dispatch(getCustomersAction({cursor: cursor, pageSize: pageSize, filters: appliedFilters, sorts: appliedSortings})).then(unwrapResult);
-
-      dispatch(setCursor(customerResponse.next_cursor));
+      const customerResponse: IResponseCursorPagination<ICustomer> = await dispatch(getCustomersAction({
+        filters: appliedFilters,
+        sorts: appliedSortings
+      })).then(unwrapResult);
     } catch (error) {
       console.error('LIST ERROR:', error);
       displayErrors(error);
@@ -372,7 +377,7 @@ const Customer = () => {
    * onRowsScrollEnd handler
    */
   const handleRowsScrollEnd = (params: GridRowScrollEndParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
-    if (cursor != null) {
+    if (cursor || filteredCursor) {
       getCustomers();
     }
   }
@@ -525,7 +530,8 @@ const Customer = () => {
     try {
       await dispatch(addCustomerAction(formFields)).then(unwrapResult);
       setOpenAddDialog(false);
-      toast.success(t('add_customered_successfully'));
+      setOpenDetailDialog(true);
+      toast.success(t('customer_added_succesfully'));
     } catch (error) {
       console.error('ADD CUSTOMER ERROR: ', error);
       displayErrors(error);
@@ -732,12 +738,10 @@ const Customer = () => {
               onRowsScrollEnd={handleRowsScrollEnd}
               onColumnOrderChange={handleColumnOrderChange}
               onSortModelChange={handleSortModelChange}
-              initialState={{
-                sorting: {
-                  sortModel: sortModel,
-                },
-              }}
+              sortModel={sortModel}
               disableColumnMenu={true}
+              filterMode="server"
+              sortingMode="server"
               hideFooterSelectedRowCount
               disableRowSelectionOnClick
             />

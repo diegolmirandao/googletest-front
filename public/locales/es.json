@@ -84,7 +84,7 @@
     "reference_type": "Tipo de referencia",
     "references": "Referencias",
     
-    "add_usered_successfully": "Usuario agregado correctamente",
+    "user_added_successfully": "Usuario agregado correctamente",
     "user_modified_successfully": "Usuario modificado correctamente",
     "user_deleted_successfully": "Usuario eliminado correctamente",
     "no_user_selected": "No se ha seleccionado ningún usuario",
@@ -92,7 +92,7 @@
     "edit_user": "Editar usuario",
     "user_data": "Datos del usuario",
 
-    "add_customered_successfully": "Cliente agregado correctamente",
+    "customer_added_succesfully": "Cliente agregado correctamente",
     "customer_modified_successfully": "Cliente modificado correctamente",
     "customer_deleted_successfully": "Cliente eliminado correctamente",
     "no_customer_selected": "No se ha seleccionado ningún cliente",

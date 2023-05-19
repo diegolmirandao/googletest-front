@@ -40,7 +40,7 @@ export const displayErrors = (e: unknown) => {
     }
 };
 
-export const generateFilterQueryParams = (filters: ITableFilterApplied[] | undefined): FilterQueryType => {
+export const generateFilterQueryParams = (filters: ITableFilterApplied[] | undefined): FilterQueryType | null => {
     let queryParams: FilterQueryType = {};
 
     filters?.map(filter => {
@@ -75,10 +75,10 @@ export const generateFilterQueryParams = (filters: ITableFilterApplied[] | undef
         }
     });
 
-    return queryParams
+    return (filters && filters!.length > 0) ? queryParams : null;
 }
 
-export const generateSortQueryParams = (sortModel: GridSortModel | undefined): SortQueryType => {
+export const generateSortQueryParams = (sortModel: GridSortModel | undefined): SortQueryType | null => {
     let sortQueryParams: SortQueryType = {}
 
     sortModel?.map(sort => {
@@ -86,7 +86,7 @@ export const generateSortQueryParams = (sortModel: GridSortModel | undefined): S
         sortQueryParams[`f_params[orderBy][type]`] = sort.sort;
     });
 
-    return sortQueryParams;
+    return (sortModel && sortModel!.length > 0) ? sortQueryParams : null;
 }
 
 export const setDataGridLocale = () => {

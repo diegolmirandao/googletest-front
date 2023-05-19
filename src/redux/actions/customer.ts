@@ -10,21 +10,25 @@ import { IAddUpdateCustomerBillingAddress } from 'src/interfaces/customer/addUpd
 import { IAddUpdateCustomerAddress } from 'src/interfaces/customer/addUpdateAddress';
 import { IUpdateCustomer } from 'src/interfaces/customer/update';
 import { IResponseCursorPagination } from 'src/interfaces/responseCursorPagination';
+import requestParamConfig from 'src/config/requestParam';
 
 export const getCustomersAction = createAsyncThunk(
     'customer/get',
-    async (params: IListQueryParam, {rejectWithValue}) => {
+    async (params: IListQueryParam, {getState, rejectWithValue}) => {
         try {
-            const {data: userResponse}: AxiosResponse<IResponseCursorPagination<ICustomer>> = await axios.get(`/customers`, {
+            const { customerReducer: { cursor, filteredCursor } } = getState() as RootState;
+            const sentCursor = params.filters || params.sorts ? filteredCursor : cursor;
+
+            const {data: customerResponse}: AxiosResponse<IResponseCursorPagination<ICustomer>> = await axios.get(`/customers`, {
                 params: {
-                    cursor: params.cursor,
-                    page_size: params.pageSize,
+                    cursor: sentCursor,
+                    page_size: requestParamConfig['customers'].pageSize,
                     ...params.filters,
                     ...params.sorts
                 }
             });
 
-            return userResponse;
+            return customerResponse;
         } catch (error) {
             return rejectWithValue(error)
         }

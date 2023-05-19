@@ -7,6 +7,7 @@ export interface ICustomerState {
   customers: MCustomer[];
   filteredCustomers: MCustomer[] | null;
   cursor: string | null;
+  filteredCursor: string | null;
   currentCustomer: MCustomer | undefined;
   currentCustomerBillingAddress: MCustomerBillingAddress | undefined;
   currentCustomerReference: MCustomerReference | undefined;

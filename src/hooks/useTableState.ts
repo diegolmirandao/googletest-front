@@ -18,7 +18,6 @@ const useTableState = (table: string) => {
         const storage = localStorage.getItem('tableState');
         let tablesState: {[key: string]: ITableState} = storage ? JSON.parse(storage) : {};
         tablesState[table] = state;
-        console.log(tablesState);
         localStorage.setItem('tableState', JSON.stringify(tablesState));
     };
 

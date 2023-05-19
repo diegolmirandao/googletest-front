@@ -58,7 +58,7 @@ const CustomerEditDialog = (props: IProps) => {
     name: currentCustomer!.name,
     identification_document: currentCustomer!.identificationDocument,
     email: currentCustomer!.email,
-    birthday: dayjs(currentCustomer!.birthday),
+    birthday: currentCustomer!.birthday ? dayjs(currentCustomer!.birthday) : null,
     address: currentCustomer!.address,
     phones: currentCustomer!.phones
   };

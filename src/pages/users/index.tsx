@@ -363,7 +363,7 @@ const User = () => {
     try {
       await dispatch(addUserAction(formFields)).then(unwrapResult);
       setOpenAddDialog(false);
-      toast.success(t('add_usered_successfully'));
+      toast.success(t('user_added_successfully'));
     } catch (error) {
       console.log('ADD USER ERROR: ', error);
       displayErrors(error);
