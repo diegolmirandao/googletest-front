@@ -1,6 +1,6 @@
 import { ICustomerState } from '../../interfaces/customer/redux/customerState';
 import { createSlice } from '@reduxjs/toolkit';
-import { getCustomersAction, addCustomerAction, updateCustomerAction, deleteCustomerAction } from '../actions/customer';
+import { getCustomersAction, addCustomerAction, updateCustomerAction, deleteCustomerAction, showCustomerAction } from '../actions/customer';
 import { deleteCustomerBillingAddressAction, updateCustomerBillingAddressAction, addCustomerBillingAddressAction } from '../actions/customer';
 import { deleteCustomerReferenceAction, updateCustomerReferenceAction, addCustomerReferenceAction } from '../actions/customer';
 import { addCustomerAddressAction, updateCustomerAddressAction, deleteCustomerAddressAction } from '../actions/customer';
@@ -41,6 +41,9 @@ const slice = createSlice({
         },
         setCurrentCustomerAddress(state, action) {
             state.currentCustomerAddress = action.payload;
+        },
+        deleteCustomer(state, payload) {
+            state.customers = state.customers.filter(customer => customer.id !== Number(payload));
         }
     },
     extraReducers(builder) {
@@ -54,6 +57,15 @@ const slice = createSlice({
             } else {
                 state.customers = state.customers.length && state.cursor ? [...state.customers, ...customers] : customers;
                 state.cursor = action.payload.next_cursor;
+            }
+        })
+        builder.addCase(showCustomerAction.fulfilled, (state, action) => {
+            const receivedCustomer = new MCustomer(action.payload);
+            const existingCustomer = state.customers.find(customer => customer.id == receivedCustomer.id);
+            if (existingCustomer) {
+                state.customers = state.customers.map(customer => customer.id == receivedCustomer.id ? receivedCustomer : customer);
+            } else {
+                state.customers = [receivedCustomer, ...state.customers];
             }
         })
         builder.addCase(addCustomerAction.fulfilled, (state, action) => {
@@ -130,6 +142,6 @@ const slice = createSlice({
     },
 });
 
-export const { resetFilteredCustomers, setCursor, setFilteredCursor, setCurrentCustomer, setCurrentCustomerBillingAddress, setCurrentCustomerReference, setCurrentCustomerAddress } = slice.actions;
+export const { resetFilteredCustomers, setCursor, setFilteredCursor, setCurrentCustomer, setCurrentCustomerBillingAddress, setCurrentCustomerReference, setCurrentCustomerAddress, deleteCustomer } = slice.actions;
 
 export default slice;

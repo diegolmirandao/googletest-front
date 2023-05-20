@@ -8,6 +8,7 @@ import AppLogout from '../components/auth/AppLogout'
 import ProtectedPage from '../components/auth/ProtectedPage'
 import OfflineWrapper from '../components/OfflineWrapper'
 import WindowWrapper from '../components/WindowWrapper'
+import NotificationWrapper from './NotificationWrapper';
 
 export type PageType = ComponentType & {
     acl?: ACLObj
@@ -36,11 +37,13 @@ const Page = (Component: PageType) => {
                                 <ProtectedPage>
                                     <AppLogout>
                                         <OfflineWrapper>
-                                            <WindowWrapper>
-                                                <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                                                    {getLayout(<Component {...props} />)}
-                                                </AclGuard>
-                                            </WindowWrapper>
+                                            <NotificationWrapper>
+                                                <WindowWrapper>
+                                                    <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                                                        {getLayout(<Component {...props} />)}
+                                                    </AclGuard>
+                                                </WindowWrapper>
+                                            </NotificationWrapper>
                                         </OfflineWrapper>
                                     </AppLogout>
                                 </ProtectedPage>

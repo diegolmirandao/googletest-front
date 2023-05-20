@@ -35,6 +35,19 @@ export const getCustomersAction = createAsyncThunk(
     }
 );
 
+export const showCustomerAction = createAsyncThunk(
+    'customer/show',
+    async (id: number, {rejectWithValue}) => {
+        try {
+            const {data: customerResponse}: AxiosResponse<ICustomer> = await axios.get(`/customers/${id}`);
+
+            return customerResponse;
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+);
+
 export const addCustomerAction = createAsyncThunk(
     'customer/add',
     async (addData: IAddCustomer, {rejectWithValue}) => {
