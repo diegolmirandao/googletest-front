@@ -8,6 +8,7 @@ import Customer from "./pages/customers";
 import CustomerReferenceType from "./pages/customer-reference-types";
 import MeasurementUnit from "./pages/measurement-units";
 import ProductCategory from "./pages/product-categories";
+import Brand from "./pages/brands";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
       <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
       <Route path="/configuration/customers/reference-types" element={ <CustomerReferenceType/> } />
       <Route path="/configuration/products/categories" element={ <ProductCategory/> } />
+      <Route path="/configuration/products/brands" element={ <Brand/> } />
       <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
     </Routes>
   )

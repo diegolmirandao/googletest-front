@@ -68,6 +68,12 @@ const navigation = (): VerticalNavItemsType => {
               subject: 'product_category',
             },
             {
+              title: i18n.t('brands'),
+              path: '/configuration/products/brands',
+              action: 'view',
+              subject: 'brand',
+            },
+            {
               title: i18n.t('measurement_units'),
               path: '/configuration/products/measurement-units',
               action: 'view',

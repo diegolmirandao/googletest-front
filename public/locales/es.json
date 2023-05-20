@@ -12,6 +12,7 @@
     "acquisition_channels": "Canales de adquisición",
     "reference_types": "Tipos de referencia",
     "measurement_units": "Unidades de medida",
+    "brands": "Marcas",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -159,5 +160,14 @@
     "no_subcategory_selected": "No se ha seleccionado ningúna subcategoría",
     "add_subcategory": "Agregar subcategoría",
     "edit_subcategory": "Editar subcategoría",
-    "category_data": "Datos de la categoría"
+    "category_data": "Datos de la categoría",
+
+    
+    "brand_added_successfully": "Marca agregada correctamente",
+    "brand_modified_successfully": "Marca modificada correctamente",
+    "brand_deleted_successfully": "Marca eliminada correctamente",
+    "no_brand_selected": "No se ha seleccionado ninguna marca",
+    "brand_add": "Agregar marca",
+    "brand_edit": "Editar marca",
+    "brand_data": "Datos de la marca"
 }
