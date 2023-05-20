@@ -6,10 +6,12 @@
     "home": "Inicio",
     "users": "Usuarios",
     "customers": "Clientes",
+    "products": "Productos",
     "configuration": "Configuración",
     "categories": "Categorías",
     "acquisition_channels": "Canales de adquisición",
     "reference_types": "Tipos de referencia",
+    "measurement_units": "Unidades de medida",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -83,6 +85,9 @@
     "billing_address": "Datos de facturación",
     "reference_type": "Tipo de referencia",
     "references": "Referencias",
+
+    "measurement_unit": "Unidad de medida",
+    "abbreviation": "Abreviación",
     
     "user_added_successfully": "Usuario agregado correctamente",
     "user_modified_successfully": "Usuario modificado correctamente",
@@ -137,5 +142,12 @@
     "reference_type_deleted_successfully": "Tipo de referencia eliminada correctamente",
     "no_reference_type_selected": "No se ha seleccionado ningún tipo de referencia",
     "reference_type_add": "Agregar tipo de referencia",
-    "reference_type_edit": "Editar tipo de referencia"
+    "reference_type_edit": "Editar tipo de referencia",
+
+    "measurement_unit_added_successfully": "Unidad de medida agregada correctamente",
+    "measurement_unit_modified_successfully": "Unidad de medida modificada correctamente",
+    "measurement_unit_deleted_successfully": "Unidad de medida eliminada correctamente",
+    "no_measurement_unit_selected": "No se ha seleccionado ninguna unidad de medida",
+    "measurement_unit_add": "Agregar unidad de medida",
+    "measurement_unit_edit": "Editar unidad de medida"
 }

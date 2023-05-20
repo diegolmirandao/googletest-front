@@ -57,6 +57,17 @@ const navigation = (): VerticalNavItemsType => {
               subject: 'customer_reference_type',
             }
           ]
+        },
+        {
+          title: i18n.t('products'),
+          children: [
+            {
+              title: i18n.t('measurement_units'),
+              path: '/configuration/products/measurement-units',
+              action: 'view',
+              subject: 'measurement_unit',
+            }
+          ]
         }
       ]
     },

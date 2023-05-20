@@ -2,7 +2,7 @@
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddUpdateAcquisitionChannel } from 'src/interfaces/customer/addUpdateAcquisitionChannel';
+import { IAddUpdateMeasurementUnit } from 'src/interfaces/product/addUpdateMeasurementUnit';
 
 // ** MUI Imports
 import { Button, TextField, FormControl, FormHelperText, IconButton, DialogTitle } from '@mui/material';
@@ -24,23 +24,24 @@ import { useForm, Controller } from 'react-hook-form';
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddUpdateAcquisitionChannel) => void;
+  onSubmit: (formFields: IAddUpdateMeasurementUnit) => void;
   onClose: () => void;
 }
 
 /**
- * Add and edit acquisition channel form
+ * Add and edit measurement unit form
  * @param props component parameters
- * @returns AcquisitionChannel Form Dialog component
+ * @returns MeasurementUnit Form Dialog component
  */
-const AcquisitionChannelAddEditDialog = (props: IProps) => {
+const MeasurementUnitAddEditDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
-  const { acquisitionChannelReducer: { currentAcquisitionChannel } } = useAppSelector((state) => state);
+  const { measurementUnitReducer: { currentMeasurementUnit } } = useAppSelector((state) => state);
 
-  const defaultValues: IAddUpdateAcquisitionChannel = {
-    name: currentAcquisitionChannel?.name ?? ''
+  const defaultValues: IAddUpdateMeasurementUnit = {
+    name: currentMeasurementUnit?.name ?? '',
+    abbreviation: currentMeasurementUnit?.abbreviation ?? ''
   }
 
   /**
@@ -48,6 +49,7 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
    */
   const schema = yup.object().shape({
     name: yup.string().required(),
+    abbreviation: yup.string().required(),
   });
 
   /**
@@ -98,7 +100,7 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentAcquisitionChannel ? t('channel_edit') : t('channel_add')}
+          {currentMeasurementUnit ? t('measurement_unit_edit') : t('measurement_unit_add')}
           <IconButton
             size='small'
             onClick={handleClose}
@@ -124,6 +126,22 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
               />
               {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
             </FormControl>
+
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='abbreviation'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    value={value}
+                    label={t('abbreviation')}
+                    onChange={onChange}
+                    error={Boolean(errors.name)}
+                  />
+                )}
+              />
+              {errors.abbreviation && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.abbreviation.message}`)}</FormHelperText>}
+            </FormControl>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'right' }}>
             <LoadingButton size='large' type='submit' variant='contained' sx={{ mr: 3 }} loading={loading}>
@@ -139,4 +157,4 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
   )
 };
 
-export default AcquisitionChannelAddEditDialog;
+export default MeasurementUnitAddEditDialog;

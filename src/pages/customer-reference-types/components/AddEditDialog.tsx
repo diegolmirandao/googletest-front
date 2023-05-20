@@ -122,7 +122,7 @@ const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
                   />
                 )}
               />
-              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
+              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'right' }}>

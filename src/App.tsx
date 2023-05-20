@@ -6,6 +6,7 @@ import CustomerCategory from "./pages/customer-categories";
 import AcquisitionChannel from "./pages/acquisition-channels";
 import Customer from "./pages/customers";
 import CustomerReferenceType from "./pages/customer-reference-types";
+import MeasurementUnit from "./pages/measurement-units";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
       <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
       <Route path="/configuration/customers/reference-types" element={ <CustomerReferenceType/> } />
+      <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
     </Routes>
   )
 }
