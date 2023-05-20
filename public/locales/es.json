@@ -88,6 +88,8 @@
 
     "measurement_unit": "Unidad de medida",
     "abbreviation": "Abreviación",
+    "subcategories": "Subcategorías",
+    "multimedia": "Multimedia",
     
     "user_added_successfully": "Usuario agregado correctamente",
     "user_modified_successfully": "Usuario modificado correctamente",
@@ -149,5 +151,13 @@
     "measurement_unit_deleted_successfully": "Unidad de medida eliminada correctamente",
     "no_measurement_unit_selected": "No se ha seleccionado ninguna unidad de medida",
     "measurement_unit_add": "Agregar unidad de medida",
-    "measurement_unit_edit": "Editar unidad de medida"
+    "measurement_unit_edit": "Editar unidad de medida",
+
+    "subcategory_added_successfully": "Subategoría agregada correctamente",
+    "subcategory_modified_successfully": "Subategoría modificada correctamente",
+    "subcategory_deleted_successfully": "Subategoría eliminada correctamente",
+    "no_subcategory_selected": "No se ha seleccionado ningúna subcategoría",
+    "add_subcategory": "Agregar subcategoría",
+    "edit_subcategory": "Editar subcategoría",
+    "category_data": "Datos de la categoría"
 }

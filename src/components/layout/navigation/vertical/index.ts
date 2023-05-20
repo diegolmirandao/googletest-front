@@ -62,6 +62,12 @@ const navigation = (): VerticalNavItemsType => {
           title: i18n.t('products'),
           children: [
             {
+              title: i18n.t('categories'),
+              path: '/configuration/products/categories',
+              action: 'view',
+              subject: 'product_category',
+            },
+            {
               title: i18n.t('measurement_units'),
               path: '/configuration/products/measurement-units',
               action: 'view',
