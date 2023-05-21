@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import authSlice from './auth';
 import offline from './offline';
 import init from './init';
+import currencySlice from './currency';
 import countrySlice from './country';
 
 import userSlice from './user';
@@ -21,6 +22,7 @@ export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
     initReducer: init.reducer,
+    currencyReducer: currencySlice.reducer,
     countryReducer: countrySlice.reducer,
 
     userReducer: userSlice.reducer,

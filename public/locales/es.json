@@ -62,12 +62,16 @@
     "list": "Listado de opciones",
     
     "id": "ID",
+    "code": "Código",
     "name": "Nombre",
     "active": "Activo",
     "inactive": "Inactivo",
     "actions": "Acciones",
     "created_at": "Creado en",
     "updated_at": "Modificado en",
+
+    "exchange_rate": "Cotización",
+    "currencies": "Monedas",
 
     "username": "Usuario",
     "user": "Usuario",
@@ -101,6 +105,13 @@
     "type": "Tipo",
     "options": "Opciones",
     "option": "Opción",
+
+    "currency_added_successfully": "Moneda agregada correctamente",
+    "currency_modified_successfully": "Moneda modificada correctamente",
+    "currency_deleted_successfully": "Moneda eliminada correctamente",
+    "no_currency_selected": "No se ha seleccionado ninguna moneda",
+    "add_currency": "Agregar moneda",
+    "edit_currency": "Editar moneda",
     
     "user_added_successfully": "Usuario agregado correctamente",
     "user_modified_successfully": "Usuario modificado correctamente",

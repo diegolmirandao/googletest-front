@@ -36,6 +36,12 @@ const navigation = (): VerticalNavItemsType => {
       icon: CogOutlineIcon,
       children: [
         {
+          title: i18n.t('currencies'),
+          path: '/configuration/currencies',
+          action: 'view',
+          subject: 'currency',
+        },
+        {
           title: i18n.t('customers'),
           children: [
             {
