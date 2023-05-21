@@ -10,7 +10,6 @@ import { setCurrentBrand  } from "src/redux/reducers/brand";
 // ** Interfaces and Types Imports
 import { ACLObj } from "src/config/acl";
 import { IAddUpdateBrand } from 'src/interfaces/product/addUpdateBrand';
-import { MBrand } from "src/models/product/brand";
 
 // ** MUI Imports
 import { GridColDef, GridRowParams, DataGridPro } from '@mui/x-data-grid-pro';

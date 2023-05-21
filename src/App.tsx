@@ -9,6 +9,7 @@ import CustomerReferenceType from "./pages/customer-reference-types";
 import MeasurementUnit from "./pages/measurement-units";
 import ProductCategory from "./pages/product-categories";
 import Brand from "./pages/brands";
+import Property from "./pages/properties";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
       <Route path="/configuration/products/categories" element={ <ProductCategory/> } />
       <Route path="/configuration/products/brands" element={ <Brand/> } />
       <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
+      <Route path="/configuration/products/properties" element={ <Property/> } />
     </Routes>
   )
 }

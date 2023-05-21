@@ -1,6 +1,8 @@
 {
     "spanish": "Español",
     "english": "Inglés",
+    "yes": "Si",
+    "no": "No",
 
     "login": "Iniciar Sesión",
     "home": "Inicio",
@@ -13,6 +15,7 @@
     "reference_types": "Tipos de referencia",
     "measurement_units": "Unidades de medida",
     "brands": "Marcas",
+    "properties": "Propiedades",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -40,8 +43,8 @@
     "action_confirmation_question": "Estas seguro de que desea confirmar la acción?",
     "delete_confirmation_question": "Estas seguro de que desea eliminar el registro? Esta acción no podrá ser revertida.",
 
-    "required_field": "Campo requerido",
-    "is_required_field": "es un campo requerido",
+    "required_field": "Campo obligatorio",
+    "is_required_field": "Es un campo obligatorio",
 
     "is_equal": "Es igual",
     "is_not_equal": "No es igual",
@@ -54,6 +57,9 @@
     "contains": "Contiene",
     "starts_with": "Empieza con",
     "ends_with": "Termina con",
+    "numeric": "Numerico",
+    "text": "Texto",
+    "list": "Listado de opciones",
     
     "id": "ID",
     "name": "Nombre",
@@ -91,6 +97,10 @@
     "abbreviation": "Abreviación",
     "subcategories": "Subcategorías",
     "multimedia": "Multimedia",
+
+    "type": "Tipo",
+    "options": "Opciones",
+    "option": "Opción",
     
     "user_added_successfully": "Usuario agregado correctamente",
     "user_modified_successfully": "Usuario modificado correctamente",
@@ -162,12 +172,26 @@
     "edit_subcategory": "Editar subcategoría",
     "category_data": "Datos de la categoría",
 
-    
     "brand_added_successfully": "Marca agregada correctamente",
     "brand_modified_successfully": "Marca modificada correctamente",
     "brand_deleted_successfully": "Marca eliminada correctamente",
     "no_brand_selected": "No se ha seleccionado ninguna marca",
     "brand_add": "Agregar marca",
     "brand_edit": "Editar marca",
-    "brand_data": "Datos de la marca"
+    "brand_data": "Datos de la marca",
+
+    "property_added_successfully": "Propiedad agregada correctamente",
+    "property_modified_successfully": "Propiedad modificada correctamente",
+    "property_deleted_successfully": "Propiedad eliminada correctamente",
+    "no_property_selected": "No se ha seleccionado ninguna propiedad",
+    "add_property": "Agregar propiedad",
+    "edit_property": "Editar propiedad",
+    "property_data": "Datos de la propiedad",
+    "option_added_successfully": "Opción agregada correctamente",
+    "option_modified_successfully": "Opción modificada correctamente",
+    "option_deleted_successfully": "Opción eliminada correctamente",
+    "no_option_selected": "No se ha seleccionado ninguna opción",
+    "add_option": "Agregar opción",
+    "edit_option": "Editar opción",
+    "property_can_have_more_than_one_value_at_once": "La propiedad puede tomar más de un valor a la vez"
 }

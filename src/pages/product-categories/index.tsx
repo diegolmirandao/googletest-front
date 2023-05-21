@@ -17,12 +17,10 @@ import { MProductSubcategory } from "src/models/product/subcategory";
 import { IAddUpdateProductSubcategory } from "src/interfaces/product/addUpdateSubcategory";
 
 // ** MUI Imports
-import { GridColDef, GridRowParams, DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
+import { GridColDef, GridRowParams, DataGridPro } from '@mui/x-data-grid-pro';
 import { Card, Grid, Box, Tooltip } from '@mui/material';
 
 // ** Icons Imports
-import PencilOutlineIcon from 'mdi-material-ui/PencilOutline';
-import DeleteOutlineIcon from 'mdi-material-ui/DeleteOutline';
 
 // ** Third Party Imports
 import { t } from "i18next";
@@ -31,7 +29,6 @@ import { AbilityContext } from 'src/components/layout/acl/Can';
 import { displayErrors, setDataGridLocale } from 'src/utils/common';
 
 // ** Custom components Imports
-import ProductCategoryAddEditDialog from './components/EditDialog';
 import DeleteDialog from 'src/components/DeleteDialog';
 import TableHeaderAlt from "src/components/table/TableHeaderAlt";
 import Page from "src/components/Page";
@@ -136,14 +133,6 @@ const ProductCategory = () => {
   const handleSubcategoryDeleteDialogClose = () => {
     setOpenSubcategoryDeleteDialog(false);
     dispatch(setCurrentProductSubcategory(undefined));
-  };
-
-  /**
-   * Delete button click handler
-   */
-  const handleDeleteClick = (productCategory: MProductCategory) => {
-    setOpenDeleteDialog(true);
-    dispatch(setCurrentProductCategory(productCategory));
   };
 
   /**
