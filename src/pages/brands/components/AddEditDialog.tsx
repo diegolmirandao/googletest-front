@@ -98,7 +98,7 @@ const BrandAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentBrand ? t('brand_edit') : t('brand_add')}
+          {currentBrand ? t('edit_brand') : t('add_brand')}
           <IconButton
             size='small'
             onClick={handleClose}

@@ -100,7 +100,7 @@ const MeasurementUnitAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentMeasurementUnit ? t('measurement_unit_edit') : t('measurement_unit_add')}
+          {currentMeasurementUnit ? t('edit_measurement_unit') : t('add_measurement_unit')}
           <IconButton
             size='small'
             onClick={handleClose}

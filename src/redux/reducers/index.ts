@@ -3,6 +3,7 @@ import authSlice from './auth';
 import offline from './offline';
 import init from './init';
 import currencySlice from './currency';
+import warehouseSlice from './warehouse';
 import countrySlice from './country';
 
 import userSlice from './user';
@@ -13,6 +14,7 @@ import customerCategorySlice from './customerCategory';
 import acquisitionChannelSlice from './acquisitionChannel';
 import customerReferenceTypeSlice from './customerReferenceType';
 
+import productTypeSlice from './productType';
 import measurementUnitSlice from './measurementUnit';
 import productCategorySlice from './productCategory';
 import brandSlice from './brand';
@@ -23,6 +25,7 @@ export default combineReducers({
     offlineReducer: offline.reducer,
     initReducer: init.reducer,
     currencyReducer: currencySlice.reducer,
+    warehouseReducer: warehouseSlice.reducer,
     countryReducer: countrySlice.reducer,
 
     userReducer: userSlice.reducer,
@@ -33,6 +36,7 @@ export default combineReducers({
     acquisitionChannelReducer: acquisitionChannelSlice.reducer,
     customerReferenceTypeReducer: customerReferenceTypeSlice.reducer,
 
+    productTypeReducer: productTypeSlice.reducer,
     measurementUnitReducer: measurementUnitSlice.reducer,
     productCategoryReducer: productCategorySlice.reducer,
     brandReducer: brandSlice.reducer,

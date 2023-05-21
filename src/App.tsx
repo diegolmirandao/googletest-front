@@ -11,6 +11,7 @@ import MeasurementUnit from "./pages/measurement-units";
 import ProductCategory from "./pages/product-categories";
 import Brand from "./pages/brands";
 import Property from "./pages/properties";
+import Warehouse from "./pages/warehouses";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
       <Route path="/users" element={ <User/> } />
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/configuration/currencies" element={ <Currency/> } />
+      <Route path="/configuration/warehouses" element={ <Warehouse/> } />
       <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
       <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
       <Route path="/configuration/customers/reference-types" element={ <CustomerReferenceType/> } />

@@ -2,7 +2,7 @@
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddUpdateCustomerReferenceType } from 'src/interfaces/customer/addUpdateReferenceType';
+import { IAddUpdateWarehouse } from 'src/interfaces/warehouse/addUpdate';
 
 // ** MUI Imports
 import { Button, TextField, FormControl, FormHelperText, IconButton, DialogTitle } from '@mui/material';
@@ -24,23 +24,23 @@ import { useForm, Controller } from 'react-hook-form';
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddUpdateCustomerReferenceType) => void;
+  onSubmit: (formFields: IAddUpdateWarehouse) => void;
   onClose: () => void;
 }
 
 /**
- * Add and edit customer reference type form
+ * Add and edit warehouse form
  * @param props component parameters
- * @returns CustomerReferenceType Form Dialog component
+ * @returns Warehouse Form Dialog component
  */
-const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
+const WarehouseAddEditDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
-  const { customerReferenceTypeReducer: { currentCustomerReferenceType } } = useAppSelector((state) => state);
+  const { warehouseReducer: { currentWarehouse } } = useAppSelector((state) => state);
 
-  const defaultValues: IAddUpdateCustomerReferenceType = {
-    name: currentCustomerReferenceType?.name ?? ''
+  const defaultValues: IAddUpdateWarehouse = {
+    name: currentWarehouse?.name ?? ''
   }
 
   /**
@@ -98,7 +98,7 @@ const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentCustomerReferenceType ? t('edit_reference_type') : t('add_reference_type')}
+          {currentWarehouse ? t('edit_warehouse') : t('add_warehouse')}
           <IconButton
             size='small'
             onClick={handleClose}
@@ -139,4 +139,4 @@ const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
   )
 };
 
-export default CustomerReferenceTypeAddEditDialog;
+export default WarehouseAddEditDialog;

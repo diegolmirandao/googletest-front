@@ -98,7 +98,7 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentAcquisitionChannel ? t('channel_edit') : t('channel_add')}
+          {currentAcquisitionChannel ? t('edit_channel') : t('add_channel')}
           <IconButton
             size='small'
             onClick={handleClose}

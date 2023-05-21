@@ -98,7 +98,7 @@ const ProductCategoryEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {t('category_edit')}
+          {t('edit_category')}
           <IconButton
             size='small'
             onClick={handleClose}
