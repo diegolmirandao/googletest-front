@@ -4,12 +4,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
-import { addProductPriceTypeAction, deleteProductPriceTypeAction, updateProductPriceTypeAction } from 'src/redux/actions/productPriceType';
-import { setCurrentProductPriceType  } from "src/redux/reducers/productPriceType";
+import { addProductCostTypeAction, deleteProductCostTypeAction, updateProductCostTypeAction } from 'src/redux/actions/productCostType';
+import { setCurrentProductCostType  } from "src/redux/reducers/productCostType";
 
 // ** Interfaces and Types Imports
 import { ACLObj } from "src/config/acl";
-import { IAddUpdateProductPriceType } from 'src/interfaces/product/addUpdatePriceType';
+import { IAddUpdateProductCostType } from 'src/interfaces/product/addUpdateCostType';
 
 // ** MUI Imports
 import { GridColDef, GridRowParams, DataGridPro } from '@mui/x-data-grid-pro';
@@ -24,21 +24,21 @@ import { AbilityContext } from 'src/components/layout/acl/Can';
 import { displayErrors, setDataGridLocale } from 'src/utils/common';
 
 // ** Custom components Imports
-import ProductPriceTypesAddEditDialog from './components/AddEditDialog';
+import ProductCostTypesAddEditDialog from './components/AddEditDialog';
 import DeleteDialog from 'src/components/DeleteDialog';
 import TableHeaderAlt from "src/components/table/TableHeaderAlt";
 import Page from "src/components/Page";
-import ProductPriceTypesDetailDialog from "./components/DetailDialog";
+import ProductCostTypesDetailDialog from "./components/DetailDialog";
 
 /**
- * ProductPriceTypes section index page
- * @returns ProductPriceTypes page component
+ * ProductCostTypes section index page
+ * @returns ProductCostTypes page component
  */
-const ProductPriceTypes = () => {
+const ProductCostTypes = () => {
   const dispatch = useAppDispatch();
   const ability = useContext(AbilityContext);
   // ** Reducers
-  const { productPriceTypeReducer: { productPriceTypes, currentProductPriceType } } = useAppSelector((state) => state);
+  const { productCostTypeReducer: { productCostTypes, currentProductCostType } } = useAppSelector((state) => state);
   // ** DataGrid Vars
   const [tableLoading, setTableLoading] = useState<boolean>(false);
   const [filterValue, setFilterValue] = useState<string>('');
@@ -51,7 +51,7 @@ const ProductPriceTypes = () => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   /**
-   * Action buttons column service prices table
+   * Action buttons column service costs table
    */
   const columns: GridColDef[] = [
     {
@@ -71,7 +71,7 @@ const ProductPriceTypes = () => {
    * @param row Row clicked information
    */
   const handleRowClick = (row: GridRowParams) => {
-    dispatch(setCurrentProductPriceType(row.row));
+    dispatch(setCurrentProductCostType(row.row));
     setOpenDetailDialog(true);
   };
 
@@ -84,60 +84,60 @@ const ProductPriceTypes = () => {
    */
   const handleDetailDialogClose = () => {
     setOpenDetailDialog(false);
-    dispatch(setCurrentProductPriceType(undefined));
+    dispatch(setCurrentProductCostType(undefined));
   };
 
   /**
-   * ProductPriceTypes delete dialog close handler
+   * ProductCostTypes delete dialog close handler
    */
   const handleDeleteDialogClose = () => {
     setOpenDeleteDialog(false);
     setOpenDetailDialog(false);
-    dispatch(setCurrentProductPriceType(undefined));
+    dispatch(setCurrentProductCostType(undefined));
   };
 
   /**
-   * ProductPriceTypes section handlers
+   * ProductCostTypes section handlers
    */
 
   /**
    * Form submit handler
-   * @param formFields form fields submitted by productpricetypes
+   * @param formFields form fields submitted by productcosttypes
    */
-  const handleAddEditSubmit = async (formFields: IAddUpdateProductPriceType) => {
+  const handleAddEditSubmit = async (formFields: IAddUpdateProductCostType) => {
     setAddEditLoading(true);
     try {
-      if (currentProductPriceType) {
-        await dispatch(updateProductPriceTypeAction(formFields)).then(unwrapResult);
+      if (currentProductCostType) {
+        await dispatch(updateProductCostTypeAction(formFields)).then(unwrapResult);
         setOpenAddEditDialog(false);
-        toast.success(t('price_type_modified_successfully'));
+        toast.success(t('cost_type_modified_successfully'));
       } else {
-        await dispatch(addProductPriceTypeAction(formFields)).then(unwrapResult);
+        await dispatch(addProductCostTypeAction(formFields)).then(unwrapResult);
         setOpenAddEditDialog(false);
-        toast.success(t('price_type_added_successfully'));
+        toast.success(t('cost_type_added_successfully'));
       }
     } catch (error) {
-      console.log('ADD/EDIT PRODUCT PRICE TYPES ERROR: ', error);
+      console.log('ADD/EDIT PRODUCT COST TYPES ERROR: ', error);
       displayErrors(error);
     }
     setAddEditLoading(false);
   }
 
   /**
-   * ProductPriceTypes delete event submit handler
+   * ProductCostTypes delete event submit handler
    */
   const handleDeleteSubmit = async () => {
     setDeleteLoading(true);
-    if (currentProductPriceType) {
+    if (currentProductCostType) {
       try {
-        await dispatch(deleteProductPriceTypeAction()).then(unwrapResult);
-        toast.success(t('price_type_deleted_successfully'));
+        await dispatch(deleteProductCostTypeAction()).then(unwrapResult);
+        toast.success(t('cost_type_deleted_successfully'));
         handleDeleteDialogClose();
       } catch (error) {
         displayErrors(error);
       }
     } else {
-      toast.error(t('no_price_type_selected'));
+      toast.error(t('no_cost_type_selected'));
     }
     setDeleteLoading(false);
   };
@@ -149,12 +149,12 @@ const ProductPriceTypes = () => {
           <TableHeaderAlt
             onAddClick={() => setOpenAddEditDialog(true)}
             onFilterChange={(event: React.ChangeEvent<HTMLInputElement>) => setFilterValue(event.target.value)}
-            canAdd={ability.can('create', 'product_price_type')}
+            canAdd={ability.can('create', 'product_cost_type')}
           />
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
               columns={columns} 
-              rows={productPriceTypes} 
+              rows={productCostTypes} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
               filterModel={{
@@ -170,7 +170,7 @@ const ProductPriceTypes = () => {
       </Grid>
 
       {openDetailDialog &&
-        <ProductPriceTypesDetailDialog
+        <ProductCostTypesDetailDialog
           open={openDetailDialog}
           onEditClick={() => setOpenAddEditDialog(true)}
           onDeleteClick={() => setOpenDeleteDialog(true)}
@@ -178,7 +178,7 @@ const ProductPriceTypes = () => {
         />
       }
       {openAddEditDialog &&
-        <ProductPriceTypesAddEditDialog
+        <ProductCostTypesAddEditDialog
           open={openAddEditDialog}
           loading={addEditLoading}
           onSubmit={handleAddEditSubmit}
@@ -197,9 +197,9 @@ const ProductPriceTypes = () => {
   )
 };
 
-ProductPriceTypes.acl = {
+ProductCostTypes.acl = {
   action: 'view',
-  subject: 'product_price_type'
+  subject: 'product_cost_type'
 } as ACLObj;
 
-export default Page(ProductPriceTypes);
+export default Page(ProductCostTypes);

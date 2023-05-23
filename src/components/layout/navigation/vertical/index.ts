@@ -98,6 +98,12 @@ const navigation = (): VerticalNavItemsType => {
               subject: 'product_price_type',
             },
             {
+              title: i18n.t('cost_types'),
+              path: '/configuration/products/cost-types',
+              action: 'view',
+              subject: 'product_cost_type',
+            },
+            {
               title: i18n.t('properties'),
               path: '/configuration/products/properties',
               action: 'view',

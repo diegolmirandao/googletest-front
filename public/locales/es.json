@@ -20,6 +20,7 @@
     "properties": "Propiedades",
     "variants": "Variantes",
     "price_types": "Tipos de precios",
+    "cost_types": "Tipos de costos",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -237,5 +238,13 @@
     "no_price_type_selected": "No se ha seleccionado ningún tipo de precio",
     "add_price_type": "Agregar tipo de precio",
     "edit_price_type": "Editar tipo de precio",
-    "price_type_data": "Datos del tipo de precio"
+    "price_type_data": "Datos del tipo de precio",
+
+    "cost_type_added_successfully": "Tipo de costo agregado correctamente",
+    "cost_type_modified_successfully": "Tipo de costo modificado correctamente",
+    "cost_type_deleted_successfully": "Tipo de costo eliminado correctamente",
+    "no_cost_type_selected": "No se ha seleccionado ningún tipo de costo",
+    "add_cost_type": "Agregar tipo de costo",
+    "edit_cost_type": "Editar tipo de costo",
+    "cost_type_data": "Datos del tipo de costo"
 }

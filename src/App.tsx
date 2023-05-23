@@ -14,6 +14,7 @@ import Property from "./pages/properties";
 import Warehouse from "./pages/warehouses";
 import Variant from "./pages/variants";
 import ProductPriceType from "./pages/product-price-types";
+import ProductCostType from "./pages/product-cost-types";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
       <Route path="/configuration/products/categories" element={ <ProductCategory/> } />
       <Route path="/configuration/products/brands" element={ <Brand/> } />
       <Route path="/configuration/products/price-types" element={ <ProductPriceType/> } />
+      <Route path="/configuration/products/cost-types" element={ <ProductCostType/> } />
       <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
       <Route path="/configuration/products/properties" element={ <Property/> } />
       <Route path="/configuration/products/variants" element={ <Variant/> } />
