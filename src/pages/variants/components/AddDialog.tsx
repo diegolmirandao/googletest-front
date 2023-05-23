@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // ** Interfaces and Models Imports
-import { IAddProperty } from 'src/interfaces/product/addProperty';
+import { IAddVariant } from 'src/interfaces/product/addVariant';
 
 // ** MUI Imports
 import { Button, TextField, FormControl, FormHelperText, IconButton, DialogTitle, Grid, Typography, Autocomplete, InputLabel, styled, lighten, darken, Checkbox, FormControlLabel, Tooltip } from '@mui/material';
@@ -20,11 +20,10 @@ import { t } from 'i18next';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
-import { EPropertyType } from 'src/enums/propertyType';
 import { useAppSelector } from 'src/hooks/redux';
 import { DataGridPro, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
 import { setDataGridLocale } from 'src/utils/common';
-import { IAddUpdatePropertyOption } from 'src/interfaces/product/addUpdatePropertyOption';
+import { IAddUpdateVariantOption } from 'src/interfaces/product/addUpdateVariantOption';
 
 /**
  * Component props
@@ -32,11 +31,11 @@ import { IAddUpdatePropertyOption } from 'src/interfaces/product/addUpdateProper
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddProperty) => void;
+  onSubmit: (formFields: IAddVariant) => void;
   onClose: () => void;
 }
 
-interface ISelectedOption extends IAddUpdatePropertyOption {
+interface ISelectedOption extends IAddUpdateVariantOption {
   index: number;
   id: string;
 }
@@ -59,9 +58,9 @@ const GroupItems = styled('ul')({
 /**
  * Add and edit measurement unit form
  * @param props component parameters
- * @returns Property Form Dialog component
+ * @returns Variant Form Dialog component
  */
-const PropertyAddDialog = (props: IProps) => {
+const VariantAddDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
@@ -72,13 +71,9 @@ const PropertyAddDialog = (props: IProps) => {
   const [showMeasurementUnitField, setShowMeasurementUnitField] = useState<boolean>(true);
   const [selectedOptions, setSelectedOptions] = useState<ISelectedOption[]>([]);
   const productSubcategories = productCategories.map(category => category.subcategories).flat();
-  const propertyTypes = Object.entries(EPropertyType).map(([key, value]) => ({value: key, text: String(value)}));
-  const defaultValues: IAddProperty = {
+  const defaultValues: IAddVariant = {
     name: '',
-    type: 'list',
-    measurement_unit_id: 1,
-    has_multiple_values: false,
-    is_required: false,
+    has_amount_equivalencies: false,
     subcategories: [],
     options: []
   };
@@ -90,7 +85,7 @@ const PropertyAddDialog = (props: IProps) => {
     {
       flex: 0.45,
       minWidth: 130,
-      field: 'value',
+      field: 'name',
       headerName: String(t('option'))
     },
     {
@@ -136,22 +131,15 @@ const PropertyAddDialog = (props: IProps) => {
     name: "options"
   });
 
-  const watchType = watch('type');
-
   useEffect(() => {
-    setShowOptions(watchType == 'list');
-    setShowMeasurementUnitField(watchType == 'numeric');
-  }, [watchType]);
-
-  useEffect(() => {
-    setSelectedOptions(optionFields.map((option, index) => ({ index: index, id: option.id, value: option.value })))
+    setSelectedOptions(optionFields.map((option, index) => ({ index: index, id: option.id, name: option.name })))
   }, [optionFields]);
 
   /**
-   * Handle new property add event
+   * Handle new variant add event
    */
   const handleNewOptionAdd = () => {
-    optionAppend({ value: newOption });
+    optionAppend({ name: newOption });
     setNewOption('');
   };
 
@@ -189,7 +177,7 @@ const PropertyAddDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {t('add_property')}
+          {t('add_variant')}
           <IconButton
             size='small'
             onClick={handleClose}
@@ -218,45 +206,18 @@ const PropertyAddDialog = (props: IProps) => {
                   {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
                 </FormControl>
 
-                <FormControl fullWidth sx={{ mb: 6 }} size='small'>
+                <FormControl fullWidth sx={{ mb: 3 }}>
                   <Controller
-                    name='type'
+                    name="has_amount_equivalencies"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <Autocomplete
-                        disableClearable
-                        id="select-type"
-                        options={propertyTypes}
-                        getOptionLabel={(option) => t(option.text)}
-                        renderInput={(params) => <TextField {...params} label={t('type')} />}
-                        onChange={(_, data) => {onChange(data?.value)}}
-                        value={propertyTypes.find(type => type.value == value)}
-                      />
+                    render={({ field }) => (
+                    <FormControlLabel
+                      label={t('has_amount_equivalencies')}
+                      control={<Checkbox {...field} checked={Boolean(field.value)} />}
+                    />
                     )}
                   />
-                  {errors.type && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.type.message}`)}</FormHelperText>}
                 </FormControl>
-
-                {showMeasurementUnitField &&
-                  <FormControl fullWidth sx={{ mb: 6 }} size='small'>
-                    <Controller
-                      name='measurement_unit_id'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <Autocomplete
-                          disableClearable
-                          id="select-measurement-unit"
-                          options={measurementUnits}
-                          getOptionLabel={(option) => option.name}
-                          renderInput={(params) => <TextField {...params} label={t('measurement_unit')} />}
-                          onChange={(_, data) => {onChange(data?.id)}}
-                          value={measurementUnits.find(measurementUnit => measurementUnit.id == value)}
-                        />
-                      )}
-                    />
-                    {errors.measurement_unit_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.measurement_unit_id.message}`)}</FormHelperText>}
-                  </FormControl>
-                }
                 
                 <FormControl fullWidth sx={{ mb: 3 }}>
                   <Controller
@@ -292,32 +253,6 @@ const PropertyAddDialog = (props: IProps) => {
                   />
                   {errors.subcategories && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.subcategories.message}`)}</FormHelperText>}
                 </FormControl>
-
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                  <Controller
-                    name="has_multiple_values"
-                    control={control}
-                    render={({ field }) => (
-                    <FormControlLabel
-                      label={t('property_can_have_more_than_one_value_at_once')}
-                      control={<Checkbox {...field} checked={Boolean(field.value)} />}
-                    />
-                    )}
-                  />
-                </FormControl>
-
-                <FormControl fullWidth sx={{ mb: 3 }}>
-                  <Controller
-                    name="is_required"
-                    control={control}
-                    render={({ field }) => (
-                    <FormControlLabel
-                      label={t('is_required_field')}
-                      control={<Checkbox {...field} checked={Boolean(field.value)} />}
-                    />
-                    )}
-                  />
-                </FormControl>
               </Grid>
 
               {showOptions && <Grid item xs={12} md={6} lg={8}>
@@ -340,7 +275,7 @@ const PropertyAddDialog = (props: IProps) => {
                   disableColumnMenu={true}
                   hideFooterSelectedRowCount
                   disableRowSelectionOnClick
-                  sx={{height: '50vh'}}
+                  sx={{height: '40vh'}}
                 />
               </Grid>}
             </Grid>
@@ -359,4 +294,4 @@ const PropertyAddDialog = (props: IProps) => {
   )
 };
 
-export default PropertyAddDialog;
+export default VariantAddDialog;

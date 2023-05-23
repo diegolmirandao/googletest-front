@@ -6,5 +6,13 @@ export interface IVariantOption {
     equivalent_amount: number | null;
     created_at: string;
     updated_at: string;
-    equivalent_option: IVariantOption | null;
+    equivalent_option: IVariantOptionEquivalent | null;
+}
+
+export interface IVariantOptionEquivalent {
+    id: number;
+    variant_id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
 }

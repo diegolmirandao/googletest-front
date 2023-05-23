@@ -12,6 +12,7 @@ import ProductCategory from "./pages/product-categories";
 import Brand from "./pages/brands";
 import Property from "./pages/properties";
 import Warehouse from "./pages/warehouses";
+import Variant from "./pages/variants";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
       <Route path="/configuration/products/brands" element={ <Brand/> } />
       <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
       <Route path="/configuration/products/properties" element={ <Property/> } />
+      <Route path="/configuration/products/variants" element={ <Variant/> } />
     </Routes>
   )
 }

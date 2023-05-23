@@ -18,6 +18,7 @@
     "measurement_units": "Unidades de medida",
     "brands": "Marcas",
     "properties": "Propiedades",
+    "variants": "Variantes",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -108,6 +109,8 @@
     "type": "Tipo",
     "options": "Opciones",
     "option": "Opción",
+
+    "variant": "Variante",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",
@@ -214,5 +217,16 @@
     "no_option_selected": "No se ha seleccionado ninguna opción",
     "add_option": "Agregar opción",
     "edit_option": "Editar opción",
-    "property_can_have_more_than_one_value_at_once": "La propiedad puede tomar más de un valor a la vez"
+    "property_can_have_more_than_one_value_at_once": "La propiedad puede tomar más de un valor a la vez",
+
+    "variant_added_successfully": "Variante agregada correctamente",
+    "variant_modified_successfully": "Variante modificada correctamente",
+    "variant_deleted_successfully": "Variante eliminada correctamente",
+    "no_variant_selected": "No se ha seleccionado ninguna variante",
+    "add_variant": "Agregar variante",
+    "edit_variant": "Editar variante",
+    "variant_data": "Datos de la variante",
+    "has_amount_equivalencies": "Cuenta con equivalencia de cantidades",
+    "equivalent_to": "Equivalente a",
+    "equivalent_amount": "Cantidad equivalente"
 }

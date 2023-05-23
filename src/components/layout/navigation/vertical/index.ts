@@ -96,6 +96,12 @@ const navigation = (): VerticalNavItemsType => {
               path: '/configuration/products/properties',
               action: 'view',
               subject: 'property',
+            },
+            {
+              title: i18n.t('variants'),
+              path: '/configuration/products/variants',
+              action: 'view',
+              subject: 'variant',
             }
           ]
         }
