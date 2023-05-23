@@ -17,6 +17,7 @@ import customerReferenceTypeSlice from './customerReferenceType';
 import productTypeSlice from './productType';
 import measurementUnitSlice from './measurementUnit';
 import productCategorySlice from './productCategory';
+import productPriceTypeSlice from './productPriceType';
 import brandSlice from './brand';
 import propertySlice from './property';
 import variantSlice from './variant';
@@ -41,6 +42,7 @@ export default combineReducers({
     measurementUnitReducer: measurementUnitSlice.reducer,
     productCategoryReducer: productCategorySlice.reducer,
     brandReducer: brandSlice.reducer,
+    productPriceTypeReducer: productPriceTypeSlice.reducer,
     propertyReducer: propertySlice.reducer,
     variantReducer: variantSlice.reducer,
 });

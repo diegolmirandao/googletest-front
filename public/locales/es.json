@@ -19,6 +19,7 @@
     "brands": "Marcas",
     "properties": "Propiedades",
     "variants": "Variantes",
+    "price_types": "Tipos de precios",
 
     "details": "Detalles",
     "add": "Agregar",
@@ -228,5 +229,13 @@
     "variant_data": "Datos de la variante",
     "has_amount_equivalencies": "Cuenta con equivalencia de cantidades",
     "equivalent_to": "Equivalente a",
-    "equivalent_amount": "Cantidad equivalente"
+    "equivalent_amount": "Cantidad equivalente",
+
+    "price_type_added_successfully": "Tipo de precio agregado correctamente",
+    "price_type_modified_successfully": "Tipo de precio modificado correctamente",
+    "price_type_deleted_successfully": "Tipo de precio eliminado correctamente",
+    "no_price_type_selected": "No se ha seleccionado ningún tipo de precio",
+    "add_price_type": "Agregar tipo de precio",
+    "edit_price_type": "Editar tipo de precio",
+    "price_type_data": "Datos del tipo de precio"
 }

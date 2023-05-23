@@ -92,6 +92,12 @@ const navigation = (): VerticalNavItemsType => {
               subject: 'measurement_unit',
             },
             {
+              title: i18n.t('price_types'),
+              path: '/configuration/products/price-types',
+              action: 'view',
+              subject: 'product_price_type',
+            },
+            {
               title: i18n.t('properties'),
               path: '/configuration/products/properties',
               action: 'view',
