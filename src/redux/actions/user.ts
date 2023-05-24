@@ -28,6 +28,19 @@ export const getUsersAction = createAsyncThunk(
     }
 );
 
+export const showUserAction = createAsyncThunk(
+    'user/show',
+    async (id: number, {rejectWithValue}) => {
+        try {
+            const {data: userResponse}: AxiosResponse<IUser> = await axios.get(`/users/${id}`);
+
+            return userResponse;
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+);
+
 export const addUserAction = createAsyncThunk(
     'user/add',
     async (addData: IAddUser, {rejectWithValue}) => {

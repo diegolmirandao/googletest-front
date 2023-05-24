@@ -50,7 +50,7 @@ const slice = createSlice({
         builder.addCase(getCustomersAction.fulfilled, (state, action) => {
             const params = action.meta.arg;
             const customers = action.payload.data.map((customer) => new MCustomer(customer));
-            console.log(params.sorts);
+            
             if (params.filters || (JSON.stringify(params.sorts) !== JSON.stringify({'f_params[orderBy][field]': "created_at", 'f_params[orderBy][type]': "desc"}))) {
                 state.filteredCustomers = customers;
                 state.filteredCursor = action.payload.next_cursor;
