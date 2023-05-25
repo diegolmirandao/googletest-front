@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import authSlice from './auth';
 import offline from './offline';
 import init from './init';
+import sync from './sync';
 import userSlice from './user';
 import countrySlice from './country';
 import roleSlice from './role';
@@ -21,4 +22,5 @@ export default combineReducers({
     customerCategoryReducer: customerCategorySlice.reducer,
     acquisitionChannelReducer: acquisitionChannelSlice.reducer,
     customerReferenceTypeReducer: customerReferenceTypeSlice.reducer,
+    syncReducer: sync.reducer,
 });

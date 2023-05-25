@@ -1,7 +1,8 @@
 import { IUserState } from '../../interfaces/user/redux/userState';
-import { createSlice } from '@reduxjs/toolkit'
+import { createAction, createSlice } from '@reduxjs/toolkit'
 import { getUsersAction, addUserAction, updateUserAction, deleteUserAction, showUserAction } from '../actions/user'
 import { MUser } from '../../models/user/user';
+import { IUser } from 'src/interfaces/user/user';
 
 const initialState: IUserState = {
     users: [],
@@ -53,6 +54,10 @@ const slice = createSlice({
         })
         builder.addCase(deleteUserAction.fulfilled, (state, action) => {
             state.users = state.users.filter(user => user.id !== action.payload);
+        })
+        builder.addCase(createAction<IUser[]>('user/sync'), (state, action) => {
+            const users = action.payload.map((user) => new MUser(user));
+            state.users = state.users.length ? [...state.users, ...users] : users
         })
     },
 })
