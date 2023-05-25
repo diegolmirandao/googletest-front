@@ -98,7 +98,7 @@ const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentCustomerReferenceType ? t('reference_type_edit') : t('reference_type_add')}
+          {currentCustomerReferenceType ? t('edit_reference_type') : t('add_reference_type')}
           <IconButton
             size='small'
             onClick={handleClose}
@@ -122,7 +122,7 @@ const CustomerReferenceTypeAddEditDialog = (props: IProps) => {
                   />
                 )}
               />
-              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
+              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'right' }}>

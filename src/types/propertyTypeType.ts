@@ -1,0 +1,1 @@
+export type PropertyTypeType = 'numeric' | 'string' | 'list';

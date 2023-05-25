@@ -1,6 +1,7 @@
 // ** Icon imports
 import HomeOutline from 'mdi-material-ui/HomeOutline';
 import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
+import WarehouseIcon from 'mdi-material-ui/Warehouse';
 import AccountIcon from 'mdi-material-ui/Account';
 import CogOutlineIcon from 'mdi-material-ui/CogOutline';
 import i18n from 'i18next';
@@ -25,6 +26,13 @@ const navigation = (): VerticalNavItemsType => {
       subject: 'customer'
     },
     {
+      title: i18n.t('products'),
+      icon: WarehouseIcon,
+      path: '/products',
+      action: 'view',
+      subject: 'product'
+    },
+    {
       title: i18n.t('users'),
       icon: AccountIcon,
       path: '/users',
@@ -35,6 +43,18 @@ const navigation = (): VerticalNavItemsType => {
       title: i18n.t('configuration'),
       icon: CogOutlineIcon,
       children: [
+        {
+          title: i18n.t('currencies'),
+          path: '/configuration/currencies',
+          action: 'view',
+          subject: 'currency',
+        },
+        {
+          title: i18n.t('warehouses'),
+          path: '/configuration/warehouses',
+          action: 'view',
+          subject: 'warehouse',
+        },
         {
           title: i18n.t('customers'),
           children: [
@@ -55,6 +75,53 @@ const navigation = (): VerticalNavItemsType => {
               path: '/configuration/customers/reference-types',
               action: 'view',
               subject: 'customer_reference_type',
+            }
+          ]
+        },
+        {
+          title: i18n.t('products'),
+          children: [
+            {
+              title: i18n.t('categories'),
+              path: '/configuration/products/categories',
+              action: 'view',
+              subject: 'product_category',
+            },
+            {
+              title: i18n.t('brands'),
+              path: '/configuration/products/brands',
+              action: 'view',
+              subject: 'brand',
+            },
+            {
+              title: i18n.t('measurement_units'),
+              path: '/configuration/products/measurement-units',
+              action: 'view',
+              subject: 'measurement_unit',
+            },
+            {
+              title: i18n.t('price_types'),
+              path: '/configuration/products/price-types',
+              action: 'view',
+              subject: 'product_price_type',
+            },
+            {
+              title: i18n.t('cost_types'),
+              path: '/configuration/products/cost-types',
+              action: 'view',
+              subject: 'product_cost_type',
+            },
+            {
+              title: i18n.t('properties'),
+              path: '/configuration/products/properties',
+              action: 'view',
+              subject: 'property',
+            },
+            {
+              title: i18n.t('variants'),
+              path: '/configuration/products/variants',
+              action: 'view',
+              subject: 'variant',
             }
           ]
         }
