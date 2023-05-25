@@ -3,6 +3,7 @@ import authSlice from './auth';
 import offline from './offline';
 import init from './init';
 import currencySlice from './currency';
+import businessSlice from './business';
 import warehouseSlice from './warehouse';
 import countrySlice from './country';
 
@@ -29,6 +30,7 @@ export default combineReducers({
     offlineReducer: offline.reducer,
     initReducer: init.reducer,
     currencyReducer: currencySlice.reducer,
+    businessReducer: businessSlice.reducer,
     warehouseReducer: warehouseSlice.reducer,
     countryReducer: countrySlice.reducer,
 

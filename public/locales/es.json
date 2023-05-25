@@ -11,6 +11,7 @@
     "products": "Productos",
     "configuration": "Configuración",
     "currencies": "Monedas",
+    "businesses": "Empresas",
     "warehouses": "Depósitos",
     "categories": "Categorías",
     "acquisition_channels": "Canales de adquisición",
@@ -135,6 +136,14 @@
     "no_currency_selected": "No se ha seleccionado ninguna moneda",
     "add_currency": "Agregar moneda",
     "edit_currency": "Editar moneda",
+
+    "business_added_successfully": "Empresa agregada correctamente",
+    "business_modified_successfully": "Empresa modificada correctamente",
+    "business_deleted_successfully": "Empresa eliminada correctamente",
+    "no_business_selected": "No se ha seleccionado ninguna empresa",
+    "add_business": "Agregar empresa",
+    "edit_business": "Editar empresa",
+    "business_data": "Datos de la empresa",
 
     "warehouse_added_successfully": "Depósito agregado correctamente",
     "warehouse_modified_successfully": "Depósito modificado correctamente",

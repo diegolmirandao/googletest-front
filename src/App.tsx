@@ -16,6 +16,7 @@ import Warehouse from "./pages/warehouses";
 import Variant from "./pages/variants";
 import ProductPriceType from "./pages/product-price-types";
 import ProductCostType from "./pages/product-cost-types";
+import Business from "./pages/businesses";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/products" element={ <Product/> } />
       <Route path="/configuration/currencies" element={ <Currency/> } />
+      <Route path="/configuration/businesses" element={ <Business/> } />
       <Route path="/configuration/warehouses" element={ <Warehouse/> } />
       <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
       <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />

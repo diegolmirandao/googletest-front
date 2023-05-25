@@ -50,6 +50,12 @@ const navigation = (): VerticalNavItemsType => {
           subject: 'currency',
         },
         {
+          title: i18n.t('businesses'),
+          path: '/configuration/businesses',
+          action: 'view',
+          subject: 'business',
+        },
+        {
           title: i18n.t('warehouses'),
           path: '/configuration/warehouses',
           action: 'view',
