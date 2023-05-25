@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'src/config/i18n'
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
+import NotificationWrapper from './components/NotificationWrapper';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -19,9 +20,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <InitWrapper>
           <>
             <AuthProvider>
-              <BrowserRouter>
-                <App/>
-              </BrowserRouter>
+              <NotificationWrapper>
+                <BrowserRouter>
+                  <App/>
+                </BrowserRouter>
+              </NotificationWrapper>
             </AuthProvider>
             <ToastContainer autoClose={3000} />
           </>
