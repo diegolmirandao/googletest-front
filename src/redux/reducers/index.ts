@@ -27,6 +27,7 @@ import propertySlice from './property';
 import variantSlice from './variant';
 
 import paymentTermSlice from './paymentTerm';
+import paymentMethodSlice from './paymentMethod';
 
 export default combineReducers({
     authReducer: authSlice.reducer,
@@ -57,4 +58,5 @@ export default combineReducers({
     variantReducer: variantSlice.reducer,
 
     paymentTermReducer: paymentTermSlice.reducer,
+    paymentMethodReducer: paymentMethodSlice.reducer,
 });
