@@ -1,10 +1,11 @@
 import { ICustomerState } from '../../interfaces/customer/redux/customerState';
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 import { getCustomersAction, addCustomerAction, updateCustomerAction, deleteCustomerAction, showCustomerAction } from '../actions/customer';
 import { deleteCustomerBillingAddressAction, updateCustomerBillingAddressAction, addCustomerBillingAddressAction } from '../actions/customer';
 import { deleteCustomerReferenceAction, updateCustomerReferenceAction, addCustomerReferenceAction } from '../actions/customer';
 import { addCustomerAddressAction, updateCustomerAddressAction, deleteCustomerAddressAction } from '../actions/customer';
 import { MCustomer } from 'src/models/customer/customer';
+import { ICustomer } from 'src/interfaces/customer/customer';
 
 const initialState: ICustomerState = {
     customers: [],
@@ -138,6 +139,22 @@ const slice = createSlice({
             const deletePayload = new MCustomer(action.payload);
             state.customers = state.customers.filter(customer => customer.id !== deletePayload.id);
             state.filteredCustomers = state.filteredCustomers ? state.filteredCustomers.map(customer => customer.id == deletePayload.id ? deletePayload : customer) : null;
+        })
+        builder.addCase(createAction<ICustomer[]>('customer/sync'), (state, action) => {
+            const syncCustomers = action.payload.map((customer) => new MCustomer(customer));
+
+            if (state.customers.length) {
+                syncCustomers.forEach((syncCustomer, index) => {
+                    if (state.customers.includes(syncCustomer)) {
+                        state.customers = state.customers.map(customer => customer.id == syncCustomer.id ? syncCustomer : customer);
+                        syncCustomers.splice(index, 1);
+                    }
+                });
+
+                state.customers = [...state.customers, ...syncCustomers]
+            } else {
+                state.customers = syncCustomers
+            }
         })
     },
 });

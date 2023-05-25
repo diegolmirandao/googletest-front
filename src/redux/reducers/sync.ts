@@ -2,6 +2,7 @@ import ISyncState from 'src/interfaces/syncState';
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState: ISyncState = {
+    syncStarted: false,
     syncDone: false
 }
 
@@ -9,6 +10,9 @@ const slice = createSlice({
     initialState,
     name: 'sync',
     reducers: {
+        setSyncStarted(state, action) {
+            state.syncStarted = action.payload
+        },
         syncEnded(state) {
             state.syncDone = true
         },
@@ -18,6 +22,6 @@ const slice = createSlice({
     },
 })
 
-export const { syncEnded, resetSync } = slice.actions
+export const { syncEnded, resetSync, setSyncStarted } = slice.actions
 
 export default slice
