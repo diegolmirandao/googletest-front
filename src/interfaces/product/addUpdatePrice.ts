@@ -1,5 +1,7 @@
-import { IAddProductDetailPrice } from "./addDetailPrice";
+import { IAddUpdateProductDetailCost } from "./addUpdateDetailCost";
+import { IAddUpdateProductDetailPrice } from "./addDetailPrice";
 
 export interface IAddUpdateProductPrice {
-    prices: IAddProductDetailPrice[];
+    costs: IAddUpdateProductDetailCost[];
+    prices: IAddUpdateProductDetailPrice[];
 }

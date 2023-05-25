@@ -71,7 +71,7 @@ const PropertyAddDialog = (props: IProps) => {
   const [showOptions, setShowOptions] = useState<boolean>(true);
   const [showMeasurementUnitField, setShowMeasurementUnitField] = useState<boolean>(true);
   const [selectedOptions, setSelectedOptions] = useState<ISelectedOption[]>([]);
-  const productSubcategories = productCategories.map(category => category.subcategories).flat();
+  const productSubcategories = productCategories.map(category => category.subcategories!).flat();
   const propertyTypes = Object.entries(EPropertyType).map(([key, value]) => ({value: key, text: String(value)}));
   const defaultValues: IAddProperty = {
     name: '',

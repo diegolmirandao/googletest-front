@@ -2,8 +2,9 @@ import { MVariant } from "src/models/product/variant";
 import { IAddImage } from "../image/add";
 import { IAddDescription } from "./addDescription";
 import { IAddProductDetail } from "./addDetail";
-import { IAddProductDetailPrice } from "./addDetailPrice";
+import { IAddUpdateProductDetailPrice } from "./addDetailPrice";
 import { IAddProductProperty } from "./addProductProperty";
+import { IAddUpdateProductDetailCost } from "./addUpdateDetailCost";
 
 export interface IAddProduct {
     category_id: number;
@@ -20,7 +21,8 @@ export interface IAddProduct {
     codes: string[];
     descriptions: IAddDescription[];
     images: IAddImage[];
-    prices: IAddProductDetailPrice[];
+    costs: IAddUpdateProductDetailCost[];
+    prices: IAddUpdateProductDetailPrice[];
     properties: IAddProductProperty[];
     variants: MVariant[];
     details: IAddProductDetail[];

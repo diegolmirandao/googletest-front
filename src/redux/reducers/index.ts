@@ -14,6 +14,7 @@ import customerCategorySlice from './customerCategory';
 import acquisitionChannelSlice from './acquisitionChannel';
 import customerReferenceTypeSlice from './customerReferenceType';
 
+import productSlice from './product';
 import productTypeSlice from './productType';
 import measurementUnitSlice from './measurementUnit';
 import productCategorySlice from './productCategory';
@@ -39,6 +40,7 @@ export default combineReducers({
     acquisitionChannelReducer: acquisitionChannelSlice.reducer,
     customerReferenceTypeReducer: customerReferenceTypeSlice.reducer,
 
+    productReducer: productSlice.reducer,
     productTypeReducer: productTypeSlice.reducer,
     measurementUnitReducer: measurementUnitSlice.reducer,
     productCategoryReducer: productCategorySlice.reducer,

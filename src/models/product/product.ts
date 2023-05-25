@@ -6,6 +6,8 @@ import { MProductDetail } from "./detail";
 import { MMeasurementUnit } from "./measurementUnit";
 import { MProductSubcategory } from "./subcategory";
 import { MProductType } from "./type";
+import { MProductCategory } from "./category";
+import { MProductProperty } from "./productProperty";
 
 export class MProduct {
     public id: number;
@@ -24,11 +26,12 @@ export class MProduct {
     public createdAt: string;
     public updatedAt: string;
     public codes: string[];
-    public category: MProductSubcategory;
+    public category: MProductCategory;
     public subcategory: MProductSubcategory;
     public brand: MBrand;
     public type: MProductType;
     public measurementUnit: MMeasurementUnit;
+    public properties: MProductProperty[];
     public descriptions: MDescription[];
     public details?: MProductDetail[];
     public images: MImage[];
@@ -50,11 +53,12 @@ export class MProduct {
         this.createdAt = product.created_at;
         this.updatedAt = product.updated_at;
         this.codes = product.codes;
-        this.category = new MProductSubcategory(product.subcategory);
+        this.category = new MProductCategory(product.category);
         this.subcategory = new MProductSubcategory(product.subcategory);
         this.brand = new MBrand(product.brand);
         this.type = new MProductType(product.type);
         this.measurementUnit = new MMeasurementUnit(product.measurement_unit);
+        this.properties = product.properties.map(property => new MProductProperty(property));
         this.descriptions = product.descriptions.map(description => new MDescription(description));
         this.details = product.details ? product.details.map(detail => new MProductDetail(detail)) : undefined;
         this.images = product.images.map(image => new MImage(image));

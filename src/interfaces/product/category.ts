@@ -5,5 +5,5 @@ export interface IProductCategory {
     name: string;
     created_at: string;
     updated_at: string;
-    subcategories: IProductSubcategory[];
+    subcategories?: IProductSubcategory[];
 }

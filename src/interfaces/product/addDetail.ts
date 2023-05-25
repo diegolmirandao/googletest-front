@@ -1,6 +1,7 @@
 import { IAddImage } from "../image/add";
 import { IAddDescription } from "./addDescription";
-import { IAddProductDetailPrice } from "./addDetailPrice";
+import { IAddUpdateProductDetailCost } from "./addUpdateDetailCost";
+import { IAddUpdateProductDetailPrice } from "./addDetailPrice";
 import { IAddProductDetailVariant } from "./addDetailVariant";
 
 export interface IAddProductDetail {
@@ -9,5 +10,6 @@ export interface IAddProductDetail {
     descriptions: IAddDescription[];
     images: IAddImage[];
     variants: IAddProductDetailVariant[];
-    prices: IAddProductDetailPrice[];
+    costs: IAddUpdateProductDetailCost[];
+    prices: IAddUpdateProductDetailPrice[];
 }

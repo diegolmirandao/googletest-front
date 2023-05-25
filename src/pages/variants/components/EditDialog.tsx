@@ -55,7 +55,7 @@ const VariantEditDialog = (props: IProps) => {
   // ** Reducers
   const { variantReducer: { currentVariant }, productCategoryReducer: { productCategories } } = useAppSelector((state) => state);
   // ** Vars
-  const productSubcategories = productCategories.map(category => category.subcategories).flat();
+  const productSubcategories = productCategories.map(category => category.subcategories!).flat();
 
   const defaultValues: IUpdateVariant = {
     name: currentVariant!.name,

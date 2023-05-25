@@ -8,7 +8,7 @@ import * as dayjs from 'dayjs'
  * @param number number to format
  * @returns formatted number
  */
-export const formatNumber = (number: number | string) => {
+export const formatNumber = (number: number | string | undefined) => {
     return Number(number);
 };
 

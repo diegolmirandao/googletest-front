@@ -1,5 +1,4 @@
-import { IImage } from "../image/image";
-import { IDescription } from "./description";
+import { IAddProductProperty } from "./addProductProperty";
 
 export interface IUpdateProduct {
     category_id: number;
@@ -14,4 +13,5 @@ export interface IUpdateProduct {
     taxed: boolean;
     tax: number;
     percentage_taxed: number;
+    properties: IAddProductProperty[];
 }

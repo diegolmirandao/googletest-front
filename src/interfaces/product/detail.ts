@@ -1,5 +1,6 @@
 import { IImage } from "../image/image";
 import { IDescription } from "./description";
+import { IProductDetailCost } from "./detailCost";
 import { IProductDetailPrice } from "./detailPrice";
 import { IProductDetailStock } from "./detailStock";
 import { IProductDetailVariant } from "./detailVariant";
@@ -14,6 +15,7 @@ export interface IProductDetail {
     name: string;
     product: IProduct;
     codes: string[];
+    costs: IProductDetailCost[];
     prices: IProductDetailPrice[];
     stock: IProductDetailStock[];
     variants: IProductDetailVariant[];

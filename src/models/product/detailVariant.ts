@@ -5,6 +5,7 @@ export class MProductDetailVariant {
     public id: number;
     public productDetailId: number;
     public variantoptionId: number;
+    public name: string;
     public createdAt: string;
     public updatedAt: string;
     public option: MVariantOption;
@@ -13,6 +14,7 @@ export class MProductDetailVariant {
         this.id = detailVariant.id;
         this.productDetailId = detailVariant.product_detail_id;
         this.variantoptionId = detailVariant.variant_option_id;
+        this.name = detailVariant.name;
         this.createdAt = detailVariant.created_at;
         this.updatedAt = detailVariant.updated_at;
         this.option = new MVariantOption(detailVariant.option);

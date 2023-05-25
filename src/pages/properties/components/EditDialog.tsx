@@ -57,7 +57,7 @@ const PropertyEditDialog = (props: IProps) => {
   const { propertyReducer: { currentProperty }, productCategoryReducer: { productCategories }, measurementUnitReducer: { measurementUnits } } = useAppSelector((state) => state);
   // ** Vars
   const [showMeasurementUnitField, setShowMeasurementUnitField] = useState<boolean>(false);
-  const productSubcategories = productCategories.map(category => category.subcategories).flat();
+  const productSubcategories = productCategories.map(category => category.subcategories!).flat();
   const propertyTypes = Object.entries(EPropertyType).map(([key, value]) => ({value: key, text: String(value)}));
 
   const defaultValues: IUpdateProperty = {

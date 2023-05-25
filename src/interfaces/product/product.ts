@@ -1,8 +1,10 @@
 import { IImage } from "../image/image";
 import { IBrand } from "./brand";
+import { IProductCategory } from "./category";
 import { IDescription } from "./description";
 import { IProductDetail } from "./detail";
 import { IMeasurementUnit } from "./measurementUnit";
+import { IProductProperty } from "./productProperty";
 import { IProductSubcategory } from "./subcategory";
 import { IProductType } from "./type";
 
@@ -23,11 +25,12 @@ export interface IProduct {
     created_at: string;
     updated_at: string;
     codes: string[];
-    category: IProductSubcategory;
+    category: IProductCategory;
     subcategory: IProductSubcategory;
     brand: IBrand;
     type: IProductType;
     measurement_unit: IMeasurementUnit;
+    properties: IProductProperty[];
     descriptions: IDescription[];
     details?: IProductDetail[];
     images: IImage[];

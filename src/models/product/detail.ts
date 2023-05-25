@@ -5,6 +5,7 @@ import { MProduct } from "./product";
 import { MProductDetailPrice } from "./detailPrice";
 import { MProductDetailStock } from "./detailStock";
 import { MProductDetailVariant } from "./detailVariant";
+import { MProductDetailCost } from "./detailCost";
 
 export class MProductDetail {
     public id: number;
@@ -15,6 +16,7 @@ export class MProductDetail {
     public name: string;
     public product: MProduct;
     public codes: string[];
+    public costs: MProductDetailCost[];
     public prices: MProductDetailPrice[];
     public stock: MProductDetailStock[];
     public variants: MProductDetailVariant[];
@@ -30,6 +32,7 @@ export class MProductDetail {
         this.name = detail.name;
         this.product = new MProduct(detail.product);
         this.codes = detail.codes;
+        this.costs = detail.costs.map(cost => new MProductDetailCost(cost));
         this.prices = detail.prices.map(price => new MProductDetailPrice(price));
         this.stock = detail.stock.map(stock => new MProductDetailStock(stock));
         this.variants = detail.variants.map(variant => new MProductDetailVariant(variant));
