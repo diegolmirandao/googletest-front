@@ -26,6 +26,8 @@ import brandSlice from './brand';
 import propertySlice from './property';
 import variantSlice from './variant';
 
+import paymentTermSlice from './paymentTerm';
+
 export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
@@ -53,4 +55,6 @@ export default combineReducers({
     productCostTypeReducer: productCostTypeSlice.reducer,
     propertyReducer: propertySlice.reducer,
     variantReducer: variantSlice.reducer,
+
+    paymentTermReducer: paymentTermSlice.reducer,
 });
