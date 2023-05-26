@@ -56,8 +56,20 @@ const slice = createSlice({
             state.users = state.users.filter(user => user.id !== action.payload);
         })
         builder.addCase(createAction<IUser[]>('user/sync'), (state, action) => {
-            const users = action.payload.map((user) => new MUser(user));
-            state.users = state.users.length ? [...state.users, ...users] : users
+            const syncUsers = action.payload.map((user) => new MUser(user));
+
+            if (state.users.length) {
+                syncUsers.forEach((syncUser, index) => {
+                    if (state.users.find(user => user.id == syncUser.id)) {
+                        state.users = state.users.map(user => user.id == syncUser.id ? syncUser : user);
+                        syncUsers.splice(index, 1);
+                    }
+                });
+                
+                state.users = [...state.users, ...syncUsers]
+            } else {
+                state.users = syncUsers
+            }
         })
     },
 })

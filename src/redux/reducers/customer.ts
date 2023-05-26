@@ -145,12 +145,12 @@ const slice = createSlice({
 
             if (state.customers.length) {
                 syncCustomers.forEach((syncCustomer, index) => {
-                    if (state.customers.includes(syncCustomer)) {
+                    if (state.customers.find(customer => customer.id == syncCustomer.id)) {
                         state.customers = state.customers.map(customer => customer.id == syncCustomer.id ? syncCustomer : customer);
                         syncCustomers.splice(index, 1);
                     }
                 });
-
+                
                 state.customers = [...state.customers, ...syncCustomers]
             } else {
                 state.customers = syncCustomers

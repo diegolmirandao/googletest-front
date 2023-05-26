@@ -14,12 +14,12 @@ const SyncWrapper = ({ children }: IProps) => {
     const dispatch = useAppDispatch();
     const { t } = useTranslation();
 
-    const { syncReducer: { syncDone, syncStarted }, authReducer: { user } } = useAppSelector((state) => state);
+    const { syncReducer: { syncDone, syncStarted }, authReducer: { user }, offlineReducer: { isOnline } } = useAppSelector((state) => state);
     const [cursor, setCursor] = useState<string | null>(null);
     const loadingToastId = useRef<Id | undefined>(undefined);
 
     useEffect(() => {
-        if (user && !syncDone) {
+        if (user && !syncDone && isOnline) {
             if (!syncStarted) {
                 loadingToastId.current = toast.loading(t('synchronizing_data'));
 
@@ -30,7 +30,7 @@ const SyncWrapper = ({ children }: IProps) => {
         } else {
             dispatch(resetSync());
         }
-    }, [user, cursor])
+    }, [user, cursor, isOnline])
 
     const sync = async () => {
         try {
