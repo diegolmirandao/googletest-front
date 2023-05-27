@@ -20,7 +20,7 @@ import CloseIcon from 'mdi-material-ui/Close';
 import PencilOutlineIcon from 'mdi-material-ui/PencilOutline';
 import InformationOutlineIcon from 'mdi-material-ui/InformationOutline';
 import DeleteOutlineIcon from 'mdi-material-ui/DeleteOutline';
-import BadgeAccountOutlineIcon from 'mdi-material-ui/BadgeAccountOutline';
+import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
 import AccountMultipleOutlineIcon from 'mdi-material-ui/AccountMultipleOutline';
 import MapMarkerIcon from 'mdi-material-ui/MapMarker';
 import PlusIcon from 'mdi-material-ui/Plus';
@@ -236,6 +236,11 @@ const SaleDetailDialog = (props: IProps) => {
           */}
           <Box sx={{ display: 'flex', justifyContent: 'right', mb: 6 }}>
             <Box sx={{ display: {xs: 'none', md: 'inline-flex'}}}>
+              {!currentSale?.paidAt &&
+                <Button sx={{ mr: 2 }} onClick={onPaymentAddClick} variant='outlined' color='primary' startIcon={<CashMultipleIcon fontSize='small' />}>
+                  {t('generate_payment')}
+                </Button>
+              }
               <Button sx={{ mr: 2 }} onClick={onEditClick} variant='outlined' color='primary' startIcon={<PencilIcon fontSize='small' />}>
                 {t('edit')}
               </Button>
@@ -244,6 +249,9 @@ const SaleDetailDialog = (props: IProps) => {
               </Button>
             </Box>
             <Box sx={{ display: {xs: 'inline-flex', md: 'none'} }}>
+              {!currentSale?.paidAt &&
+                <Button sx={{ mr: 2 }} onClick={onPaymentAddClick} color='primary' variant='outlined'><CashMultipleIcon fontSize='small'/></Button>
+              }
               <Button sx={{ mr: 2 }} onClick={onEditClick} color='primary' variant='outlined'><PencilIcon fontSize='small'/></Button>
               <Button sx={{ mr: 2 }} onClick={onDeleteClick} color='error' variant='outlined'><DeleteIcon fontSize='small'/></Button>
             </Box>
@@ -371,19 +379,19 @@ const SaleDetailDialog = (props: IProps) => {
                       <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('subtotal')}:</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                      <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatNumber(subtotal)} GS</Typography>
+                      <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(subtotal, currentSale?.currency)}</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('discount')}:</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                      <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatNumber(discount)} GS</Typography>
+                      <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(discount, currentSale?.currency)}</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{t('total')}:</Typography>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                      <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatNumber(currentSale?.amount)} GS</Typography>
+                      <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(currentSale?.amount, currentSale?.currency)}</Typography>
                     </Grid>
                   </Grid>
                 </Grid>

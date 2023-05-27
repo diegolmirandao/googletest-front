@@ -18,7 +18,7 @@ export const formatNumber = (number: number | string | undefined) => {
  * @param currency currency model
  * @returns formatted currency string
  */
-export const formatMoney = (amount: string | number, currency?: MCurrency):string => {
+export const formatMoney = (amount?: string | number, currency?: MCurrency):string => {
     return Intl.NumberFormat('fullwide', {
         style: 'decimal'
     }).format(Number(amount)) + ' ' + currency?.abbreviation;

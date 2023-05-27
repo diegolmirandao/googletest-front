@@ -21,6 +21,7 @@ export class MSale {
     public documentTypeId: number;
     public paymentTermId: number;
     public amount: number;
+    public paidAmount: number;
     public billedAt: string;
     public expiresAt: string | null;
     public paidAt: string | null;
@@ -54,6 +55,7 @@ export class MSale {
         this.documentTypeId = sale.document_type_id;
         this.paymentTermId = sale.payment_term_id;
         this.amount = sale.amount;
+        this.paidAmount = sale.paid_amount;
         this.billedAt = sale.billed_at;
         this.expiresAt = sale.expires_at;
         this.paidAt = sale.paid_at;

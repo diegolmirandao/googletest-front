@@ -8,6 +8,7 @@
     "home": "Inicio",
     "users": "Usuarios",
     "sales": "Ventas",
+    "accounts_receivable": "Cuentas a cobrar",
     "customers": "Clientes",
     "products": "Productos",
     "configuration": "Configuración",
@@ -161,6 +162,9 @@
     "down_payment": "Entrega inicial",
     "method": "Método",
     "expiration": "Vencimiento",
+    "paid": "Pagado",
+    "balance": "Saldo",
+    "generate_payment": "Generar Pago",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",

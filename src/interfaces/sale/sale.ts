@@ -20,6 +20,7 @@ export interface ISale {
     document_type_id: number;
     payment_term_id: number;
     amount: number;
+    paid_amount: number;
     billed_at: string;
     expires_at: string | null;
     paid_at: string | null;

@@ -19,6 +19,7 @@ import ProductCostType from "./pages/product-cost-types";
 import Business from "./pages/businesses";
 import Establishment from "./pages/establishments";
 import Sale from "./pages/sales";
+import AccountReceivable from "./pages/accounts-receivable";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
       <Route path="/" element={ <Home/> } />
       <Route path="/login" element={ <Login/> } />
       <Route path="/sales" element={ <Sale/> } />
+      <Route path="/accounts-receivable" element={ <AccountReceivable/> } />
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/products" element={ <Product/> } />
       <Route path="/users" element={ <User/> } />

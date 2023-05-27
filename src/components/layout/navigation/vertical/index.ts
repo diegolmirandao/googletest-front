@@ -1,6 +1,7 @@
 // ** Icon imports
 import HomeOutline from 'mdi-material-ui/HomeOutline';
 import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
+import FileAccountOutlineIcon from 'mdi-material-ui/FileAccountOutline';
 import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
 import WarehouseIcon from 'mdi-material-ui/Warehouse';
 import AccountIcon from 'mdi-material-ui/Account';
@@ -23,6 +24,13 @@ const navigation = (): VerticalNavItemsType => {
       title: i18n.t('sales'),
       icon: CashMultipleIcon,
       path: '/sales',
+      action: 'view',
+      subject: 'sale'
+    },
+    {
+      title: i18n.t('accounts_receivable'),
+      icon: FileAccountOutlineIcon,
+      path: '/accounts-receivable',
       action: 'view',
       subject: 'sale'
     },

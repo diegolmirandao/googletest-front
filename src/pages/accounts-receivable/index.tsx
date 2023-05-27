@@ -4,13 +4,13 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
-import { addSaleAction, addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, getSalesAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
+import { getAccountsAction } from "src/redux/actions/accountReceivable";
+import { addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
 import { setCurrentSale, setFilteredCursor, resetFilteredSales, setCurrentSaleProduct, setCurrentSalePayment } from 'src/redux/reducers/sale';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
 import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IAddSale } from "src/interfaces/sale/add";
 import { IUpdateSale } from 'src/interfaces/sale/update';
 import { ISale } from 'src/interfaces/sale/sale';
 import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
@@ -18,7 +18,6 @@ import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
 import FilterQueryType from "src/types/FilterQueryType";
 import SortQueryType from "src/types/SortQueryType";
 import { ITableState } from "src/interfaces/tableState";
-import { MSaleProduct } from "src/models/sale/product";
 import { MSalePayment } from "src/models/sale/payment";
 import { IAddUpdateSalePayment } from "src/interfaces/sale/addUpdatePayment";
 
@@ -37,16 +36,14 @@ import useRequestParam from "src/hooks/useRequestParams";
 // ** Custom components Imports
 import TableHeader from 'src/components/table/TableHeader';
 import TableFilter from 'src/components/table/TableFilter';
-import SaleAddDialog from './components/AddDialog';
 // import SaleEditDialog from './components/EditDialog';
-import SaleDetailDialog from './components/DetailDialog';
+import SaleDetailDialog from '../sales/components/DetailDialog';
 import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
 import useTableState from "src/hooks/useTableState";
-import SalePaymentAddEditDialog from "./components/PaymentAddEditDialog";
-import { getProductDetailsAction } from "src/redux/actions/product";
+import SalePaymentAddEditDialog from "../sales/components/PaymentAddEditDialog";
 
 /**
  * Export columns definition
@@ -93,20 +90,12 @@ const exportColumns: ITableExportColumn[] = [
     text: 'warehouse'
   },
   {
-    field: 'payment_term',
-    text: 'payment_term'
-  },
-  {
     field: 'document_type',
     text: 'document_type'
   },
   {
     field: 'expires_at',
     text: 'expires_at'
-  },
-  {
-    field: 'paid_at',
-    text: 'paid_at'
   },
   {
     field: 'seller',
@@ -123,18 +112,16 @@ const exportColumns: ITableExportColumn[] = [
 ];
 
 /**
- * Sale section index page
- * @returns Sale page component
+ * Account receivable section index page
+ * @returns Account receivable page component
  */
-const Sale = () => {
+const AccountReceivable = () => {
   const dispatch = useAppDispatch();
-  const ability = useContext(AbilityContext);
-  const requestParams = useRequestParam('sales');
-  const [tableState, setTableState] = useTableState('sales');
-  const [salesTableState, setSalesTableState] = useState<ITableState>(tableState);
+  const [tableState, setTableState] = useTableState('accounts-receivable');
+  const [accountsReceivableTableState, setAccountsReceivableTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { saleReducer: { sales, currentSale, currentSaleProduct, currentSalePayment, cursor, filteredCursor, filteredSales }, userReducer: { users }, documentTypeReducer: { documentTypes }, paymentTermReducer: { paymentTerms }, warehouseReducer: { warehouses }, businessReducer: { businesses }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
+  const { accountReceivableReducer: { accounts, filteredAccounts, cursor, filteredCursor }, saleReducer: { currentSale, currentSalePayment }, userReducer: { users }, documentTypeReducer: { documentTypes }, paymentTermReducer: { paymentTerms }, warehouseReducer: { warehouses }, businessReducer: { businesses }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
 
   // ** Vars
 
@@ -210,13 +197,6 @@ const Sale = () => {
     {
       flex: 0.25,
       minWidth: 230,
-      field: 'paymentTerm',
-      headerName: String(t('payment_term')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.paymentTerm.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
       field: 'documentType',
       headerName: String(t('document_type')),
       valueGetter: ({ row }: GridValueGetterParams) => row.documentType.name
@@ -226,13 +206,6 @@ const Sale = () => {
       minWidth: 230,
       field: 'expiresAt',
       headerName: String(t('expires_at')),
-      valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'paidAt',
-      headerName: String(t('paid_at')),
       valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
     },
     {
@@ -248,6 +221,20 @@ const Sale = () => {
       field: 'amount',
       headerName: String(t('amount')),
       valueGetter: ({ row }: GridValueGetterParams) => formatMoney(row.amount, row.currency)
+    },
+    {
+      flex: 0.25,
+      minWidth: 230,
+      field: 'paidAmount',
+      headerName: String(t('paid')),
+      valueGetter: ({ row }: GridValueGetterParams) => formatMoney(row.paidAmount, row.currency)
+    },
+    {
+      flex: 0.25,
+      minWidth: 230,
+      field: 'balance',
+      headerName: String(t('balance')),
+      valueGetter: ({ row }: GridValueGetterParams) => formatMoney((row.amount - row.paidAmount), row.currency)
     },
     {
       flex: 0.25,
@@ -274,7 +261,7 @@ const Sale = () => {
   /**
    * Datagrid default column visibility model
    */
-  const defaultColumnVisibility: GridColumnVisibilityModel = salesTableState.visibility ?? {
+  const defaultColumnVisibility: GridColumnVisibilityModel = accountsReceivableTableState.visibility ?? {
     billedAt: true,
     identificationDocument: true,
     name: true,
@@ -282,15 +269,15 @@ const Sale = () => {
     email: false,
     address: false,
     business: false,
-    establishment: true,
+    establishment: false,
     pointOfSale: false,
     warehouse: false,
-    paymentTerm: true,
     documentType: false,
     expiresAt: false,
-    paidAt: false,
     seller: false,
     amount: true,
+    paidAmount: true,
+    balance: true,
     comments: false,
     createdAt: false,
     updatedAt: false
@@ -367,15 +354,6 @@ const Sale = () => {
       }))
     },
     {
-      field: 'payment_term',
-      text: String(t('payment_term')),
-      type: 'select',
-      options: paymentTerms.map((paymentTerm) => ({
-        value: paymentTerm.id,
-        text: paymentTerm.name
-      }))
-    },
-    {
       field: 'document_type',
       text: String(t('document_type')),
       type: 'select',
@@ -421,42 +399,31 @@ const Sale = () => {
   ];
 
   // ** DataGrid Vars
-  const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 100);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(salesTableState.filters);
-  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(salesTableState.sorts);
+  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(accountsReceivableTableState.filters);
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(accountsReceivableTableState.sorts);
   const [visibilityModel, setVisibilityModel] = useState<GridColumnVisibilityModel>(defaultColumnVisibility);
-  const [exportData, setExportData] = useState<ITableExport | undefined>(salesTableState.export);
+  const [exportData, setExportData] = useState<ITableExport | undefined>(accountsReceivableTableState.export);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
   const [openTableColumnVisibilityDialog, setOpenTableColumnVisibilityDialog] = useState<boolean>(false);
   const [openDetailDialog, setOpenDetailDialog] = useState<boolean>(false);
-  const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
   const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
-  const [openProductEditDialog, setOpenProductEditDialog] = useState<boolean>(false);
-  const [openProductDeleteDialog, setOpenProductDeleteDialog] = useState<boolean>(false);
   const [openPaymentAddEditDialog, setOpenPaymentAddEditDialog] = useState<boolean>(false);
   const [openPaymentDeleteDialog, setOpenPaymentDeleteDialog] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   // ** Loading flags
   const [exportLoading, setExportLoading] = useState<boolean>(false);
-  const [addLoading, setAddLoading] = useState<boolean>(false);
   const [editLoading, setEditLoading] = useState<boolean>(false);
-  const [productEditLoading, setProductEditLoading] = useState<boolean>(false);
-  const [productDeleteLoading, setProductDeleteLoading] = useState<boolean>(false);
   const [paymentAddEditLoading, setPaymentAddEditLoading] = useState<boolean>(false);
   const [paymentDeleteLoading, setPaymentDeleteLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getProductDetails();
-  }, []);
-
-  useEffect(() => {
-    if (!sales.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
-      getSales();
+    if (!accounts.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
+      getAccounts();
     } else {
       dispatch(setFilteredCursor(null));
       dispatch(resetFilteredSales());
@@ -464,7 +431,7 @@ const Sale = () => {
   }, [filters, sortModel]);
 
   useEffect(() => {
-    setSalesTableState({
+    setAccountsReceivableTableState({
       columns: undefined,
       filters: filters,
       sorts: sortModel,
@@ -474,18 +441,18 @@ const Sale = () => {
   }, [filters, sortModel, visibilityModel, exportData]);
 
   useEffect(() => {
-    setTableState('sales', salesTableState);
-  }, [salesTableState]);
+    setTableState('accounts-receivable', accountsReceivableTableState);
+  }, [accountsReceivableTableState]);
 
   /**
-   * Get a list of sales filtered, sorted and paginated
+   * Get a list of accounts filtered, sorted and paginated
    */
-  const getSales = async () => {
+  const getAccounts = async () => {
     setTableLoading(true);
     const appliedFilters: FilterQueryType | null = generateFilterQueryParams(filters);
     const appliedSortings: SortQueryType | null = generateSortQueryParams(sortModel) ?? generateSortQueryParams([{field: 'created_at', sort: 'desc'}]);
     try {
-      const saleResponse: IResponseCursorPagination<ISale> = await dispatch(getSalesAction({
+      const accountResponse: IResponseCursorPagination<ISale> = await dispatch(getAccountsAction({
         filters: appliedFilters,
         sorts: appliedSortings
       })).then(unwrapResult);
@@ -494,13 +461,6 @@ const Sale = () => {
       displayErrors(error);
     }
     setTableLoading(false);
-  };
-
-  /**
-   * Get the list of all products
-   */
-  const getProductDetails = async () => {
-    await dispatch(getProductDetailsAction({}));
   };
 
   /**
@@ -540,7 +500,7 @@ const Sale = () => {
    */
   const handleRowsScrollEnd = (params: GridRowScrollEndParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
     if (cursor || filteredCursor) {
-      getSales();
+      getAccounts();
     }
   }
 
@@ -573,40 +533,6 @@ const Sale = () => {
     dispatch(setCurrentSale(undefined));
     dispatch(setCurrentSaleProduct(undefined));
     dispatch(setCurrentSalePayment(undefined));
-  };
-
-  /**
-   * Sale product edit button click handler
-   * @param saleProduct selected product to edit
-   */
-  const handleProductEditClick = (saleProduct: MSaleProduct) => {
-    setOpenProductEditDialog(true);
-    dispatch(setCurrentSaleProduct(saleProduct));
-  };
-
-  /**
-   * Sale product add edit dialog close handler
-   */
-  const handleProductEditDialogClose = () => {
-    setOpenProductEditDialog(false);
-    dispatch(setCurrentSaleProduct(undefined));
-  };
-
-  /**
-   * Sale product delete button click handler
-   * @param saleProduct selected product to edit
-   */
-  const handleProductDeleteClick = (saleProduct: MSaleProduct) => {
-    setOpenProductDeleteDialog(true);
-    dispatch(setCurrentSaleProduct(saleProduct));
-  };
-
-  /**
-   * Product delete dialog close handler
-   */
-  const handleProductDeleteDialogClose = () => {
-    setOpenProductDeleteDialog(false);
-    dispatch(setCurrentSaleProduct(undefined));
   };
 
   /**
@@ -646,25 +572,6 @@ const Sale = () => {
   /**
    * Sales section handlers
    */
-
-  /**
-   * Form add submit handler
-   * @param formFields form fields submitted by user
-   */
-  const handleAddSubmit = async (formFields: IAddSale) => {
-    setAddLoading(true);
-    console.log(formFields)
-    try {
-      await dispatch(addSaleAction(formFields)).then(unwrapResult);
-      setOpenAddDialog(false);
-      setOpenDetailDialog(true);
-      toast.success(t('sale_added_successfully'));
-    } catch (error) {
-      console.error('ADD SALE ERROR: ', error);
-      displayErrors(error);
-    }
-    setAddLoading(false);
-  }
 
   /**
    * Form edit submit handler
@@ -762,15 +669,15 @@ const Sale = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader
-            onAddClick={() => setOpenAddDialog(true)}
+            onAddClick={() => {}}
             onExportClick={() => setOpenTableExportDialog(true)}
             onColumnsClick={() => setOpenTableColumnVisibilityDialog(true)}
-            canAdd={ability.can('create', 'sale')}
+            canAdd={false}
           />
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
               columns={columns} 
-              rows={filteredSales ?? sales} 
+              rows={filteredAccounts ?? accounts} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
               onRowClick={handleRowClick}
@@ -799,14 +706,6 @@ const Sale = () => {
           onPaymentDeleteClick={handlePaymentDeleteClick}
           onDeleteClick={() => setOpenDeleteDialog(true)}
           onClose={handleDetailsDialogClose}
-        />
-      }
-      {openAddDialog &&
-        <SaleAddDialog
-          open={openAddDialog}
-          loading={addLoading}
-          onSubmit={handleAddSubmit}
-          onClose={() => setOpenAddDialog(false)}
         />
       }
       {openEditDialog &&
@@ -864,9 +763,9 @@ const Sale = () => {
   )
 };
 
-Sale.acl = {
+AccountReceivable.acl = {
   action: 'view',
   subject: 'sale'
 } as ACLObj;
 
-export default Page(Sale);
+export default Page(AccountReceivable);
