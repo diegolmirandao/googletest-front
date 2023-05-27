@@ -98,7 +98,7 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
         onClose={handleDialogClose}
       >
         <DialogTitle sx={{ position: 'relative' }}>
-          {currentAcquisitionChannel ? t('channel_edit') : t('channel_add')}
+          {currentAcquisitionChannel ? t('edit_channel') : t('add_channel')}
           <IconButton
             size='small'
             onClick={handleClose}
@@ -122,7 +122,7 @@ const AcquisitionChannelAddEditDialog = (props: IProps) => {
                   />
                 )}
               />
-              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
+              {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.name.message}`)}</FormHelperText>}
             </FormControl>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'right' }}>

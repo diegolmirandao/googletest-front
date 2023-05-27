@@ -19,6 +19,12 @@ const requestParamConfig: RequestParamConfig = {
         pageSize: 20,
         batchQty: 1000,
         requestQtyPerMinute: 5
+    },
+    products: {
+        initialQty: 1000,
+        pageSize: 20,
+        batchQty: 1000,
+        requestQtyPerMinute: 5
     }
 }
 

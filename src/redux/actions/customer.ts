@@ -17,11 +17,11 @@ export const getCustomersAction = createAsyncThunk(
     async (params: IListQueryParam, {getState, rejectWithValue}) => {
         try {
             const { customerReducer: { cursor, filteredCursor } } = getState() as RootState;
-            const sentCursor = params.filters || params.sorts ? filteredCursor : cursor;
+            const usedCursor = params.filters || params.sorts ? filteredCursor : cursor;
 
             const {data: customerResponse}: AxiosResponse<IResponseCursorPagination<ICustomer>> = await axios.get(`/customers`, {
                 params: {
-                    cursor: sentCursor,
+                    cursor: usedCursor,
                     page_size: requestParamConfig['customers'].pageSize,
                     ...params.filters,
                     ...params.sorts
