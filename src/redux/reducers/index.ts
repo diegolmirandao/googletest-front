@@ -30,6 +30,8 @@ import paymentTermSlice from './paymentTerm';
 import paymentMethodSlice from './paymentMethod';
 import documentTypeSlice from './documentType';
 
+import saleSlice from './sale';
+
 export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
@@ -61,4 +63,6 @@ export default combineReducers({
     paymentTermReducer: paymentTermSlice.reducer,
     paymentMethodReducer: paymentMethodSlice.reducer,
     documentTypeReducer: documentTypeSlice.reducer,
+
+    saleReducer: saleSlice.reducer,
 });

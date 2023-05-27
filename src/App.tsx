@@ -18,15 +18,17 @@ import ProductPriceType from "./pages/product-price-types";
 import ProductCostType from "./pages/product-cost-types";
 import Business from "./pages/businesses";
 import Establishment from "./pages/establishments";
+import Sale from "./pages/sales";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={ <Home/> } />
       <Route path="/login" element={ <Login/> } />
-      <Route path="/users" element={ <User/> } />
+      <Route path="/sales" element={ <Sale/> } />
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/products" element={ <Product/> } />
+      <Route path="/users" element={ <User/> } />
       <Route path="/configuration/currencies" element={ <Currency/> } />
       <Route path="/configuration/businesses" element={ <Business/> } />
       <Route path="/configuration/establishments" element={ <Establishment/> } />

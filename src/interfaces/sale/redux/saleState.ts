@@ -4,6 +4,9 @@ import { MSale } from 'src/models/sale/sale';
 
 export interface ISaleState {
     sales: MSale[],
+    filteredSales: MSale[] | null;
+    cursor: string | null;
+    filteredCursor: string | null;
     currentSale: MSale | undefined,
     currentSaleProduct: MSaleProduct | undefined,
     currentSalePayment: MSalePayment | undefined

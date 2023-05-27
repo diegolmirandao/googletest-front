@@ -12,6 +12,10 @@ import 'src/config/i18n'
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
 import NotificationWrapper from './components/NotificationWrapper';
+import { LicenseInfo } from '@mui/x-license-pro';
+import config from './config';
+
+LicenseInfo.setLicenseKey(config.muiXLicensePro);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <LocalizationProvider dateAdapter={AdapterDayjs}>

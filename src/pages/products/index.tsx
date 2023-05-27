@@ -251,7 +251,7 @@ const Product = () => {
     {
       field: 'category',
       text: String(t('category')),
-      type: 'string',
+      type: 'select',
       options: productCategories.map((category) => ({
         value: category.id,
         text: category.name
@@ -260,7 +260,7 @@ const Product = () => {
     {
       field: 'subcategory_id',
       text: String(t('subcategory')),
-      type: 'string',
+      type: 'select',
       options: productSubcategories.map((subcategory) => ({
         value: subcategory.id,
         text: subcategory.name
@@ -269,7 +269,7 @@ const Product = () => {
     {
       field: 'brand_id',
       text: String(t('brand')),
-      type: 'string',
+      type: 'select',
       options: brands.map((brand) => ({
         value: brand.id,
         text: brand.name
@@ -278,7 +278,7 @@ const Product = () => {
     {
       field: 'type_id',
       text: String(t('type')),
-      type: 'string',
+      type: 'select',
       options: productTypes.map((type) => ({
         value: type.id,
         text: type.name
@@ -287,7 +287,7 @@ const Product = () => {
     {
       field: 'measurement_unit_id',
       text: String(t('measurement_unit')),
-      type: 'string',
+      type: 'select',
       options: measurementUnits.map((measurementUnit) => ({
         value: measurementUnit.id,
         text: measurementUnit.name

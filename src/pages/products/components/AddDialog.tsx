@@ -618,7 +618,7 @@ const ProductAddDialog = (props: IProps) => {
                               {errors.properties?.[index]?.value && <FormHelperText sx={{ color: 'error.main' }}>{errors.properties?.[index]?.value?.message}</FormHelperText>}
                             </FormControl>
                           </Grid>
-                          {!!properties.find(property => property.id === item.property_id)!.isRequired && 
+                          {!properties.find(property => property.id === item.property_id)!.isRequired && 
                             <Grid item alignItems="stretch" sx={{ display: "flex", mb: 3 }}>
                               <Tooltip title={t('delete')}>
                                 <Button variant='outlined' color='error' onClick={() => propertyRemove(index)}><DeleteOutlineIcon fontSize='small' /></Button>
