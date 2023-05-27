@@ -44,6 +44,9 @@
     "initializing_data": "Inicializando datos",
     "initialized_data": "Datos inicializados",
     "initialization_failed": "Fallo de inicializacion de datos",
+    "synchronizing_data": "Sincronizando datos",
+    "synchronized_data": "Datos sincronizados",
+    "synchronization_failed": "Fallo de sincronización de datos",
 
     "confirm_action": "Confirmar acción",
     "confirm_delete": "Confirmar eliminación",
