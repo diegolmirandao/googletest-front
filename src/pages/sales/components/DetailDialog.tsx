@@ -1,19 +1,13 @@
 // ** React Imports
-import { SyntheticEvent, useState } from 'react';
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddSale } from 'src/interfaces/sale/add';
-import { MSaleProduct } from 'src/models/sale/product';
 import { MSalePayment } from 'src/models/sale/payment';
-import { MSaleInstalment } from 'src/models/sale/instalment';
 
 // ** MUI Imports
-import { DataGrid, GridColDef, esES, GridRenderCellParams, GridValueGetterParams, GridValueFormatterParams, GridActionsCellItem, GridRowParams, DataGridPro } from '@mui/x-data-grid-pro';
+import { GridColDef, GridValueGetterParams, GridValueFormatterParams, GridActionsCellItem, GridRowParams, DataGridPro } from '@mui/x-data-grid-pro';
 import { Dialog, DialogContent, DialogActions, FormControl, DialogTitle, Box, Typography, styled, Grid, InputLabel, Select, MenuItem, Autocomplete, Tooltip, useMediaQuery, useTheme, Divider } from '@mui/material';
-import { Button, IconButton, TextField } from '@mui/material';
-import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
-import MuiTab, { TabProps } from '@mui/material/Tab';
+import { Button, IconButton } from '@mui/material';
 
 // ** Icons Imports
 import CloseIcon from 'mdi-material-ui/Close';
@@ -21,11 +15,7 @@ import PencilOutlineIcon from 'mdi-material-ui/PencilOutline';
 import InformationOutlineIcon from 'mdi-material-ui/InformationOutline';
 import DeleteOutlineIcon from 'mdi-material-ui/DeleteOutline';
 import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
-import AccountMultipleOutlineIcon from 'mdi-material-ui/AccountMultipleOutline';
-import MapMarkerIcon from 'mdi-material-ui/MapMarker';
 import PlusIcon from 'mdi-material-ui/Plus';
-import PlusCircleOutlineIcon from 'mdi-material-ui/PlusCircleOutline';
-import FileEditOutlineIcon from 'mdi-material-ui/FileEditOutline';
 import PencilIcon from 'mdi-material-ui/Pencil';
 import DeleteIcon from 'mdi-material-ui/Delete';
 import { formatDate, formatMoney, formatNumber } from 'src/utils/format';
@@ -168,7 +158,8 @@ const SaleDetailDialog = (props: IProps) => {
       flex: 0.25,
       minWidth: 200,
       field: 'number',
-      headerName: String(t('number'))
+      headerName: String(t('number')),
+      valueFormatter: ({ value }: GridValueFormatterParams) => !!value ? value : t('down_payment')
     },
     {
       flex: 0.25,
@@ -184,6 +175,20 @@ const SaleDetailDialog = (props: IProps) => {
       headerName: String(t('amount')),
       align: 'right',
       valueGetter: ({ row }: GridValueGetterParams) => formatMoney(row.amount, currentSale?.currency)
+    },
+    {
+      flex: 0.15,
+      minWidth: 130,
+      field: 'balance',
+      headerName: String(t('balance')),
+      align: 'right',
+      valueGetter: ({ row }: GridValueGetterParams) => {
+        const paidAmount = currentSale?.paidAmount;
+        const previousInstalmentsAmount = currentSale?.instalments.filter(instalment => instalment.number < row.number).reduce((sum, current) => sum + Number(current.amount), 0);
+        const calculatedBalance = row.amount - ((paidAmount ?? 0) - (previousInstalmentsAmount ?? 0));
+        const balance = calculatedBalance > 0 ? (calculatedBalance < row.amount ? calculatedBalance : row.amount) : 0;
+        return formatMoney(balance, currentSale?.currency);
+      }
     }
   ];
 

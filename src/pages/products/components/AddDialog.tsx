@@ -586,7 +586,7 @@ const ProductAddDialog = (props: IProps) => {
                       <Typography variant='h6' sx={{ mb: 3, ml: 3}}>{t('properties')}</Typography>
 
                       {propertyFields.map((item, index) => (
-                        <Grid container spacing={3} sx={{ mb: 3}} key={uuid()}>
+                        <Grid container spacing={3} sx={{ mb: 3}} key={item.id}>
                           <Grid item xs={12} lg={5} sx={{ mb: 3}}>
                             <FormControl fullWidth size='small'>
                               <Controller
@@ -658,7 +658,7 @@ const ProductAddDialog = (props: IProps) => {
                   <Typography variant='h6' sx={{ mb: 3, ml: 3}}>{t('costs')}</Typography>
 
                   {costFields.map((item, index) => (
-                    <Grid container spacing={3} sx={{ mb: 3}} key={uuid()}>
+                    <Grid container spacing={3} sx={{ mb: 3}} key={item.id}>
                       <Grid item xs={12} lg={3}>
                         <FormControl fullWidth>
                           <Controller
@@ -734,7 +734,7 @@ const ProductAddDialog = (props: IProps) => {
                   <Typography variant='h6' sx={{ mb: 3, ml: 3}}>{t('prices')}</Typography>
 
                   {priceFields.map((item, index) => (
-                    <Grid container spacing={3} sx={{ mb: 3}} key={uuid()}>
+                    <Grid container spacing={3} sx={{ mb: 3}} key={item.id}>
                       <Grid item xs={12} lg={3}>
                         <FormControl fullWidth>
                           <Controller
@@ -835,7 +835,7 @@ const ProductAddDialog = (props: IProps) => {
                   
                   <Typography variant='h6' sx={{ mb: 3, ml: 3}}>{t('variants')}</Typography>
                   {detailFields.map((item, index) => (
-                    <Grid container spacing={3} sx={{ mb: 3 }} key={uuid()}>
+                    <Grid container spacing={3} sx={{ mb: 3 }} key={item.id}>
                       {item.variants.map((selectedOption, variantIndex) => {
                         const variant = variants.find((variant) => !!variant.options.find((option) => option.id == selectedOption.option_id));
                         return (

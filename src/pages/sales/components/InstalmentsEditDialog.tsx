@@ -28,6 +28,7 @@ import { v4 as uuid } from 'uuid';
  */
 interface IProps {
   open: boolean;
+  date?: Dayjs | null;
   selectedInstalments?: IUpdateSaleInstalment[];
   currency?: MCurrency;
   totalAmount: number;
@@ -42,19 +43,25 @@ interface IProps {
  */
 const SaleInstalmentEditDialog = (props: IProps) => {
   // ** Props
-  const { open, selectedInstalments, currency, totalAmount, onSubmit, onClose } = props;
+  const { open, date, selectedInstalments, currency, totalAmount, onSubmit, onClose } = props;
   // ** Vars
+  const [mounted, setMounted] = useState<boolean>(false);
+  const initialAmountOfInstalments = (selectedInstalments?.length ?? 0) - (selectedInstalments?.[0]?.number === 0 ? 1 : 0) || 1;
+  const initialFirstInstanlemtExpiresAt = selectedInstalments?.[0]?.number === 0 ? selectedInstalments?.[1].expires_at : dayjs(date).add(1, 'month');
+  const initialDownPayment = selectedInstalments?.[0]?.number === 0 ? selectedInstalments?.[0].amount : 0;
+
   const expirationIntervals = Object.entries(EExpirationInterval).map(([key, value]) => ({value: key, name: String(value)}));
-  const [amountOfInstalments, setAmountOfInstalments] = useState<number>(1);
+  const [amountOfInstalments, setAmountOfInstalments] = useState<number>(initialAmountOfInstalments);
   const [expirationInterval, setExpirationInterval] = useState<string>('month');
-  const [firstInstalmentExpiresAt, setFirstInstalmentExpiresAt] = useState<Dayjs | null>(dayjs());
-  const [downPayment, setDownPayment] = useState<number>(0);
+  const [firstInstalmentExpiresAt, setFirstInstalmentExpiresAt] = useState<Dayjs | null>(initialFirstInstanlemtExpiresAt);
+  const [downPayment, setDownPayment] = useState<number>(initialDownPayment);
   const defaultValues: {
     instalments: IUpdateSaleInstalment[];
   } = {
     instalments: selectedInstalments?.length ? selectedInstalments : [{
+      id: null,
       number: 1,
-      expires_at: dayjs(),
+      expires_at: dayjs(date).add(1, 'month'),
       amount: totalAmount
     }]
   };
@@ -80,22 +87,31 @@ const SaleInstalmentEditDialog = (props: IProps) => {
     replace: instalmentReplace
   } = useFieldArray({
     control,
-    name: "instalments"
+    name: "instalments",
+    keyName: "key"
   });
 
   useEffect(() => {
-    getGeneratedInstalments();
+    if (mounted || !selectedInstalments) {
+      getGeneratedInstalments();
+    }
+    setMounted(true);
   }, [amountOfInstalments, expirationInterval, firstInstalmentExpiresAt, downPayment]);
 
   /**
    * Re generate instalments if changes occur
    */
   const getGeneratedInstalments = () => {
-    let instalments: IUpdateSaleInstalment[] = [];
+    let instalments: IUpdateSaleInstalment[] =  downPayment > 0 ? [{
+      id: null,
+      number: 0,
+      expires_at: dayjs(date),
+      amount: downPayment
+    }] : [];
     const instalmentAmount = (totalAmount - downPayment) / amountOfInstalments;
-    console.log(firstInstalmentExpiresAt?.add(11, expirationInterval as ManipulateType))
     for (let i = 1; i <= amountOfInstalments; i++) {
       instalments = [...instalments, {
+        id: null,
         number: i,
         expires_at: firstInstalmentExpiresAt?.add(i-1, expirationInterval as ManipulateType) ?? null,
         amount: instalmentAmount
@@ -158,7 +174,8 @@ const SaleInstalmentEditDialog = (props: IProps) => {
                   label={t('amount_of_instalments')}
                   onChange={(e) => setAmountOfInstalments(Number(e.target.value))}
                   inputProps={{
-                    sx: { textAlign: 'right'}
+                    sx: { textAlign: 'right'},
+                    min: 1
                   }}
                 />
               </FormControl>
@@ -202,57 +219,59 @@ const SaleInstalmentEditDialog = (props: IProps) => {
             </Grid>
             <Grid item xs={12} md={8} paddingLeft={6}>
               <Typography variant='h5' mb={3} ml={3}>{t('instalments')}</Typography>
-              {instalmentFields.map((instalment, index) => (
-                <Grid container spacing={3} mb={3} key={uuid()}>
-                  <Grid item>
-                    <Typography variant='h5'>{instalment.number}</Typography>
-                  </Grid>
-                  <Grid item xs>
-                    <FormControl fullWidth>
-                      <Controller
-                        name={`instalments.${index}.expires_at`}
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                          <DatePicker
-                            label={t('expires_at')}
-                            value={value}
-                            format='DD-MM-YYYY'
-                            onChange={(newValue) => onChange(newValue)}
-                            slotProps={{ textField: { size: 'small' } }}
-                          />
-                        )}
-                      />
-                      {errors.instalments?.[index]?.expires_at && <FormHelperText sx={{ color: 'error.main' }}>{errors.instalments?.[index]?.expires_at?.message}</FormHelperText>}
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs>
-                    <FormControl fullWidth>
-                      <Controller
-                        name={`instalments.${index}.amount`}
-                        control={control}
-                        render={({ field: { value, onChange } }) => (
-                        <TextField
-                          value={value}
-                          key={value}
-                          type='number'
-                          label={t('amount')}
-                          size='small'
-                          onChange={onChange}
-                          error={Boolean(errors.instalments?.[index]?.amount)}
-                          inputProps={{
-                            sx: { textAlign: 'right'}
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position='end'>{currency?.abbreviation}</InputAdornment>
-                          }}
+              {instalmentFields.map((instalment, index) => {
+                if (instalment.number === 0) return;
+                return (
+                  <Grid container spacing={3} mb={3} key={instalment.key}>
+                    <Grid item>
+                      <Typography variant='h5'>{instalment.number}</Typography>
+                    </Grid>
+                    <Grid item xs>
+                      <FormControl fullWidth>
+                        <Controller
+                          name={`instalments.${index}.expires_at`}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <DatePicker
+                              label={t('expires_at')}
+                              value={value}
+                              format='DD-MM-YYYY'
+                              onChange={(newValue) => onChange(newValue)}
+                              slotProps={{ textField: { size: 'small' } }}
+                            />
+                          )}
                         />
-                        )}
-                      />
-                      {errors.instalments?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.instalments?.[index]?.amount?.message}</FormHelperText>}
-                    </FormControl>
+                        {errors.instalments?.[index]?.expires_at && <FormHelperText sx={{ color: 'error.main' }}>{errors.instalments?.[index]?.expires_at?.message}</FormHelperText>}
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs>
+                      <FormControl fullWidth>
+                        <Controller
+                          name={`instalments.${index}.amount`}
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                          <TextField
+                            value={value}
+                            key={value}
+                            type='number'
+                            label={t('amount')}
+                            size='small'
+                            onChange={onChange}
+                            error={Boolean(errors.instalments?.[index]?.amount)}
+                            inputProps={{
+                              sx: { textAlign: 'right'}
+                            }}
+                            InputProps={{
+                              endAdornment: <InputAdornment position='end'>{currency?.abbreviation}</InputAdornment>
+                            }}
+                          />
+                          )}
+                        />
+                        {errors.instalments?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.instalments?.[index]?.amount?.message}</FormHelperText>}
+                      </FormControl>
+                    </Grid>
                   </Grid>
-                </Grid>
-              ))}
+              );})}
             </Grid>
           </Grid>
         </DialogContent>

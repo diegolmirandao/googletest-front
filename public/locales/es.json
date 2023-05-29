@@ -9,6 +9,7 @@
     "users": "Usuarios",
     "sales": "Ventas",
     "accounts_receivable": "Cuentas a cobrar",
+    "customer_payments": "Pagos de clientes",
     "customers": "Clientes",
     "products": "Productos",
     "configuration": "Configuración",
@@ -42,6 +43,7 @@
     "parameters": "Parámetros",
     "value": "Valor",
     "info": "Información",
+    "information": "Información",
     "number": "Número",
     "date": "Fecha",
 
@@ -165,6 +167,7 @@
     "paid": "Pagado",
     "balance": "Saldo",
     "generate_payment": "Generar Pago",
+    "payment_method": "Generar Pago",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",
@@ -368,6 +371,8 @@
     "payment_modified_successfully": "Pago modificado correctamente",
     "payment_deleted_successfully": "Pago eliminado correctamente",
     "no_payment_selected": "No se ha seleccionado ningún pago",
+    "add_payments": "Agregar pagos",
+    "edit_payments": "Editar pagos",
     "add_payment": "Agregar pago",
     "edit_payment": "Editar pago",
     "payment_data": "Datos del pago",

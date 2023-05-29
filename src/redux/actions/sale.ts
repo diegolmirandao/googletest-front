@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import axios from 'src/config/axios';
 import { RootState } from '..';
 import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
-import { IAddSale } from 'src/interfaces/sale/add';
+import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
 import { IListQueryParam } from 'src/interfaces/listQueryParam';
 import { IUpdateSale } from 'src/interfaces/sale/update';
 import { IAddSaleProduct } from 'src/interfaces/sale/addProduct';
@@ -37,7 +37,7 @@ export const getSalesAction = createAsyncThunk(
 
 export const addSaleAction = createAsyncThunk(
     'sale/add',
-    async (addData: IAddSale, {rejectWithValue}) => {
+    async (addData: IAddUpdateSale, {rejectWithValue}) => {
         try {
             const {data: saleResponse}: AxiosResponse<ISale> = await axios.post('/sales', addData);
 
@@ -50,7 +50,7 @@ export const addSaleAction = createAsyncThunk(
 
 export const updateSaleAction = createAsyncThunk(
     'sale/update',
-    async (updateData: IUpdateSale, {getState, rejectWithValue}) => {
+    async (updateData: IAddUpdateSale, {getState, rejectWithValue}) => {
         try {
             const { saleReducer: { currentSale } } = getState() as RootState;
             const {data: saleResponse}: AxiosResponse<ISale> = await axios.put(`/sales/${currentSale?.id}`, updateData);

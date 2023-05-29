@@ -3,7 +3,7 @@ import { SyntheticEvent, forwardRef, useEffect, useState } from 'react';
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddSale } from 'src/interfaces/sale/add';
+import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
 import { formatMoney } from 'src/utils/format';
 import { MProductDetail } from 'src/models/product/detail';
 import { MProductDetailPrice } from 'src/models/product/detailPrice';
@@ -36,6 +36,8 @@ import { useForm, Controller, useFieldArray, ControllerRenderProps } from 'react
 import SaleInstalmentEditDialog from './InstalmentsEditDialog';
 import { t } from 'i18next';
 import { setDataGridLocale } from 'src/utils/common';
+import SalePaymentsAddEditDialog from './PaymentsEditDialog';
+import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
 
 /**
  * Component props
@@ -43,7 +45,7 @@ import { setDataGridLocale } from 'src/utils/common';
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddSale) => void;
+  onSubmit: (formFields: IAddUpdateSale) => void;
   onClose: () => void;
 }
 
@@ -57,16 +59,6 @@ type AddSaleProductType = {
   productDetailPrice: MProductDetailPrice;
   quantity: number;
   discount: number;
-};
-
-/**
- * Sale financing information
- */
-type AddSaleFinancingType = {
-  amountOfInstalments: number;
-  expirationInterval: string;
-  firstInstalmentExpiresAt: Date | Dayjs | null;
-  downPayment: number;
 };
 
 /**
@@ -134,40 +126,65 @@ const PercentageFormat = forwardRef<NumericFormatProps, CustomProps>(
  * @param props component parameters
  * @returns Sale Edit Dialog component
  */
-const SaleAddDialog = (props: IProps) => {
+const SaleAddEditDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
-  const { customerReducer: { customers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
+  const { saleReducer: { currentSale }, customerReducer: { customers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
   // ** Vars
+  const [mountedProducts, setMountedProducts] = useState<boolean>(false);
+  const [mountedPaymentTerm, setMountedPaymentTerm] = useState<boolean>(false);
   const [selectedProductCode, setSelectedProductCode] = useState<string>('');
   const [selectedProductByDescription, setSelectedProductByDescription] = useState<MProductDetail | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<AddSaleProductType[]>([]);
   const [saleTotals, setSaleTotals] = useState<AddSaleTotalsType>({currency: currencies[0], subtotal: 0, discount: 0, total: 0});
-  const [saleFinancingInformation, setSaleFinancingInformation] = useState<AddSaleFinancingType>({amountOfInstalments: 1, expirationInterval: 'monthly', firstInstalmentExpiresAt: dayjs().add(1, 'month'), downPayment: 0});
   const [showPaymentsButton, setShowPaymentsButton] = useState<boolean>(true);
   const [showExpiresAtField, setShowExpiresAtField] = useState<boolean>(false);
   const [showInstalmentsButton, setShowInstalmentsButton] = useState<boolean>(false);
-  const [openPaymentEditDialog, setOpenPaymentEditDialog] = useState<boolean>(false);
   const [openInstalmentsEditDialog, setOpenInstalmentsEditDialog] = useState<boolean>(false);
+  const [openPaymentsEditDialog, setOpenPaymentsEditDialog] = useState<boolean>(false);
 
   const pointsOfSale = establishments.map(establishment => establishment.pointsOfSale).flat();
 
-  const defaultValues: IAddSale = {
-    customer_id: 1,
-    currency_id: 1,
-    establishment_id: 1,
-    point_of_sale_id: 1,
-    warehouse_id: 1,
-    seller_id: 1,
-    document_type_id: 1,
-    payment_term_id: 1,
-    billed_at: dayjs(),
-    expires_at: null,
-    comments: '',
-    products: [],
-    payments: [],
-    instalments: []
+  const defaultValues: IAddUpdateSale = {
+    customer_id: currentSale?.customerId ?? 1,
+    currency_id:currentSale?.currencyId ?? 1,
+    establishment_id: currentSale?.establishment.id ?? 1,
+    point_of_sale_id: currentSale?.pointOfSaleId ?? 1,
+    warehouse_id: currentSale?.warehouseId ?? 1,
+    seller_id: currentSale?.sellerId ?? 1,
+    document_type_id: currentSale?.documentTypeId ?? 1,
+    payment_term_id: currentSale?.paymentTermId ?? 1,
+    billed_at: dayjs(currentSale?.billedAt) ?? dayjs(),
+    expires_at: currentSale?.expiresAt ? dayjs(currentSale?.expiresAt) : null,
+    comments: currentSale?.comments ?? '',
+    products: currentSale?.products.map(product => ({
+      id: product.id,
+      product_detail_price_id: product.price.id,
+      measurement_unit_id: product.measurementUnitId,
+      quantity: product.quantity,
+      discount: product.discount,
+      code: product.code,
+      name: product.name,
+      taxed: product.taxed,
+      tax: product.tax,
+      percentage_taxed: product.productDetail.product.percentageTaxed
+
+    })) ?? [],
+    payments: currentSale?.payments.map(payment => ({
+      id: payment.id,
+      currency_id: payment.currencyId,
+      payment_method_id: payment.paymentMethodId,
+      paid_at: dayjs(payment.paidAt),
+      amount: payment.amount,
+      comments: payment.comments
+    })) ?? [],
+    instalments: currentSale?.instalments.map(instalment => ({
+      id: instalment.id,
+      number: instalment.number,
+      expires_at: dayjs(instalment.expiresAt),
+      amount: instalment.amount
+    })) ?? []
   };
 
   /**
@@ -315,15 +332,17 @@ const SaleAddDialog = (props: IProps) => {
     getValues,
     watch,
     formState: { errors }
-  } = useForm<IAddSale>({
+  } = useForm<IAddUpdateSale>({
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
   });
 
+  let watchBilledAt = watch('billed_at');
   let watchCurrency = watch('currency_id');
   let watchEstablishment = watch('establishment_id');
   let watchPaymentTerm = watch('payment_term_id');
+  let watchPayments = watch('payments');
   let watchInstalments = watch('instalments');
 
   const {
@@ -333,7 +352,8 @@ const SaleAddDialog = (props: IProps) => {
     remove: productRemove
   } = useFieldArray({
     control,
-    name: "products"
+    name: "products",
+    keyName: "key"
   });
 
   const {
@@ -344,7 +364,8 @@ const SaleAddDialog = (props: IProps) => {
     remove: paymentRemove
   } = useFieldArray({
     control,
-    name: "payments"
+    name: "payments",
+    keyName: "key"
   });
 
   const {
@@ -352,7 +373,8 @@ const SaleAddDialog = (props: IProps) => {
     remove: instalmentRemove
   } = useFieldArray({
     control,
-    name: "instalments"
+    name: "instalments",
+    keyName: "key"
   });
 
   useEffect(() => {
@@ -374,6 +396,27 @@ const SaleAddDialog = (props: IProps) => {
       setShowPaymentsButton(true);
       setShowExpiresAtField(false);
       setShowInstalmentsButton(false);
+    }
+    if (mountedPaymentTerm) {
+      if(watchPaymentTerm !== 1) {
+        instalmentReplace([{
+          number: 1,
+          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
+          amount: saleTotals.total
+        }]);
+        paymentRemove();
+      } else {
+        paymentReplace([{
+          payment_method_id: 1,
+          currency_id: watchCurrency,
+          paid_at: dayjs(getValues('billed_at')),
+          amount: saleTotals.total,
+          comments: null
+        }]);
+        instalmentRemove();
+      }
+    } else {
+      setMountedPaymentTerm(true);
     }
   }, [watchPaymentTerm]);
 
@@ -410,26 +453,44 @@ const SaleAddDialog = (props: IProps) => {
     });
     setSelectedProducts(selectedProducts);
     setSaleTotals(saleTotals);
-
-    if (watchPaymentTerm === 1) {
-      paymentReplace([{
-        payment_method_id: 1,
-        currency_id: watchCurrency,
-        paid_at: dayjs(getValues('billed_at')),
-        amount: saleTotals.total,
-        comments: null
-      }]);
-      instalmentRemove();
+    console.log('hola')
+    if (mountedProducts) {
+      if(watchPaymentTerm !== 1) {
+        instalmentReplace([{
+          number: 1,
+          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
+          amount: saleTotals.total
+        }]);
+        paymentRemove();
+      } else {
+        paymentReplace([{
+          payment_method_id: 1,
+          currency_id: watchCurrency,
+          paid_at: dayjs(getValues('billed_at')),
+          amount: saleTotals.total,
+          comments: null
+        }]);
+        instalmentRemove();
+      }
     } else {
-      paymentRemove();
+      setMountedProducts(true);
     }
+  };
+
+  /**
+   * Payments add edit event submit handler
+   * @param formFields form fields submitted by user
+   */
+  const handlePaymentsEditSubmit = (payments: IAddUpdateSalePayment[]) => {
+    paymentReplace(payments);
+    setOpenPaymentsEditDialog(false);
   };
 
   /**
    * Instalment add edit event submit handler
    * @param formFields form fields submitted by user
    */
-  const handleInstalmentEditSubmit = async (instalments: IUpdateSaleInstalment[]) => {
+  const handleInstalmentsEditSubmit = (instalments: IUpdateSaleInstalment[]) => {
     instalmentReplace(instalments);
     setOpenInstalmentsEditDialog(false);
   };
@@ -444,6 +505,7 @@ const SaleAddDialog = (props: IProps) => {
     if (index == -1) {
       const product = selectedProductByDescription!;
       productAppend({
+        id: null,
         product_detail_price_id: productDetailPriceId,
         measurement_unit_id: product.product.measurementUnitId,
         quantity: 1,
@@ -457,6 +519,7 @@ const SaleAddDialog = (props: IProps) => {
     } else {
       const product = productFields[index];
       productUpdate(index, {
+        id: product.id,
         product_detail_price_id: productDetailPriceId,
         measurement_unit_id: product.measurement_unit_id,
         quantity: product.quantity + 1,
@@ -488,6 +551,7 @@ const SaleAddDialog = (props: IProps) => {
     if (index == -1) {
       const product = selectedProductDetail;
       productAppend({
+        id: null,
         product_detail_price_id: productDetailPriceId,
         measurement_unit_id: product.product.measurementUnitId,
         quantity: 1,
@@ -501,6 +565,7 @@ const SaleAddDialog = (props: IProps) => {
     } else {
       const product = productFields[index];
       productUpdate(index, {
+        id: product.id,
         product_detail_price_id: productDetailPriceId,
         measurement_unit_id: product.measurement_unit_id,
         quantity: product.quantity + 1,
@@ -523,6 +588,7 @@ const SaleAddDialog = (props: IProps) => {
   const handleProductPriceChange = (index: number, detailPriceId: number) => {
     const product = productFields[index];
     productUpdate(index, {
+      id: product.id,
       product_detail_price_id: detailPriceId,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
@@ -543,6 +609,7 @@ const SaleAddDialog = (props: IProps) => {
   const handleProductQuantityChange = (index: number, quantity: number) => {
     const product = productFields[index];
     productUpdate(index, {
+      id: product.id,
       product_detail_price_id: product.product_detail_price_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: quantity,
@@ -563,6 +630,7 @@ const SaleAddDialog = (props: IProps) => {
   const handleProductDiscountChange = (index: number, discount: number) => {
     const product = productFields[index];
     productUpdate(index, {
+      id: product.id,
       product_detail_price_id: product.product_detail_price_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
@@ -584,6 +652,7 @@ const SaleAddDialog = (props: IProps) => {
     const product = productFields[index];
     const price = productDetails.find(productDetail => !productDetail.prices.find(productDetailPrice => productDetailPrice.id == product.product_detail_price_id))!.prices.find(productDetailPrice => productDetailPrice.id == product.product_detail_price_id)!.amount;
     productUpdate(index, {
+      id: product.id,
       product_detail_price_id: product.product_detail_price_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
@@ -601,9 +670,16 @@ const SaleAddDialog = (props: IProps) => {
    */
 
   /**
+   * Payments add edit dialog close handler
+   */
+  const handlePaymentsEditDialogClose = () => {
+    setOpenPaymentsEditDialog(false);
+  };
+
+  /**
    * Instalment add edit dialog close handler
    */
-  const handleInstalmentEditDialogClose = () => {
+  const handleInstalmentsEditDialogClose = () => {
     setOpenInstalmentsEditDialog(false);
   };
 
@@ -762,7 +838,7 @@ const SaleAddDialog = (props: IProps) => {
 
                           {showPaymentsButton &&
                             <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                              <Button variant='outlined' color='primary' size='small' onClick={() => setOpenPaymentEditDialog(true)}>
+                              <Button variant='outlined' color='primary' size='small' onClick={() => setOpenPaymentsEditDialog(true)}>
                                 <CashMultipleIcon /> {t('payments')}
                               </Button>
                             </Grid>
@@ -965,18 +1041,28 @@ const SaleAddDialog = (props: IProps) => {
         </DialogContent>
       </Dialog>
 
+      {openPaymentsEditDialog &&
+        <SalePaymentsAddEditDialog
+          open={openPaymentsEditDialog}
+          selectedPayments={watchPayments}
+          onSubmit={handlePaymentsEditSubmit}
+          onClose={handlePaymentsEditDialogClose}
+        />
+      }
+
       {openInstalmentsEditDialog &&
         <SaleInstalmentEditDialog
           open={openInstalmentsEditDialog}
+          date={watchBilledAt}
           selectedInstalments={watchInstalments}
           currency={currencies.find((currency) => currency.id === watchCurrency)}
           totalAmount={saleTotals.total}
-          onSubmit={handleInstalmentEditSubmit}
-          onClose={handleInstalmentEditDialogClose}
+          onSubmit={handleInstalmentsEditSubmit}
+          onClose={handleInstalmentsEditDialogClose}
         />
       }
     </>
   );
 };
 
-export default SaleAddDialog;
+export default SaleAddEditDialog;

@@ -137,7 +137,7 @@ const SalePaymentAddEditDialog = (props: IProps) => {
                   getOptionLabel={option => option.name}
                   onChange={(event, newValue) => {onChange(newValue.id)}}
                   value={currencies.find(currency => currency.id == value)!}
-                  renderInput={params => <TextField {...params} label='Moneda' />}
+                  renderInput={params => <TextField {...params} label={t('currency')} />}
                 />
               )}
             />
@@ -156,7 +156,7 @@ const SalePaymentAddEditDialog = (props: IProps) => {
                   getOptionLabel={option => option.name}
                   onChange={(event, newValue) => {onChange(newValue.id)}}
                   value={paymentMethods.find(paymentMethod => paymentMethod.id == value)!}
-                  renderInput={params => <TextField {...params} label='Método de pago' />}
+                  renderInput={params => <TextField {...params} label={t('payment_method')} />}
                 />
               )}
             />
@@ -171,7 +171,7 @@ const SalePaymentAddEditDialog = (props: IProps) => {
               <TextField
                 type='number'
                 value={value}
-                label='Monto'
+                label={t('amount')}
                 onChange={onChange}
                 error={Boolean(errors.amount)}
                 inputProps={{
@@ -195,7 +195,7 @@ const SalePaymentAddEditDialog = (props: IProps) => {
                 value={value}
                 multiline
                 rows={3}
-                label='Comentarios'
+                label={t('comments')}
                 onChange={onChange}
                 error={Boolean(errors.comments)}
               />

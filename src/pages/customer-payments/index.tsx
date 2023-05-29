@@ -4,13 +4,13 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
-import { addSaleAction, addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, getSalesAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
+import { getAccountsAction, getCustomerPaymentsAction } from "src/redux/actions/customerPayment";
+import { addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
 import { setCurrentSale, setFilteredCursor, resetFilteredSales, setCurrentSaleProduct, setCurrentSalePayment } from 'src/redux/reducers/sale';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
 import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IAddUpdateSale } from "src/interfaces/sale/addUpdate";
 import { IUpdateSale } from 'src/interfaces/sale/update';
 import { ISale } from 'src/interfaces/sale/sale';
 import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
@@ -18,7 +18,6 @@ import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
 import FilterQueryType from "src/types/FilterQueryType";
 import SortQueryType from "src/types/SortQueryType";
 import { ITableState } from "src/interfaces/tableState";
-import { MSaleProduct } from "src/models/sale/product";
 import { MSalePayment } from "src/models/sale/payment";
 import { IAddUpdateSalePayment } from "src/interfaces/sale/addUpdatePayment";
 
@@ -37,23 +36,23 @@ import useRequestParam from "src/hooks/useRequestParams";
 // ** Custom components Imports
 import TableHeader from 'src/components/table/TableHeader';
 import TableFilter from 'src/components/table/TableFilter';
-import SaleAddEditDialog from './components/AddEditDialog';
-import SaleDetailDialog from './components/DetailDialog';
+// import SaleEditDialog from './components/EditDialog';
+import SaleDetailDialog from '../sales/components/DetailDialog';
 import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
 import useTableState from "src/hooks/useTableState";
-import SalePaymentAddEditDialog from "./components/PaymentAddEditDialog";
-import { getProductDetailsAction } from "src/redux/actions/product";
+import SalePaymentAddEditDialog from "../sales/components/PaymentAddEditDialog";
+import { ISalePayment } from "src/interfaces/sale/payment";
 
 /**
  * Export columns definition
  */
 const exportColumns: ITableExportColumn[] = [
   {
-    field: 'billed_at',
-    text: 'billed_at'
+    field: 'paid_at',
+    text: 'paid_at'
   },
   {
     field: 'identification_document',
@@ -76,40 +75,12 @@ const exportColumns: ITableExportColumn[] = [
     text: 'address'
   },
   {
-    field: 'business',
-    text: 'business'
+    field: 'currency',
+    text: 'currency'
   },
   {
-    field: 'establishment',
-    text: 'establishment'
-  },
-  {
-    field: 'point_of_sale',
-    text: 'point_of_sale'
-  },
-  {
-    field: 'warehouse',
-    text: 'warehouse'
-  },
-  {
-    field: 'payment_term',
-    text: 'payment_term'
-  },
-  {
-    field: 'document_type',
-    text: 'document_type'
-  },
-  {
-    field: 'expires_at',
-    text: 'expires_at'
-  },
-  {
-    field: 'paid_at',
-    text: 'paid_at'
-  },
-  {
-    field: 'seller',
-    text: 'seller'
+    field: 'method',
+    text: 'method'
   },
   {
     field: 'created_at',
@@ -122,18 +93,16 @@ const exportColumns: ITableExportColumn[] = [
 ];
 
 /**
- * Sale section index page
- * @returns Sale page component
+ * Account receivable section index page
+ * @returns Account receivable page component
  */
-const Sale = () => {
+const CustomerPayment = () => {
   const dispatch = useAppDispatch();
-  const ability = useContext(AbilityContext);
-  const requestParams = useRequestParam('sales');
-  const [tableState, setTableState] = useTableState('sales');
-  const [salesTableState, setSalesTableState] = useState<ITableState>(tableState);
+  const [tableState, setTableState] = useTableState('accounts-receivable');
+  const [customerPaymentsTableState, setCustomerPaymentsTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { saleReducer: { sales, currentSale, currentSaleProduct, currentSalePayment, cursor, filteredCursor, filteredSales }, userReducer: { users }, documentTypeReducer: { documentTypes }, paymentTermReducer: { paymentTerms }, warehouseReducer: { warehouses }, businessReducer: { businesses }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
+  const { customerPaymentReducer: { payments, filteredPayments, cursor, filteredCursor }, saleReducer: { currentSale, currentSalePayment }, userReducer: { users }, documentTypeReducer: { documentTypes }, currencyReducer: { currencies }, warehouseReducer: { warehouses }, paymentMethodReducer: { paymentMethods }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
 
   // ** Vars
 
@@ -144,7 +113,7 @@ const Sale = () => {
     {
       flex: 0.25,
       minWidth: 200,
-      field: 'billedAt',
+      field: 'paidAt',
       headerName: String(t('date')),
       valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
     },
@@ -181,65 +150,16 @@ const Sale = () => {
     {
       flex: 0.25,
       minWidth: 200,
-      field: 'business',
-      headerName: String(t('business')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.establishment.name
+      field: 'currency',
+      headerName: String(t('currency')),
+      valueGetter: ({ row }: GridValueGetterParams) => row.currency.name
     },
     {
       flex: 0.25,
       minWidth: 200,
-      field: 'establishment',
-      headerName: String(t('establishment')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.establishment.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 200,
-      field: 'pointOfSale',
-      headerName: String(t('point_of_sale')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.pointOfSale.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 200,
-      field: 'warehouse',
-      headerName: String(t('warehouse')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.warehouse.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'paymentTerm',
-      headerName: String(t('payment_term')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.paymentTerm.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'documentType',
-      headerName: String(t('document_type')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.documentType.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'expiresAt',
-      headerName: String(t('expires_at')),
-      valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'paidAt',
-      headerName: String(t('paid_at')),
-      valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'seller',
-      headerName: String(t('seller')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.seller.name
+      field: 'method',
+      headerName: String(t('method')),
+      valueGetter: ({ row }: GridValueGetterParams) => row.method.name
     },
     {
       flex: 0.25,
@@ -273,22 +193,15 @@ const Sale = () => {
   /**
    * Datagrid default column visibility model
    */
-  const defaultColumnVisibility: GridColumnVisibilityModel = salesTableState.visibility ?? {
-    billedAt: true,
+  const defaultColumnVisibility: GridColumnVisibilityModel = customerPaymentsTableState.visibility ?? {
+    paidAt: true,
     identificationDocument: true,
     name: true,
     phone: false,
     email: false,
     address: false,
-    business: false,
-    establishment: true,
-    pointOfSale: false,
-    warehouse: false,
-    paymentTerm: true,
-    documentType: false,
-    expiresAt: false,
-    paidAt: false,
-    seller: false,
+    currency: false,
+    method: false,
     amount: true,
     comments: false,
     createdAt: false,
@@ -300,7 +213,7 @@ const Sale = () => {
   */
   const filtersFields: ITableFilter[] = [
     {
-      field: 'billed_at',
+      field: 'paid_at',
       text: String(t('date')),
       type: 'date'
     },
@@ -330,82 +243,27 @@ const Sale = () => {
       type: 'string'
     },
     {
-      field: 'business',
-      text: String(t('business')),
+      field: 'currency',
+      text: String(t('currency')),
       type: 'select',
-      options: businesses.map((business) => ({
-        value: business.id,
-        text: business.name
+      options: currencies.map((currency) => ({
+        value: currency.id,
+        text: currency.name
       }))
     },
     {
-      field: 'establishment',
-      text: String(t('establishment')),
+      field: 'method',
+      text: String(t('method')),
       type: 'select',
-      options: establishments.map((establishment) => ({
-        value: establishment.id,
-        text: establishment.name
+      options: paymentMethods.map((method) => ({
+        value: method.id,
+        text: method.name
       }))
-    },
-    // {
-    //   field: 'point_of_sale',
-    //   text: String(t('point_of_sale')),
-    //   type: 'string',
-    //   options: pointsOfSale.map((warehouse) => ({
-    //     value: warehouse.id,
-    //     text: warehouse.name
-    //   }))
-    // },
-    {
-      field: 'warehouse',
-      text: String(t('warehouse')),
-      type: 'select',
-      options: warehouses.map((warehouse) => ({
-        value: warehouse.id,
-        text: warehouse.name
-      }))
-    },
-    {
-      field: 'payment_term',
-      text: String(t('payment_term')),
-      type: 'select',
-      options: paymentTerms.map((paymentTerm) => ({
-        value: paymentTerm.id,
-        text: paymentTerm.name
-      }))
-    },
-    {
-      field: 'document_type',
-      text: String(t('document_type')),
-      type: 'select',
-      options: documentTypes.map((documentType) => ({
-        value: documentType.id,
-        text: documentType.name
-      }))
-    },
-    {
-      field: 'expires_at',
-      text: String(t('expires_at')),
-      type: 'date'
-    },
-    {
-      field: 'paid_at',
-      text: String(t('paid_at')),
-      type: 'date'
     },
     {
       field: 'amount',
       text: String(t('amount')),
       type: 'numeric'
-    },
-    {
-      field: 'seller',
-      text: String(t('seller')),
-      type: 'string',
-      options: users.map((user) => ({
-        value: user.id,
-        text: user.name
-      }))
     },
     {
       field: 'created_at',
@@ -420,36 +278,31 @@ const Sale = () => {
   ];
 
   // ** DataGrid Vars
-  const [pageSize, setPageSize] = useState<number>(requestParams.pageSize ?? 100);
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(salesTableState.filters);
-  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(salesTableState.sorts);
+  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(customerPaymentsTableState.filters);
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(customerPaymentsTableState.sorts);
   const [visibilityModel, setVisibilityModel] = useState<GridColumnVisibilityModel>(defaultColumnVisibility);
-  const [exportData, setExportData] = useState<ITableExport | undefined>(salesTableState.export);
+  const [exportData, setExportData] = useState<ITableExport | undefined>(customerPaymentsTableState.export);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
   const [openTableColumnVisibilityDialog, setOpenTableColumnVisibilityDialog] = useState<boolean>(false);
   const [openDetailDialog, setOpenDetailDialog] = useState<boolean>(false);
-  const [openAddEditDialog, setOpenAddEditDialog] = useState<boolean>(false);
+  const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
   const [openPaymentAddEditDialog, setOpenPaymentAddEditDialog] = useState<boolean>(false);
   const [openPaymentDeleteDialog, setOpenPaymentDeleteDialog] = useState<boolean>(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
   // ** Loading flags
   const [exportLoading, setExportLoading] = useState<boolean>(false);
-  const [addEditLoading, setAddEditLoading] = useState<boolean>(false);
+  const [editLoading, setEditLoading] = useState<boolean>(false);
   const [paymentAddEditLoading, setPaymentAddEditLoading] = useState<boolean>(false);
   const [paymentDeleteLoading, setPaymentDeleteLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getProductDetails();
-  }, []);
-
-  useEffect(() => {
-    if (!sales.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
-      getSales();
+    if (!payments.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
+      getPayments();
     } else {
       dispatch(setFilteredCursor(null));
       dispatch(resetFilteredSales());
@@ -457,7 +310,7 @@ const Sale = () => {
   }, [filters, sortModel]);
 
   useEffect(() => {
-    setSalesTableState({
+    setCustomerPaymentsTableState({
       columns: undefined,
       filters: filters,
       sorts: sortModel,
@@ -467,18 +320,18 @@ const Sale = () => {
   }, [filters, sortModel, visibilityModel, exportData]);
 
   useEffect(() => {
-    setTableState('sales', salesTableState);
-  }, [salesTableState]);
+    setTableState('customer-payments', customerPaymentsTableState);
+  }, [customerPaymentsTableState]);
 
   /**
-   * Get a list of sales filtered, sorted and paginated
+   * Get a list of accounts filtered, sorted and paginated
    */
-  const getSales = async () => {
+  const getPayments = async () => {
     setTableLoading(true);
     const appliedFilters: FilterQueryType | null = generateFilterQueryParams(filters);
     const appliedSortings: SortQueryType | null = generateSortQueryParams(sortModel) ?? generateSortQueryParams([{field: 'created_at', sort: 'desc'}]);
     try {
-      const saleResponse: IResponseCursorPagination<ISale> = await dispatch(getSalesAction({
+      const customerPaymentResponse: IResponseCursorPagination<ISalePayment> = await dispatch(getCustomerPaymentsAction({
         filters: appliedFilters,
         sorts: appliedSortings
       })).then(unwrapResult);
@@ -487,13 +340,6 @@ const Sale = () => {
       displayErrors(error);
     }
     setTableLoading(false);
-  };
-
-  /**
-   * Get the list of all products
-   */
-  const getProductDetails = async () => {
-    await dispatch(getProductDetailsAction({}));
   };
 
   /**
@@ -533,7 +379,7 @@ const Sale = () => {
    */
   const handleRowsScrollEnd = (params: GridRowScrollEndParams, event: MuiEvent<{}>, details: GridCallbackDetails) => {
     if (cursor || filteredCursor) {
-      getSales();
+      getPayments();
     }
   }
 
@@ -607,28 +453,20 @@ const Sale = () => {
    */
 
   /**
-   * Form add submit handler
+   * Form edit submit handler
    * @param formFields form fields submitted by user
    */
-  const handleAddEditSubmit = async (formFields: IAddUpdateSale) => {
-    setAddEditLoading(true);
-    console.log(formFields)
+  const handleEditSubmit = async (formFields: IUpdateSale) => {
+    setEditLoading(true);
     try {
-      if (currentSale) {
-        await dispatch(updateSaleAction(formFields)).then(unwrapResult);
-        setOpenAddEditDialog(false);
-        toast.success(t('sale_modified_successfully'));
-      } else {
-        await dispatch(addSaleAction(formFields)).then(unwrapResult);
-        setOpenAddEditDialog(false);
-        setOpenDetailDialog(true);
-        toast.success(t('sale_added_successfully'));
-      }
+      await dispatch(updateSaleAction(formFields)).then(unwrapResult);
+      setOpenEditDialog(false);
+      toast.success(t('sale_modified_successfully'));
     } catch (error) {
-      console.error('ADD SALE ERROR: ', error);
+      console.error('EDIT SALE ERROR: ', error);
       displayErrors(error);
     }
-    setAddEditLoading(false);
+    setEditLoading(false);
   }
 
   /**
@@ -710,15 +548,15 @@ const Sale = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader
-            onAddClick={() => setOpenAddEditDialog(true)}
+            onAddClick={() => {}}
             onExportClick={() => setOpenTableExportDialog(true)}
             onColumnsClick={() => setOpenTableColumnVisibilityDialog(true)}
-            canAdd={ability.can('create', 'sale')}
+            canAdd={false}
           />
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
               columns={columns} 
-              rows={filteredSales ?? sales} 
+              rows={filteredPayments ?? payments} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
               onRowClick={handleRowClick}
@@ -738,25 +576,6 @@ const Sale = () => {
         </Card>
       </Grid>
 
-      {openDetailDialog &&
-        <SaleDetailDialog
-          open={openDetailDialog}
-          onEditClick={() => setOpenAddEditDialog(true)}
-          onPaymentAddClick={() => setOpenPaymentAddEditDialog(true)}
-          onPaymentEditClick={handlePaymentEditClick}
-          onPaymentDeleteClick={handlePaymentDeleteClick}
-          onDeleteClick={() => setOpenDeleteDialog(true)}
-          onClose={handleDetailsDialogClose}
-        />
-      }
-      {openAddEditDialog &&
-        <SaleAddEditDialog
-          open={openAddEditDialog}
-          loading={addEditLoading}
-          onSubmit={handleAddEditSubmit}
-          onClose={() => setOpenAddEditDialog(false)}
-        />
-      }
       {openPaymentAddEditDialog &&
         <SalePaymentAddEditDialog
           open={openPaymentAddEditDialog}
@@ -804,9 +623,9 @@ const Sale = () => {
   )
 };
 
-Sale.acl = {
+CustomerPayment.acl = {
   action: 'view',
-  subject: 'sale'
+  subject: 'sale_payment'
 } as ACLObj;
 
-export default Page(Sale);
+export default Page(CustomerPayment);

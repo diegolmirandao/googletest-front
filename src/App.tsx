@@ -20,6 +20,7 @@ import Business from "./pages/businesses";
 import Establishment from "./pages/establishments";
 import Sale from "./pages/sales";
 import AccountReceivable from "./pages/accounts-receivable";
+import CustomerPayment from "./pages/customer-payments";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
       <Route path="/login" element={ <Login/> } />
       <Route path="/sales" element={ <Sale/> } />
       <Route path="/accounts-receivable" element={ <AccountReceivable/> } />
+      <Route path="/customer-payments" element={ <CustomerPayment/> } />
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/products" element={ <Product/> } />
       <Route path="/users" element={ <User/> } />

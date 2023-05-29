@@ -2,6 +2,7 @@
 import HomeOutline from 'mdi-material-ui/HomeOutline';
 import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
 import FileAccountOutlineIcon from 'mdi-material-ui/FileAccountOutline';
+import AccountCashOutlineIcon from 'mdi-material-ui/AccountCashOutline';
 import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
 import WarehouseIcon from 'mdi-material-ui/Warehouse';
 import AccountIcon from 'mdi-material-ui/Account';
@@ -33,6 +34,13 @@ const navigation = (): VerticalNavItemsType => {
       path: '/accounts-receivable',
       action: 'view',
       subject: 'sale'
+    },
+    {
+      title: i18n.t('customer_payments'),
+      icon: AccountCashOutlineIcon,
+      path: '/customer-payments',
+      action: 'view',
+      subject: 'sale_payment'
     },
     {
       title: i18n.t('customers'),
