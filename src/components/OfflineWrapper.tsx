@@ -2,7 +2,8 @@ import { AxiosResponse } from "axios";
 import { useEffect, useCallback, useRef } from "react"
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import axios from "../config/axios";
-import { dequeue } from "../redux/reducers/offline";
+import { dequeue, setOnlineStatus } from "../redux/reducers/offline";
+import { resetSync } from "../redux/reducers/sync";
 import { toast } from "react-toastify";
 import { t } from "i18next";
 
@@ -72,7 +73,12 @@ const OfflineWrapper = ({ children }: IProps) => {
         }
     }
     const processQueueCallback = useCallback(() => {
+        dispatch(setOnlineStatus(true));
         processQueue();
+    }, []);
+    const offlineEventListenerCallback = useCallback(() => {
+        dispatch(resetSync());
+        dispatch(setOnlineStatus(false));
     }, []);
     
     useEffect(() => {
@@ -82,9 +88,11 @@ const OfflineWrapper = ({ children }: IProps) => {
         process();
 
         addEventListener('online', processQueueCallback);
+        addEventListener('offline', offlineEventListenerCallback);
 
         return () => {
             removeEventListener('online', processQueueCallback);
+            removeEventListener('offline', offlineEventListenerCallback);
         }
     }, [])
 

@@ -30,7 +30,7 @@ const NotificationWrapper = ({ children }: IProps) => {
         if (user) {
             createEchoInstance();
     
-            window.Echo.private('993c7a4f-4f26-40cb-9600-34b1edfd2e3b').listen('.broadcastEvent', async (notification: INotification) => {
+            window.Echo.private('993ff0d7-9192-4581-8a14-a896ab1878b5').listen('.broadcastEvent', async (notification: INotification) => {
                 console.log(notification)
                 let actionType = '';
 
@@ -56,7 +56,7 @@ const NotificationWrapper = ({ children }: IProps) => {
             });
         } else {
             if (echoInstanceCreated()) {
-                window.Echo.leaveChannel('993c7a4f-4f26-40cb-9600-34b1edfd2e3b');
+                window.Echo.leaveChannel('993ff0d7-9192-4581-8a14-a896ab1878b5');
             }
         }
     }, [user]);

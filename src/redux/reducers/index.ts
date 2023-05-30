@@ -3,7 +3,10 @@ import authSlice from './auth';
 import offline from './offline';
 import init from './init';
 import tenant from './tenant';
+import sync from './sync';
 import currencySlice from './currency';
+import businessSlice from './business';
+import establishmentSlice from './establishment';
 import warehouseSlice from './warehouse';
 import countrySlice from './country';
 
@@ -25,12 +28,23 @@ import brandSlice from './brand';
 import propertySlice from './property';
 import variantSlice from './variant';
 
+import paymentTermSlice from './paymentTerm';
+import paymentMethodSlice from './paymentMethod';
+import documentTypeSlice from './documentType';
+
+import saleSlice from './sale';
+import accountReceivableSlice from './accountReceivable';
+import customerPaymentSlice from './customerPayment';
+
 export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
     initReducer: init.reducer,
     tenantReducer: tenant.reducer,
+    syncReducer: sync.reducer,
     currencyReducer: currencySlice.reducer,
+    businessReducer: businessSlice.reducer,
+    establishmentReducer: establishmentSlice.reducer,
     warehouseReducer: warehouseSlice.reducer,
     countryReducer: countrySlice.reducer,
 
@@ -51,4 +65,12 @@ export default combineReducers({
     productCostTypeReducer: productCostTypeSlice.reducer,
     propertyReducer: propertySlice.reducer,
     variantReducer: variantSlice.reducer,
+
+    paymentTermReducer: paymentTermSlice.reducer,
+    paymentMethodReducer: paymentMethodSlice.reducer,
+    documentTypeReducer: documentTypeSlice.reducer,
+
+    saleReducer: saleSlice.reducer,
+    accountReceivableReducer: accountReceivableSlice.reducer,
+    customerPaymentReducer: customerPaymentSlice.reducer,
 });

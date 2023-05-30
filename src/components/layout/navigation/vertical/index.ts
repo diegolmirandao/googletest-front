@@ -1,5 +1,8 @@
 // ** Icon imports
 import HomeOutline from 'mdi-material-ui/HomeOutline';
+import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
+import FileAccountOutlineIcon from 'mdi-material-ui/FileAccountOutline';
+import AccountCashOutlineIcon from 'mdi-material-ui/AccountCashOutline';
 import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
 import WarehouseIcon from 'mdi-material-ui/Warehouse';
 import AccountIcon from 'mdi-material-ui/Account';
@@ -17,6 +20,27 @@ const navigation = (): VerticalNavItemsType => {
       path: '/',
       action: 'view',
       subject: 'home'
+    },
+    {
+      title: i18n.t('sales'),
+      icon: CashMultipleIcon,
+      path: '/sales',
+      action: 'view',
+      subject: 'sale'
+    },
+    {
+      title: i18n.t('accounts_receivable'),
+      icon: FileAccountOutlineIcon,
+      path: '/accounts-receivable',
+      action: 'view',
+      subject: 'sale'
+    },
+    {
+      title: i18n.t('customer_payments'),
+      icon: AccountCashOutlineIcon,
+      path: '/customer-payments',
+      action: 'view',
+      subject: 'sale_payment'
     },
     {
       title: i18n.t('customers'),
@@ -48,6 +72,18 @@ const navigation = (): VerticalNavItemsType => {
           path: '/configuration/currencies',
           action: 'view',
           subject: 'currency',
+        },
+        {
+          title: i18n.t('businesses'),
+          path: '/configuration/businesses',
+          action: 'view',
+          subject: 'business',
+        },
+        {
+          title: i18n.t('establishments'),
+          path: '/configuration/establishments',
+          action: 'view',
+          subject: 'establishment',
         },
         {
           title: i18n.t('warehouses'),

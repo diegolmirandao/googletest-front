@@ -127,7 +127,8 @@ const ProductEditDialog = (props: IProps) => {
     remove: propertyRemove
   } = useFieldArray({
     control,
-    name: "properties"
+    name: "properties",
+    keyName: "key"
   });
 
   const PropertyValueInput: React.FC<IPropertyValueInput> = ({property, field, index}) => {
@@ -458,7 +459,7 @@ const ProductEditDialog = (props: IProps) => {
                 <Typography variant='h6' sx={{ mb: 3, ml: 3}}>{t('properties')}</Typography>
 
                 {propertyFields.map((item, index) => (
-                  <Grid container spacing={3} sx={{ mb: 3}} key={uuid()}>
+                  <Grid container spacing={3} sx={{ mb: 3}} key={item.key}>
                     <Grid item xs={12} lg={5} sx={{ mb: 3}}>
                       <FormControl fullWidth size='small'>
                         <Controller

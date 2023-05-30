@@ -12,11 +12,13 @@ interface queue {
         id: string
         actionType: string
         requestConfig: RequestConfig
-    }[]
+    }[],
+    isOnline: boolean
 }
 
 const initialState: queue = {
-    queue: []
+    queue: [],
+    isOnline: true
 }
 
 const slice = createSlice({
@@ -31,10 +33,13 @@ const slice = createSlice({
         },
         dequeueAll(state) {
             state.queue = []
+        },
+        setOnlineStatus(state, action) {
+            state.isOnline = action.payload
         }
     }
 })
 
-export const { enqueue, dequeue, dequeueAll } = slice.actions
+export const { enqueue, dequeue, dequeueAll, setOnlineStatus } = slice.actions
 
 export default slice
