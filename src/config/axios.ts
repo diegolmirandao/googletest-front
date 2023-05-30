@@ -5,6 +5,6 @@ export default axios.create({
   baseURL: config.baseUrl,
   withCredentials: true,
   headers: {
-    'X-Tenant': '34601135-5969-4f09-8597-ec7af8eaabfc'
+    'X-Tenant': '03c995c4-82a1-41bb-8efd-a5dbcc0e26aa'
   }
 });

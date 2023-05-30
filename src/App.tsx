@@ -16,16 +16,26 @@ import Warehouse from "./pages/warehouses";
 import Variant from "./pages/variants";
 import ProductPriceType from "./pages/product-price-types";
 import ProductCostType from "./pages/product-cost-types";
+import Business from "./pages/businesses";
+import Establishment from "./pages/establishments";
+import Sale from "./pages/sales";
+import AccountReceivable from "./pages/accounts-receivable";
+import CustomerPayment from "./pages/customer-payments";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={ <Home/> } />
       <Route path="/login" element={ <Login/> } />
-      <Route path="/users" element={ <User/> } />
+      <Route path="/sales" element={ <Sale/> } />
+      <Route path="/accounts-receivable" element={ <AccountReceivable/> } />
+      <Route path="/customer-payments" element={ <CustomerPayment/> } />
       <Route path="/customers" element={ <Customer/> } />
       <Route path="/products" element={ <Product/> } />
+      <Route path="/users" element={ <User/> } />
       <Route path="/configuration/currencies" element={ <Currency/> } />
+      <Route path="/configuration/businesses" element={ <Business/> } />
+      <Route path="/configuration/establishments" element={ <Establishment/> } />
       <Route path="/configuration/warehouses" element={ <Warehouse/> } />
       <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
       <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />

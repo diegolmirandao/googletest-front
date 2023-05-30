@@ -25,6 +25,24 @@ const requestParamConfig: RequestParamConfig = {
         pageSize: 20,
         batchQty: 1000,
         requestQtyPerMinute: 5
+    },
+    sales: {
+        initialQty: 1000,
+        pageSize: 20,
+        batchQty: 1000,
+        requestQtyPerMinute: 5
+    },
+    accountsReceivable: {
+        initialQty: 1000,
+        pageSize: 20,
+        batchQty: 1000,
+        requestQtyPerMinute: 5
+    },
+    customerPayments: {
+        initialQty: 1000,
+        pageSize: 20,
+        batchQty: 1000,
+        requestQtyPerMinute: 5
     }
 }
 
