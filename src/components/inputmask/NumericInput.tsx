@@ -1,45 +1,42 @@
 import { TextField, InputAdornment, TextFieldProps } from "@mui/material";
 import { forwardRef } from "react";
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
-import { MCurrency } from "src/models/currency";
+import { NumberFormatBase, NumericFormatProps } from 'react-number-format';
+import { MMeasurementUnit } from "src/models/product/measurementUnit";
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
     name: string;
 }
   
-const CurrencyFormat = forwardRef<NumericFormatProps, CustomProps>(
+const NumericAltFormat = forwardRef<NumericFormatProps, CustomProps>(
     function NumericFormatCustom(props, ref) {
         const { onChange, ...other } = props;
 
         return (
-        <NumericFormat
+        <NumberFormatBase
             {...other}
             getInputRef={ref}
             onValueChange={(values) => {
                 onChange({
                     target: {
-                    name: props.name,
-                    value: values.value,
+                        name: props.name,
+                        value: values.value,
                     },
                 });
             }}
-            allowLeadingZeros={false}
-            decimalScale={0}
+            format={(value) => String(Number(value))}
             valueIsNumericString
-            thousandSeparator
-            fixedDecimalScale
         />
         );
     },
 );
   
 type IProps = TextFieldProps & {
-    currency?: MCurrency;
+    measurementUnit?: MMeasurementUnit;
 };
 
-const CurrencyInput = (props: IProps) => {
-    const { currency, ...others} = props;
+const NumericInput = (props: IProps) => {
+    const { measurementUnit, ...others} = props;
     return (
         <TextField
             {...others}
@@ -48,11 +45,11 @@ const CurrencyInput = (props: IProps) => {
                 sx: { textAlign: 'right'}
             }}
             InputProps={{
-                endAdornment: <InputAdornment position='end'>{currency?.abbreviation}</InputAdornment>,
-                inputComponent: CurrencyFormat as any
+                endAdornment: <InputAdornment position='end'>{measurementUnit?.abbreviation}</InputAdornment>,
+                inputComponent: NumericAltFormat as any
             }}
         />
     );
 };
 
-export default CurrencyInput;
+export default NumericInput;

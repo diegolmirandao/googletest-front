@@ -170,7 +170,7 @@
     "paid": "Pagado",
     "balance": "Saldo",
     "generate_payment": "Generar Pago",
-    "payment_method": "Generar Pago",
+    "payment_method": "Método de pago",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",
