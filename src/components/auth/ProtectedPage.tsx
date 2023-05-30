@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import { logoutAction } from "../../redux/actions/auth";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from "../../hooks/useAuth";
 
 interface IProps {
@@ -12,10 +12,13 @@ const ProtectedPage = ({ children }: IProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { authReducer: { user } } = useAppSelector((state) => state)
+    const { tenantDomain } = useParams();
 
     useEffect(() => {
-        if (!user && location.pathname !== '/login') {
-            navigate('/login')
+        const loginPath = `/${tenantDomain}/login`;
+        
+        if (!user && location.pathname !== loginPath) {
+            navigate(loginPath)
         }
     }, [user]);
 

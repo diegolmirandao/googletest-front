@@ -13,6 +13,9 @@ import 'src/config/i18n'
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
 import NotificationWrapper from './components/NotificationWrapper';
+import { injectStore } from './config/axios';
+
+injectStore(store);
 import { LicenseInfo } from '@mui/x-license-pro';
 import config from './config';
 

@@ -2,8 +2,8 @@ import { combineReducers } from 'redux';
 import authSlice from './auth';
 import offline from './offline';
 import init from './init';
+import tenant from './tenant';
 import sync from './sync';
-import userSlice from './user';
 import currencySlice from './currency';
 import businessSlice from './business';
 import establishmentSlice from './establishment';
@@ -40,6 +40,7 @@ export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
     initReducer: init.reducer,
+    tenantReducer: tenant.reducer,
     syncReducer: sync.reducer,
     currencyReducer: currencySlice.reducer,
     businessReducer: businessSlice.reducer,
