@@ -658,7 +658,7 @@ const SaleAddEditDialog = (props: IProps) => {
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
             <Grid container sx={{ minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               <Grid item sx={{ position: 'relative', mb: 6, fontSize: '1.25rem' }}>
-                {t('add_sale')}
+                {currentSale ? t('edit_sale') : t('add_sale')}
                 <IconButton
                   size='small'
                   onClick={handleClose}

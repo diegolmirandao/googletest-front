@@ -146,7 +146,6 @@ const CustomerBillingAddressAddEditDialog = (props: IProps) => {
               render={({ field: { value, onChange } }) => (
                 <PhoneInput
                   value={value}
-                  label={t('phone')}
                   size='small'
                   onChange={onChange}
                   error={Boolean(errors.phone)}
