@@ -21,6 +21,7 @@ import { t } from 'i18next';
 import { updateSchema } from 'src/schemes/product';
 import { MProperty } from 'src/models/product/property';
 import { v4 as uuid } from 'uuid';
+import PercentageInput from 'src/components/inputmask/PercentageInput';
 
 /**
  * Component props
@@ -410,20 +411,13 @@ const ProductEditDialog = (props: IProps) => {
                         name='tax'
                         control={control}
                         render={({ field: { value, onChange } }) => (
-                        <TextField
-                          value={value}
-                          type='number'
-                          label={t('tax')}
-                          size='small'
-                          onChange={onChange}
-                          inputProps={{
-                            sx: { textAlign: 'right'}
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position='end'>%</InputAdornment>
-                          }}
-                          error={Boolean(errors.tax)}
-                        />
+                          <PercentageInput
+                            value={value}
+                            label={t('tax')}
+                            size='small'
+                            onChange={onChange}
+                            error={Boolean(errors.tax)}
+                          />
                         )}
                       />
                       {errors.tax && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.tax.message}`)}</FormHelperText>}
@@ -435,20 +429,13 @@ const ProductEditDialog = (props: IProps) => {
                         name='percentage_taxed'
                         control={control}
                         render={({ field: { value, onChange } }) => (
-                        <TextField
-                          value={value}
-                          type='number'
-                          label={t('percentage_taxed')}
-                          size='small'
-                          onChange={onChange}
-                          inputProps={{
-                            sx: { textAlign: 'right'}
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position='end'>%</InputAdornment>
-                          }}
-                          error={Boolean(errors.percentage_taxed)}
-                        />
+                          <PercentageInput
+                            value={value}
+                            label={t('percentage_taxed')}
+                            size='small'
+                            onChange={onChange}
+                            error={Boolean(errors.tax)}
+                          />
                         )}
                       />
                       {errors.percentage_taxed && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.percentage_taxed.message}`)}</FormHelperText>}
