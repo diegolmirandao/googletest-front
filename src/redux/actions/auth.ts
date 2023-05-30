@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
 import axios from '../../config/axios';
 import { ILogin } from '../../interfaces/user/login';
-import { IUser } from '../../interfaces/user/user';
+import IAuthResponse from 'src/interfaces/authResponse';
 
 export const loginAction = createAsyncThunk(
     'user/login',
@@ -19,7 +19,7 @@ export const loginAction = createAsyncThunk(
 
             await axios.get('/sanctum/csrf-cookie');
 
-            const {data: userResponse}: AxiosResponse<IUser> = await axios.post('/login', body);
+            const {data: userResponse}: AxiosResponse<IAuthResponse> = await axios.post('/login', body);
 
             return userResponse;
         } catch (error) {

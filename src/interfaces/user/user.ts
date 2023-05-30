@@ -13,5 +13,6 @@ export interface IUser {
     deleted_at: null | string;
     roles: IRole[]
     role_id: number
+    device_id: string 
     permissions: IPermission[]
 }

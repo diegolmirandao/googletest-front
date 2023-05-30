@@ -14,6 +14,7 @@ export class MUser {
     public deletedAt: null | string;
     public roles: MRole[];
     public roleId: number;
+    public deviceId: string;
     public permissions: MPermission[];
 
     constructor(user: IUser) {
@@ -28,6 +29,7 @@ export class MUser {
         this.deletedAt = user.deleted_at;
         this.roles = user.roles.map(role => new MRole(role));
         this.roleId = user.role_id;
+        this.deviceId = user.device_id;
         this.permissions = user.permissions.map(permission => new MPermission(permission));
     }
 }

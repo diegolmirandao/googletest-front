@@ -5,7 +5,8 @@ import { loginAction, logoutAction } from '../actions/auth'
 import { MUser } from '../../models/user/user';
 
 const initialState: IUserAuthState = {
-    user: null
+    user: null,
+    deviceId: null
 }
 
 const slice = createSlice({
@@ -14,11 +15,13 @@ const slice = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder.addCase(loginAction.fulfilled, (state, action) => {
-            state.user = new MUser(action.payload as IUser)
+            state.user = new MUser(action.payload.user as IUser)
+            state.deviceId = action.payload.deviceId
         })
 
         builder.addCase(logoutAction.fulfilled, (state) => {
             state.user = null
+            state.deviceId = null
         })
     },
 })
