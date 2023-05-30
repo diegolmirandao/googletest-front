@@ -33,6 +33,7 @@ import { MProductProperty } from 'src/models/product/productProperty';
 import { MProductDetailPrice } from 'src/models/product/detailPrice';
 import { MProductDetailCost } from 'src/models/product/detailCost';
 import { MProductDetail } from 'src/models/product/detail';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 // ** Third Party Imports
 
@@ -436,16 +437,10 @@ const ProductDetailDialog = (props: IProps) => {
                     </Grid>
                     <Grid item xs sx={{ mb: 3}}>
                       <FormControl fullWidth>
-                        <TextField
+                        <CurrencyInput
                           value={cost.amount}
-                          type='number'
                           label={t('amount')}
-                          inputProps={{
-                            sx: { textAlign: 'right'}
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == cost.currency.id)?.abbreviation}</InputAdornment>
-                          }}
+                          currency={currencies.find(currency => currency.id == cost.currency.id)}
                         />
                       </FormControl>
                     </Grid>
@@ -509,16 +504,10 @@ const ProductDetailDialog = (props: IProps) => {
                     </Grid>
                     <Grid item xs sx={{ mb: 3}}>
                       <FormControl fullWidth>
-                        <TextField
+                        <CurrencyInput
                           value={price.amount}
-                          type='number'
                           label={t('amount')}
-                          inputProps={{
-                            sx: { textAlign: 'right'}
-                          }}
-                          InputProps={{
-                            endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == price.currency.id)?.abbreviation}</InputAdornment>
-                          }}
+                          currency={currencies.find(currency => currency.id == price.currency.id)}
                         />
                       </FormControl>
                     </Grid>

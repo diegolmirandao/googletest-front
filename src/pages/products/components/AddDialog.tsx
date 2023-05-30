@@ -33,6 +33,7 @@ import { t } from 'i18next';
 import Tab from 'src/components/mui/Tab';
 import { v4 as uuid } from 'uuid';
 import ProductPriceAddEditDialog from './PriceAddEditDialog';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 /**
  * Component props
@@ -705,19 +706,13 @@ const ProductAddDialog = (props: IProps) => {
                             name={`costs.${index}.amount`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                            <TextField
-                              value={value}
-                              type='number'
-                              label={t('amount')}
-                              onChange={onChange}
-                              error={Boolean(errors.costs?.[index]?.amount)}
-                              inputProps={{
-                                sx: { textAlign: 'right'}
-                              }}
-                              InputProps={{
-                                endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues(`costs.${index}.currency_id`))?.abbreviation}</InputAdornment>
-                              }}
-                            />
+                              <CurrencyInput
+                                value={value}
+                                label={t('amount')}
+                                onChange={onChange}
+                                currency={currencies.find(currency => currency.id == getValues(`costs.${index}.currency_id`))}
+                                error={Boolean(errors.costs?.[index]?.amount)}
+                              />
                             )}
                           />
                           {errors.costs?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.costs?.[index]?.amount?.message}`)}</FormHelperText>}
@@ -781,19 +776,13 @@ const ProductAddDialog = (props: IProps) => {
                             name={`prices.${index}.amount`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                            <TextField
-                              value={value}
-                              type='number'
-                              label={t('amount')}
-                              onChange={onChange}
-                              error={Boolean(errors.prices?.[index]?.amount)}
-                              inputProps={{
-                                sx: { textAlign: 'right'}
-                              }}
-                              InputProps={{
-                                endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues(`prices.${index}.currency_id`))?.abbreviation}</InputAdornment>
-                              }}
-                            />
+                              <CurrencyInput
+                                value={value}
+                                label={t('amount')}
+                                onChange={onChange}
+                                currency={currencies.find(currency => currency.id == getValues(`prices.${index}.currency_id`))}
+                                error={Boolean(errors.prices?.[index]?.amount)}
+                              />
                             )}
                           />
                           {errors.prices?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.prices?.[index]?.amount?.message}`)}</FormHelperText>}
