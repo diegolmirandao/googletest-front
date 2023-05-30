@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Customer from "./pages/customers";
@@ -20,23 +20,29 @@ import ProductCostType from "./pages/product-cost-types";
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={ <Home/> } />
-      <Route path="/login" element={ <Login/> } />
-      <Route path="/users" element={ <User/> } />
-      <Route path="/customers" element={ <Customer/> } />
-      <Route path="/products" element={ <Product/> } />
-      <Route path="/configuration/currencies" element={ <Currency/> } />
-      <Route path="/configuration/warehouses" element={ <Warehouse/> } />
-      <Route path="/configuration/customers/categories" element={ <CustomerCategory/> } />
-      <Route path="/configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
-      <Route path="/configuration/customers/reference-types" element={ <CustomerReferenceType/> } />
-      <Route path="/configuration/products/categories" element={ <ProductCategory/> } />
-      <Route path="/configuration/products/brands" element={ <Brand/> } />
-      <Route path="/configuration/products/price-types" element={ <ProductPriceType/> } />
-      <Route path="/configuration/products/cost-types" element={ <ProductCostType/> } />
-      <Route path="/configuration/products/measurement-units" element={ <MeasurementUnit/> } />
-      <Route path="/configuration/products/properties" element={ <Property/> } />
-      <Route path="/configuration/products/variants" element={ <Variant/> } />
+      <Route path="/login" element={ <h3>Tenant Login</h3> }></Route>
+      <Route path="/" element={ <Navigate to="/login" /> }></Route>
+      <Route path="/">
+        <Route path=":tenantDomain">
+          <Route path="" element={ <Home/> } />
+          <Route path="login" element={ <Login/> } />
+          <Route path="users" element={ <User/> } />
+          <Route path="customers" element={ <Customer/> } />
+          <Route path="products" element={ <Product/> } />
+          <Route path="configuration/currencies" element={ <Currency/> } />
+          <Route path="configuration/warehouses" element={ <Warehouse/> } />
+          <Route path="configuration/customers/categories" element={ <CustomerCategory/> } />
+          <Route path="configuration/customers/acquisition-channels" element={ <AcquisitionChannel/> } />
+          <Route path="configuration/customers/reference-types" element={ <CustomerReferenceType/> } />
+          <Route path="configuration/products/categories" element={ <ProductCategory/> } />
+          <Route path="configuration/products/brands" element={ <Brand/> } />
+          <Route path="configuration/products/price-types" element={ <ProductPriceType/> } />
+          <Route path="configuration/products/cost-types" element={ <ProductCostType/> } />
+          <Route path="configuration/products/measurement-units" element={ <MeasurementUnit/> } />
+          <Route path="configuration/products/properties" element={ <Property/> } />
+          <Route path="configuration/products/variants" element={ <Variant/> } />
+        </Route>
+      </Route>
     </Routes>
   )
 }

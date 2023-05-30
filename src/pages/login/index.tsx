@@ -14,7 +14,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import { useAppDispatch } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import {unwrapResult} from '@reduxjs/toolkit';
 
 // ** Icons Imports
@@ -28,10 +28,12 @@ import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom';
 
 import { ILogin } from '../../interfaces/user/login'
 import FormHelperText from '@mui/material/FormHelperText'
 import { loginAction } from '../../redux/actions/auth'
+import { getTenantAction } from '../../redux/actions/tenant'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth'
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -67,6 +69,10 @@ const Login = () => {
   const navigate = useNavigate();
   const auth = useAuth()
   const { t } = useTranslation()
+  const { tenantDomain } = useParams();
+
+  // ** Reducers
+  const { tenantReducer: { tenantInitialized } } = useAppSelector((state) => state);
 
   // ** Hooks
   const theme = useTheme()
@@ -82,18 +88,32 @@ const Login = () => {
   })
 
   useEffect(() => {
-    if (auth.isAuthenticated) {
-      navigate('/')
+    if (!tenantInitialized) {
+      getTenant(tenantDomain!);
     }
   }, [])
-  
+
+  useEffect(() => {
+    if (tenantInitialized && auth.isAuthenticated) {
+      navigate(`/${tenantDomain}`);
+    }
+  }, [])
+
+  const getTenant = async (tenantDomain: string): Promise<void> => {
+    try {
+      await dispatch(getTenantAction(tenantDomain)).then(unwrapResult);
+    } catch (error) {
+      console.log(error)
+      navigate('/');
+    }
+  }
 
   const onSubmit = async (values: ILogin): Promise<void> => {
     setLoading(true)
     try {
       await dispatch(loginAction(values)).then(unwrapResult)
 
-      navigate('/')
+      navigate(`/${tenantDomain}`);
     } catch (error) {
       setLoading(false)
       
@@ -104,78 +124,80 @@ const Login = () => {
 
   return (
     <Box className='content-center'>
-      <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(13, 7, 6.5)} !important` }}>
-          <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src='/images/logos/logo-blue-mini.png' alt='logo' width='64' height='56' />
-            <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>{t('login')}</Typography>
-          </Box>
-          <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name='username'
-                  control={control}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      autoFocus
-                      label={t('user')}
-                      value={value}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={Boolean(errors.username)}
-                    />
+      {tenantInitialized &&
+        <Card sx={{ zIndex: 1 }}>
+          <CardContent sx={{ p: theme => `${theme.spacing(13, 7, 6.5)} !important` }}>
+            <Box sx={{ mb: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src='/images/logos/logo-blue-mini.png' alt='logo' width='64' height='56' />
+              <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>{t('login')}</Typography>
+            </Box>
+            <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+                <FormControl fullWidth sx={{ mb: 4 }}>
+                  <Controller
+                    name='username'
+                    control={control}
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <TextField
+                        autoFocus
+                        label={t('user')}
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        error={Boolean(errors.username)}
+                      />
+                    )}
+                  />
+                  {errors.username && <FormHelperText sx={{ color: 'error.main' }}>{ t(`${errors.username.message}`) }</FormHelperText>}
+                </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
+                    {t('password')}
+                  </InputLabel>
+                  <Controller
+                    name='password'
+                    control={control}
+                    render={({ field: { value, onChange, onBlur } }) => (
+                      <OutlinedInput
+                        value={value}
+                        onBlur={onBlur}
+                        label={t('password')}
+                        onChange={onChange}
+                        error={Boolean(errors.password)}
+                        type={showPassword ? 'text' : 'password'}
+                        endAdornment={
+                          <InputAdornment position='end'>
+                            <IconButton
+                              edge='end'
+                              onMouseDown={e => e.preventDefault()}
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? <EyeOutline /> : <EyeOffOutline />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    )}
+                  />
+                  {errors.password && (
+                    <FormHelperText sx={{ color: 'error.main' }} id=''>
+                      { t(`${errors.password.message}`) }
+                    </FormHelperText>
                   )}
-                />
-                {errors.username && <FormHelperText sx={{ color: 'error.main' }}>{ t(`${errors.username.message}`) }</FormHelperText>}
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
-                  {t('password')}
-                </InputLabel>
-                <Controller
-                  name='password'
-                  control={control}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <OutlinedInput
-                      value={value}
-                      onBlur={onBlur}
-                      label={t('password')}
-                      onChange={onChange}
-                      error={Boolean(errors.password)}
-                      type={showPassword ? 'text' : 'password'}
-                      endAdornment={
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onMouseDown={e => e.preventDefault()}
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  )}
-                />
-                {errors.password && (
-                  <FormHelperText sx={{ color: 'error.main' }} id=''>
-                    { t(`${errors.password.message}`) }
-                  </FormHelperText>
-                )}
-              </FormControl>
-              <Box sx={{ mb: 4, display: 'flex', alignItems: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }} >
-                {/* <Link passHref href='/forgot-password'>
-                  <Typography component={MuiLink} variant='body2' sx={{ color: 'primary.main' }}>
-                    Olvidaste la contraseña?
-                  </Typography>
-                </Link> */}
-              </Box>
-              <LoadingButton fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }} loading={loading}>
-                {t('login')}
-              </LoadingButton>
-            </form>
-        </CardContent>
-      </Card>
+                </FormControl>
+                <Box sx={{ mb: 4, display: 'flex', alignItems: 'right', flexWrap: 'wrap', justifyContent: 'flex-end' }} >
+                  {/* <Link passHref href='/forgot-password'>
+                    <Typography component={MuiLink} variant='body2' sx={{ color: 'primary.main' }}>
+                      Olvidaste la contraseña?
+                    </Typography>
+                  </Link> */}
+                </Box>
+                <LoadingButton fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }} loading={loading}>
+                  {t('login')}
+                </LoadingButton>
+              </form>
+          </CardContent>
+        </Card>
+      }
     </Box>
   )
 }

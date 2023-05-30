@@ -1,10 +1,25 @@
 import axios from 'axios';
 import config from '.';
 
-export default axios.create({
+let store
+
+export const injectStore = _store => {
+  store = _store
+}
+
+const axiosInstance =  axios.create({
   baseURL: config.baseUrl,
   withCredentials: true,
-  headers: {
-    'X-Tenant': '34601135-5969-4f09-8597-ec7af8eaabfc'
-  }
 });
+
+axiosInstance.interceptors.request.use((config) => {
+  if (store.getState().tenantReducer.tenantId) {
+    config.headers['X-Tenant'] = store.getState().tenantReducer.tenantId; 
+  }
+  
+  return config;
+}, error => {
+  return Promise.reject(error)
+});
+
+export default axiosInstance;

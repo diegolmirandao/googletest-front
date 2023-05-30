@@ -1,8 +1,7 @@
 // ** React Imports
 import { useState, SyntheticEvent, Fragment } from 'react'
 
-// ** Next Import
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -59,6 +58,7 @@ const UserDropdown = (props: Props) => {
 
   // ** Vars
   const { direction } = settings
+  const { tenantDomain } = useParams();
 
   const handleDropdownOpen = (event: SyntheticEvent) => {
     setAnchorEl(event.currentTarget)
@@ -88,7 +88,7 @@ const UserDropdown = (props: Props) => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutAction()).then(unwrapResult)
-      navigate('/login')
+      navigate(`/${tenantDomain}/login`);
       handleDropdownClose()
     } catch (error) {
       console.log('LOGOUT ERROR', error)
