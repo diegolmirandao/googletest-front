@@ -1,18 +1,18 @@
 import { TextField, InputAdornment, TextFieldProps } from "@mui/material";
 import { forwardRef } from "react";
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
+import { NumberFormatBase, NumericFormatProps } from 'react-number-format';
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
     name: string;
 }
   
-const PercentageFormat = forwardRef<NumericFormatProps, CustomProps>(
+const DecimalPercentageFormat = forwardRef<NumericFormatProps, CustomProps>(
     function NumericFormatCustom(props, ref) {
         const { onChange, ...other } = props;
 
         return (
-        <NumericFormat
+        <NumberFormatBase
             {...other}
             getInputRef={ref}
             onValueChange={(values) => {
@@ -23,14 +23,14 @@ const PercentageFormat = forwardRef<NumericFormatProps, CustomProps>(
                     },
                 });
             }}
-            allowLeadingZeros={false}
-            valueIsNumericString
+            format={(val) => String(Number(val) * 100)}
+            removeFormatting={(val) => String(Number(val) / 100)}
         />
         );
     },
 );
 
-const PercentageInput = (props: TextFieldProps) => {
+const DecimalPercentageInput = (props: TextFieldProps) => {
     return (
         <TextField
             {...props}
@@ -40,10 +40,10 @@ const PercentageInput = (props: TextFieldProps) => {
             }}
             InputProps={{
                 endAdornment: <InputAdornment position='end'>%</InputAdornment>,
-                inputComponent: PercentageFormat as any
+                inputComponent: DecimalPercentageFormat as any
             }}
         />
     );
 };
 
-export default PercentageInput;
+export default DecimalPercentageInput;

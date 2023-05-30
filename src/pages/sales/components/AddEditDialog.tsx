@@ -38,6 +38,7 @@ import { t } from 'i18next';
 import { setDataGridLocale } from 'src/utils/common';
 import SalePaymentsAddEditDialog from './PaymentsEditDialog';
 import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
+import DecimalPercentageInput from 'src/components/inputmask/DecimalPercentageInput';
 
 /**
  * Component props
@@ -251,6 +252,11 @@ const SaleAddEditDialog = (props: IProps) => {
       field: 'discount',
       headerName: String(t('discount')),
       renderCell: ({ row }: GridRenderCellParams) => {
+        return <DecimalPercentageInput
+          size='small'
+          value={row.discount}
+          onChange={(e) => handleProductDiscountChange(row.index, Number(e.target.value))}
+        />;
         return <TextField
           size='small'
           value={row.discount}
@@ -628,6 +634,7 @@ const SaleAddEditDialog = (props: IProps) => {
    * @param discount new discount
    */
   const handleProductDiscountChange = (index: number, discount: number) => {
+    console.log(discount);
     const product = productFields[index];
     productUpdate(index, {
       id: product.id,
