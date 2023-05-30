@@ -16,6 +16,7 @@ import DeleteOutlineIcon from 'mdi-material-ui/DeleteOutline';
 // ** Third Party Imports
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { t } from 'i18next';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 /**
  * Component props
@@ -146,19 +147,13 @@ const ProductDetailCostAddEditDialog = (props: IProps) => {
               name='amount'
               control={control}
               render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                type='number'
-                label={t('amount')}
-                onChange={onChange}
-                error={Boolean(errors.amount)}
-                inputProps={{
-                  sx: { textAlign: 'right'}
-                }}
-                InputProps={{
-                  endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues('currency_id'))?.abbreviation}</InputAdornment>
-                }}
-              />
+                <CurrencyInput
+                  value={value}
+                  label={t('amount')}
+                  onChange={onChange}
+                  currency={currencies.find(currency => currency.id == getValues(`currency_id`))}
+                  error={Boolean(errors.amount)}
+                />
               )}
             />
             {errors.amount && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.amount.message}`)}</FormHelperText>}

@@ -92,7 +92,7 @@ const SaleDetailDialog = (props: IProps) => {
       field: 'discount',
       headerName: String(t('discount')),
       align: 'right',
-      valueFormatter: ({ value }: GridValueFormatterParams) => `${formatNumber(value)} %`
+      valueFormatter: ({ value }: GridValueFormatterParams) => `${formatNumber(value * 100)} %`
     },
     {
       flex: 0.15,

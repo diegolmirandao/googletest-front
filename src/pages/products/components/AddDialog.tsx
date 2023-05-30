@@ -33,6 +33,8 @@ import { t } from 'i18next';
 import Tab from 'src/components/mui/Tab';
 import { v4 as uuid } from 'uuid';
 import ProductPriceAddEditDialog from './PriceAddEditDialog';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
+import PercentageInput from 'src/components/inputmask/PercentageInput';
 
 /**
  * Component props
@@ -537,20 +539,13 @@ const ProductAddDialog = (props: IProps) => {
                               name='tax'
                               control={control}
                               render={({ field: { value, onChange } }) => (
-                              <TextField
-                                value={value}
-                                type='number'
-                                label={t('tax')}
-                                size='small'
-                                onChange={onChange}
-                                inputProps={{
-                                  sx: { textAlign: 'right'}
-                                }}
-                                InputProps={{
-                                  endAdornment: <InputAdornment position='end'>%</InputAdornment>
-                                }}
-                                error={Boolean(errors.tax)}
-                              />
+                                <PercentageInput
+                                  value={value}
+                                  label={t('tax')}
+                                  size='small'
+                                  onChange={onChange}
+                                  error={Boolean(errors.tax)}
+                                />
                               )}
                             />
                             {errors.tax && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.tax.message}`)}</FormHelperText>}
@@ -562,20 +557,13 @@ const ProductAddDialog = (props: IProps) => {
                               name='percentage_taxed'
                               control={control}
                               render={({ field: { value, onChange } }) => (
-                              <TextField
-                                value={value}
-                                type='number'
-                                label={t('percentage_taxed')}
-                                size='small'
-                                onChange={onChange}
-                                inputProps={{
-                                  sx: { textAlign: 'right'}
-                                }}
-                                InputProps={{
-                                  endAdornment: <InputAdornment position='end'>%</InputAdornment>
-                                }}
-                                error={Boolean(errors.percentage_taxed)}
-                              />
+                                <PercentageInput
+                                  value={value}
+                                  label={t('percentage_taxed')}
+                                  size='small'
+                                  onChange={onChange}
+                                  error={Boolean(errors.tax)}
+                                />
                               )}
                             />
                             {errors.percentage_taxed && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.percentage_taxed.message}`)}</FormHelperText>}
@@ -705,19 +693,13 @@ const ProductAddDialog = (props: IProps) => {
                             name={`costs.${index}.amount`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                            <TextField
-                              value={value}
-                              type='number'
-                              label={t('amount')}
-                              onChange={onChange}
-                              error={Boolean(errors.costs?.[index]?.amount)}
-                              inputProps={{
-                                sx: { textAlign: 'right'}
-                              }}
-                              InputProps={{
-                                endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues(`costs.${index}.currency_id`))?.abbreviation}</InputAdornment>
-                              }}
-                            />
+                              <CurrencyInput
+                                value={value}
+                                label={t('amount')}
+                                onChange={onChange}
+                                currency={currencies.find(currency => currency.id == getValues(`costs.${index}.currency_id`))}
+                                error={Boolean(errors.costs?.[index]?.amount)}
+                              />
                             )}
                           />
                           {errors.costs?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.costs?.[index]?.amount?.message}`)}</FormHelperText>}
@@ -781,19 +763,13 @@ const ProductAddDialog = (props: IProps) => {
                             name={`prices.${index}.amount`}
                             control={control}
                             render={({ field: { value, onChange } }) => (
-                            <TextField
-                              value={value}
-                              type='number'
-                              label={t('amount')}
-                              onChange={onChange}
-                              error={Boolean(errors.prices?.[index]?.amount)}
-                              inputProps={{
-                                sx: { textAlign: 'right'}
-                              }}
-                              InputProps={{
-                                endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues(`prices.${index}.currency_id`))?.abbreviation}</InputAdornment>
-                              }}
-                            />
+                              <CurrencyInput
+                                value={value}
+                                label={t('amount')}
+                                onChange={onChange}
+                                currency={currencies.find(currency => currency.id == getValues(`prices.${index}.currency_id`))}
+                                error={Boolean(errors.prices?.[index]?.amount)}
+                              />
                             )}
                           />
                           {errors.prices?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.prices?.[index]?.amount?.message}`)}</FormHelperText>}

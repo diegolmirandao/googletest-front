@@ -20,6 +20,7 @@ import { t } from 'i18next';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs, { Dayjs } from 'dayjs';
 import { v4 as uuid } from 'uuid';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 /**
  * Component props
@@ -192,19 +193,13 @@ const SalePaymentsEditDialog = (props: IProps) => {
                           name={`payments.${index}.amount`}
                           control={control}
                           render={({ field: { value, onChange } }) => (
-                          <TextField
-                            type='number'
-                            value={value}
-                            label={t('amount')}
-                            onChange={onChange}
-                            error={Boolean(errors.payments?.[index]?.amount)}
-                            inputProps={{
-                              sx: { textAlign: 'right'}
-                            }}
-                            InputProps={{
-                              endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == getValues(`payments.${index}.currency_id`))?.abbreviation}</InputAdornment>
-                            }}
-                          />
+                            <CurrencyInput
+                              value={value}
+                              label={t('amount')}
+                              onChange={onChange}
+                              currency={currencies.find(currency => currency.id == getValues(`payments.${index}.currency_id`))}
+                              error={Boolean(errors.payments?.[index]?.amount)}
+                            />
                           )}
                         />
                         {errors.payments?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.payments?.[index]?.amount?.message}</FormHelperText>}

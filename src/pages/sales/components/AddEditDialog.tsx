@@ -38,6 +38,8 @@ import { t } from 'i18next';
 import { setDataGridLocale } from 'src/utils/common';
 import SalePaymentsAddEditDialog from './PaymentsEditDialog';
 import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
+import DecimalPercentageInput from 'src/components/inputmask/DecimalPercentageInput';
+import NumericInput from 'src/components/inputmask/NumericInput';
 
 /**
  * Component props
@@ -70,56 +72,6 @@ type AddSaleTotalsType = {
   discount: number,
   total: number
 };
-
-interface CustomProps {
-  onChange: (event: { target: { name: string; value: string } }) => void;
-  name: string;
-}
-
-const CurrencyFormat = forwardRef<NumericFormatProps, CustomProps>(
-  function NumericFormatCustom(props, ref) {
-    const { onChange, ...other } = props;
-
-    return (
-      <NumericFormat
-        {...other}
-        getInputRef={ref}
-        onValueChange={(values) => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value,
-            },
-          });
-        }}
-        valueIsNumericString
-        thousandSeparator
-      />
-    );
-  },
-);
-
-const PercentageFormat = forwardRef<NumericFormatProps, CustomProps>(
-  function NumericFormatCustom(props, ref) {
-    const { onChange, ...other } = props;
-
-    return (
-      <NumericFormat
-        {...other}
-        getInputRef={ref}
-        onValueChange={(values) => {
-          onChange({
-            target: {
-              name: props.name,
-              value: values.value,
-            },
-          });
-        }}
-        valueIsNumericString
-      />
-    );
-  },
-);
 
 /**
  * Sale edit dialog
@@ -163,7 +115,7 @@ const SaleAddEditDialog = (props: IProps) => {
       product_detail_price_id: product.price.id,
       measurement_unit_id: product.measurementUnitId,
       quantity: product.quantity,
-      discount: product.discount,
+      discount: product.discount * 100,
       code: product.code,
       name: product.name,
       taxed: product.taxed,
@@ -231,17 +183,12 @@ const SaleAddEditDialog = (props: IProps) => {
       field: 'quantity',
       headerName: String(t('quantity')),
       renderCell: ({ row }: GridRenderCellParams) => {
-        return <TextField
-          type={'number'}
+        console.log(row)
+        return <NumericInput
           size='small'
           value={row.quantity}
+          measurementUnit={row.productDetail.product.measurementUnit}
           onChange={(e) => handleProductQuantityChange(row.index, Number(e.target.value))}
-          inputProps={{
-            sx: { textAlign: 'right'}
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position='end'>{measurementUnits.find(measurementUnit => measurementUnit.id == row.measurement_unit_id)?.abbreviation}</InputAdornment>
-          }}
         />;
       }
     },
@@ -251,17 +198,10 @@ const SaleAddEditDialog = (props: IProps) => {
       field: 'discount',
       headerName: String(t('discount')),
       renderCell: ({ row }: GridRenderCellParams) => {
-        return <TextField
+        return <DecimalPercentageInput
           size='small'
           value={row.discount}
           onChange={(e) => handleProductDiscountChange(row.index, Number(e.target.value))}
-          inputProps={{
-            sx: { textAlign: 'right'}
-          }}
-          InputProps={{
-            endAdornment: <InputAdornment position='end'>%</InputAdornment>,
-            inputComponent: PercentageFormat as any
-          }}
         />;
       }
     },
@@ -628,6 +568,7 @@ const SaleAddEditDialog = (props: IProps) => {
    * @param discount new discount
    */
   const handleProductDiscountChange = (index: number, discount: number) => {
+    console.log(discount);
     const product = productFields[index];
     productUpdate(index, {
       id: product.id,
@@ -717,7 +658,7 @@ const SaleAddEditDialog = (props: IProps) => {
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
             <Grid container sx={{ minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               <Grid item sx={{ position: 'relative', mb: 6, fontSize: '1.25rem' }}>
-                {t('add_sale')}
+                {currentSale ? t('edit_sale') : t('add_sale')}
                 <IconButton
                   size='small'
                   onClick={handleClose}

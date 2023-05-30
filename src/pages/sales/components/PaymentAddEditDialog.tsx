@@ -17,6 +17,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 /**
  * Component props
@@ -168,19 +169,13 @@ const SalePaymentAddEditDialog = (props: IProps) => {
               name='amount'
               control={control}
               render={({ field: { value, onChange } }) => (
-              <TextField
-                type='number'
-                value={value}
-                label={t('amount')}
-                onChange={onChange}
-                error={Boolean(errors.amount)}
-                inputProps={{
-                  sx: { textAlign: 'right'}
-                }}
-                InputProps={{
-                  endAdornment: <InputAdornment position='end'>{currencies.find((currency) => currency.id == watchCurrency)?.abbreviation}</InputAdornment>
-                }}
-              />
+                <CurrencyInput
+                  value={value}
+                  label={t('amount')}
+                  onChange={onChange}
+                  currency={currencies.find(currency => currency.id == watchCurrency)}
+                  error={Boolean(errors.amount)}
+                />
               )}
             />
             {errors.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.amount.message}</FormHelperText>}

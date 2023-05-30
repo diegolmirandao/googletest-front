@@ -15,6 +15,7 @@ import CloseIcon from 'mdi-material-ui/Close';
 // ** Third Party Imports
 import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
+import PhoneInput from 'src/components/inputmask/PhoneInput';
 
 /**
  * Component props
@@ -143,13 +144,12 @@ const CustomerBillingAddressAddEditDialog = (props: IProps) => {
               name='phone'
               control={control}
               render={({ field: { value, onChange } }) => (
-              <TextField
-                value={value}
-                label={t('phone')}
-                size='small'
-                onChange={onChange}
-                error={Boolean(errors.phone)}
-              />
+                <PhoneInput
+                  value={value}
+                  size='small'
+                  onChange={onChange}
+                  error={Boolean(errors.phone)}
+                />
               )}
             />
             {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.phone.message}`)}</FormHelperText>}

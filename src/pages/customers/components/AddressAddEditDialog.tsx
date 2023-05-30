@@ -17,6 +17,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
 import Map from 'src/components/misc/map';
 import { useEffect } from 'react';
+import PhoneInput from 'src/components/inputmask/PhoneInput';
 
 /**
  * Component props
@@ -155,13 +156,13 @@ const CustomerAddressAddEditDialog = (props: IProps) => {
                   name='phone'
                   control={control}
                   render={({ field: { value, onChange } }) => (
-                  <TextField
-                    value={value}
-                    label={t('phone')}
-                    size='small'
-                    onChange={onChange}
-                    error={Boolean(errors.phone)}
-                  />
+                    <PhoneInput
+                      value={value}
+                      label={t('phone')}
+                      size='small'
+                      onChange={onChange}
+                      error={Boolean(errors.phone)}
+                    />
                   )}
                 />
                 {errors.phone && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.phone.message}`)}</FormHelperText>}

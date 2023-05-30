@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { t } from 'i18next';
 import dayjs, { Dayjs, ManipulateType } from 'dayjs';
 import { v4 as uuid } from 'uuid';
+import CurrencyInput from 'src/components/inputmask/CurrencyInput';
 
 /**
  * Component props
@@ -203,17 +204,11 @@ const SaleInstalmentEditDialog = (props: IProps) => {
               </FormControl>
 
               <FormControl fullWidth sx={{ mb: 6 }}>
-                <TextField
-                  type='number'
+                <CurrencyInput
                   value={downPayment}
                   label={t('down_payment')}
                   onChange={(e) => setDownPayment(Number(e.target.value))}
-                  inputProps={{
-                    sx: { textAlign: 'right' }
-                  }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position='end'>{currency?.abbreviation}</InputAdornment>
-                  }}
+                  currency={currency}
                 />
               </FormControl>
             </Grid>
@@ -250,21 +245,14 @@ const SaleInstalmentEditDialog = (props: IProps) => {
                           name={`instalments.${index}.amount`}
                           control={control}
                           render={({ field: { value, onChange } }) => (
-                          <TextField
-                            value={value}
-                            key={value}
-                            type='number'
-                            label={t('amount')}
-                            size='small'
-                            onChange={onChange}
-                            error={Boolean(errors.instalments?.[index]?.amount)}
-                            inputProps={{
-                              sx: { textAlign: 'right'}
-                            }}
-                            InputProps={{
-                              endAdornment: <InputAdornment position='end'>{currency?.abbreviation}</InputAdornment>
-                            }}
-                          />
+                            <CurrencyInput
+                              value={value}
+                              size='small'
+                              label={t('amount')}
+                              onChange={onChange}
+                              currency={currency}
+                              error={Boolean(errors.instalments?.[index]?.amount)}
+                            />
                           )}
                         />
                         {errors.instalments?.[index]?.amount && <FormHelperText sx={{ color: 'error.main' }}>{errors.instalments?.[index]?.amount?.message}</FormHelperText>}
