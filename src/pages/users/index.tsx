@@ -125,7 +125,7 @@ const User = () => {
       minWidth: 130,
       field: 'role',
       headerName: String(t('role')),
-      valueGetter: (params: GridValueGetterParams) => 'params.row.roles[0].name'
+      valueGetter: (params: GridValueGetterParams) => params.row.roles[0].name
     },
     {
       flex: 0.15,

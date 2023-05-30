@@ -1,9 +1,10 @@
+import { StoreType } from './../redux';
 import axios from 'axios';
 import config from '.';
 
-let store
+let store: StoreType;
 
-export const injectStore = _store => {
+export const injectStore = (_store: StoreType) => {
   store = _store
 }
 

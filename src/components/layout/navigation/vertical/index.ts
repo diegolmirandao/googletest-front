@@ -12,54 +12,54 @@ import i18n from 'i18next';
 // ** Type import
 import { VerticalNavItemsType } from '../../../../types/Layout';
 
-const navigation = (): VerticalNavItemsType => {
+const navigation = (tenantDomain: string): VerticalNavItemsType => {
   return [
     {
       title: i18n.t('home'),
       icon: HomeOutline,
-      path: '/',
+      path: `/${tenantDomain}/`,
       action: 'view',
       subject: 'home'
     },
     {
       title: i18n.t('sales'),
       icon: CashMultipleIcon,
-      path: '/sales',
+      path: `/${tenantDomain}/sales`,
       action: 'view',
       subject: 'sale'
     },
     {
       title: i18n.t('accounts_receivable'),
       icon: FileAccountOutlineIcon,
-      path: '/accounts-receivable',
+      path: `/${tenantDomain}/accounts-receivable`,
       action: 'view',
       subject: 'sale'
     },
     {
       title: i18n.t('customer_payments'),
       icon: AccountCashOutlineIcon,
-      path: '/customer-payments',
+      path: `/${tenantDomain}/customer-payments`,
       action: 'view',
       subject: 'sale_payment'
     },
     {
       title: i18n.t('customers'),
       icon: AccountCircleIcon,
-      path: '/customers',
+      path: `/${tenantDomain}/customers`,
       action: 'view',
       subject: 'customer'
     },
     {
       title: i18n.t('products'),
       icon: WarehouseIcon,
-      path: '/products',
+      path: `/${tenantDomain}/products`,
       action: 'view',
       subject: 'product'
     },
     {
       title: i18n.t('users'),
       icon: AccountIcon,
-      path: '/users',
+      path: `/${tenantDomain}/users`,
       action: 'view',
       subject: 'user'
     },
@@ -69,25 +69,25 @@ const navigation = (): VerticalNavItemsType => {
       children: [
         {
           title: i18n.t('currencies'),
-          path: '/configuration/currencies',
+          path: `/${tenantDomain}/configuration/currencies`,
           action: 'view',
           subject: 'currency',
         },
         {
           title: i18n.t('businesses'),
-          path: '/configuration/businesses',
+          path: `/${tenantDomain}/configuration/businesses`,
           action: 'view',
           subject: 'business',
         },
         {
           title: i18n.t('establishments'),
-          path: '/configuration/establishments',
+          path: `/${tenantDomain}/configuration/establishments`,
           action: 'view',
           subject: 'establishment',
         },
         {
           title: i18n.t('warehouses'),
-          path: '/configuration/warehouses',
+          path: `/${tenantDomain}/configuration/warehouses`,
           action: 'view',
           subject: 'warehouse',
         },
@@ -96,19 +96,19 @@ const navigation = (): VerticalNavItemsType => {
           children: [
             {
               title: i18n.t('categories'),
-              path: '/configuration/customers/categories',
+              path: `/${tenantDomain}/configuration/customers/categories`,
               action: 'view',
               subject: 'customer_category',
             },
             {
               title: i18n.t('acquisition_channels'),
-              path: '/configuration/customers/acquisition-channels',
+              path: `/${tenantDomain}/configuration/customers/acquisition-channels`,
               action: 'view',
               subject: 'acquisition_channel',
             },
             {
               title: i18n.t('reference_types'),
-              path: '/configuration/customers/reference-types',
+              path: `/${tenantDomain}/configuration/customers/reference-types`,
               action: 'view',
               subject: 'customer_reference_type',
             }
@@ -119,43 +119,43 @@ const navigation = (): VerticalNavItemsType => {
           children: [
             {
               title: i18n.t('categories'),
-              path: '/configuration/products/categories',
+              path: `/${tenantDomain}/configuration/products/categories`,
               action: 'view',
               subject: 'product_category',
             },
             {
               title: i18n.t('brands'),
-              path: '/configuration/products/brands',
+              path: `/${tenantDomain}/configuration/products/brands`,
               action: 'view',
               subject: 'brand',
             },
             {
               title: i18n.t('measurement_units'),
-              path: '/configuration/products/measurement-units',
+              path: `/${tenantDomain}/configuration/products/measurement-units`,
               action: 'view',
               subject: 'measurement_unit',
             },
             {
               title: i18n.t('price_types'),
-              path: '/configuration/products/price-types',
+              path: `/${tenantDomain}/configuration/products/price-types`,
               action: 'view',
               subject: 'product_price_type',
             },
             {
               title: i18n.t('cost_types'),
-              path: '/configuration/products/cost-types',
+              path: `/${tenantDomain}/configuration/products/cost-types`,
               action: 'view',
               subject: 'product_cost_type',
             },
             {
               title: i18n.t('properties'),
-              path: '/configuration/products/properties',
+              path: `/${tenantDomain}/configuration/products/properties`,
               action: 'view',
               subject: 'property',
             },
             {
               title: i18n.t('variants'),
-              path: '/configuration/products/variants',
+              path: `/${tenantDomain}/configuration/products/variants`,
               action: 'view',
               subject: 'variant',
             }

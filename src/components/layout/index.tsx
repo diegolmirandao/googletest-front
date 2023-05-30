@@ -20,6 +20,7 @@ import FooterContent from './shared-components/footer/FooterContent'
 
 // ** Hook Import
 import { useSettings } from '../../hooks/useSettings'
+import { useParams } from 'react-router-dom';
 import { Typography, Box } from '@mui/material'
 
 interface Props {
@@ -40,6 +41,7 @@ const AppBrand = () => {
 const Layout = ({ children }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
+  const { tenantDomain } = useParams();
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -74,7 +76,7 @@ const Layout = ({ children }: Props) => {
           }
         : {
             // ** Navigation Items
-            verticalNavItems: VerticalNavItems(),
+            verticalNavItems: VerticalNavItems(tenantDomain!),
 
             // Uncomment the below line when using server-side menu in vertical layout and comment the above line
             // verticalNavItems: ServerSideVerticalNavItems(),
