@@ -17,9 +17,16 @@ const navigation = (tenantDomain: string): VerticalNavItemsType => {
     {
       title: i18n.t('home'),
       icon: HomeOutline,
-      path: `/${tenantDomain}/`,
+      path: `/${tenantDomain}`,
       action: 'view',
       subject: 'home'
+    },
+    {
+      title: i18n.t('customers'),
+      icon: AccountCircleIcon,
+      path: `/${tenantDomain}/customers`,
+      action: 'view',
+      subject: 'customer'
     },
     {
       title: i18n.t('sales'),
@@ -43,11 +50,11 @@ const navigation = (tenantDomain: string): VerticalNavItemsType => {
       subject: 'sale_payment'
     },
     {
-      title: i18n.t('customers'),
+      title: i18n.t('suppliers'),
       icon: AccountCircleIcon,
-      path: `/${tenantDomain}/customers`,
+      path: `/${tenantDomain}/suppliers`,
       action: 'view',
-      subject: 'customer'
+      subject: 'supplier'
     },
     {
       title: i18n.t('products'),

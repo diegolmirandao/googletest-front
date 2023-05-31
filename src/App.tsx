@@ -21,6 +21,7 @@ import Establishment from "./pages/establishments";
 import Sale from "./pages/sales";
 import AccountReceivable from "./pages/accounts-receivable";
 import CustomerPayment from "./pages/customer-payments";
+import Suppliers from "./pages/suppliers";
 
 const App = () => {
   return (
@@ -29,12 +30,13 @@ const App = () => {
       <Route path="/" element={ <Navigate to="/login" /> }></Route>
       <Route path="/">
         <Route path=":tenantDomain">
-          <Route path="" element={ <Home/> } />
+          <Route index element={ <Home/> } />
           <Route path="login" element={ <Login/> } />
+          <Route path="customers" element={ <Customer/> } />
           <Route path="sales" element={ <Sale/> } />
           <Route path="accounts-receivable" element={ <AccountReceivable/> } />
           <Route path="customer-payments" element={ <CustomerPayment/> } />
-          <Route path="customers" element={ <Customer/> } />
+          <Route path="suppliers" element={ <Suppliers/> } />
           <Route path="products" element={ <Product/> } />
           <Route path="users" element={ <User/> } />
           <Route path="configuration/currencies" element={ <Currency/> } />

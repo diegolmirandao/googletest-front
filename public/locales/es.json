@@ -7,10 +7,11 @@
     "login": "Iniciar Sesión",
     "home": "Inicio",
     "users": "Usuarios",
+    "customers": "Clientes",
     "sales": "Ventas",
     "accounts_receivable": "Cuentas a cobrar",
     "customer_payments": "Pagos de clientes",
-    "customers": "Clientes",
+    "suppliers": "Proveedores",
     "products": "Productos",
     "configuration": "Configuración",
     "currencies": "Monedas",
@@ -119,6 +120,7 @@
     "billing_address": "Datos de facturación",
     "reference_type": "Tipo de referencia",
     "references": "Referencias",
+    "contacts": "Contactos",
 
     "measurement_unit": "Unidad de medida",
     "abbreviation": "Abreviación",
@@ -380,5 +382,19 @@
     "edit_payment": "Editar pago",
     "payment_data": "Datos del pago",
     "edit_instalments": "Editar datos de las cuotas",
-    "instalment_data": "Datos de las cuotas"
+    "instalment_data": "Datos de las cuotas",
+
+    "supplier_added_succesfully": "Proveedor agregado correctamente",
+    "supplier_modified_successfully": "Proveedor modificado correctamente",
+    "supplier_deleted_successfully": "Proveedor eliminado correctamente",
+    "no_supplier_selected": "No se ha seleccionado ningún proveedor",
+    "add_supplier": "Agregar proveedor",
+    "edit_supplier": "Editar proveedor",
+    "supplier_data": "Datos del proveedor",
+    "contact_added_successfully": "Contacto agregada correctamente",
+    "contact_modified_successfully": "Contacto modificada correctamente",
+    "contact_deleted_successfully": "Contacto eliminada correctamente",
+    "no_contact_selected": "No se ha seleccionado ninguna contacto",
+    "add_contact": "Agregar contacto",
+    "edit_contact": "Modificar contacto"
 }
