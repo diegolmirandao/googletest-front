@@ -4,14 +4,14 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
-import { getAccountsAction, getCustomerPaymentsAction } from "src/redux/actions/customerPayment";
+import { getCustomerPaymentsAction } from "src/redux/actions/customerPayment";
 import { addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
 import { setCurrentSale, setFilteredCursor, resetFilteredSales, setCurrentSaleProduct, setCurrentSalePayment } from 'src/redux/reducers/sale';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
 import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IUpdateSale } from 'src/interfaces/sale/update';
+import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
 import { ISale } from 'src/interfaces/sale/sale';
 import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
 import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
@@ -456,7 +456,7 @@ const CustomerPayment = () => {
    * Form edit submit handler
    * @param formFields form fields submitted by user
    */
-  const handleEditSubmit = async (formFields: IUpdateSale) => {
+  const handleEditSubmit = async (formFields: IAddUpdateSale) => {
     setEditLoading(true);
     try {
       await dispatch(updateSaleAction(formFields)).then(unwrapResult);

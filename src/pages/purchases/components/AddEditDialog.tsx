@@ -1,21 +1,21 @@
 // ** React Imports
-import { SyntheticEvent, forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
+import { IAddUpdatePurchase } from 'src/interfaces/purchase/addUpdate';
 import { formatMoney } from 'src/utils/format';
 import { MProductDetail } from 'src/models/product/detail';
-import { MProductDetailPrice } from 'src/models/product/detailPrice';
+import { MProductDetailCost } from 'src/models/product/detailCost';
 import { MCurrency } from 'src/models/currency';
-import { IUpdateSaleInstalment } from 'src/interfaces/sale/updateInstalment';
+import { IUpdatePurchaseInstalment } from 'src/interfaces/purchase/updateInstalment';
 
 // ** MUI Imports
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { GridColDef, GridValueGetterParams, GridRenderCellParams, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
-import { Dialog, DialogContent, DialogActions, FormControl, FormControlLabel, FormHelperText, DialogTitle, Box, Typography, styled, Grid, InputLabel, Select, MenuItem, InputAdornment, Autocomplete, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-import { Button, IconButton, Checkbox, TextField } from '@mui/material';
-import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
+import { Dialog, DialogContent, FormControl, FormHelperText, Typography, Grid, Select, MenuItem, Autocomplete, Tooltip } from '@mui/material';
+import { Button, IconButton, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 
 // ** Icons Imports
@@ -27,17 +27,16 @@ import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
 import InformationOutlineIcon from 'mdi-material-ui/InformationOutline';
 
 // ** Third Party Imports
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller, useFieldArray, ControllerRenderProps } from 'react-hook-form';
-import SaleInstalmentEditDialog from './InstalmentsEditDialog';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import PurchaseInstalmentEditDialog from './InstalmentsEditDialog';
 import { t } from 'i18next';
 import { setDataGridLocale } from 'src/utils/common';
-import SalePaymentsAddEditDialog from './PaymentsEditDialog';
-import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
+import PurchasePaymentsAddEditDialog from './PaymentsEditDialog';
+import { IAddUpdatePurchasePayment } from 'src/interfaces/purchase/addUpdatePayment';
 import DecimalPercentageInput from 'src/components/inputmask/DecimalPercentageInput';
 import NumericInput from 'src/components/inputmask/NumericInput';
 
@@ -47,26 +46,26 @@ import NumericInput from 'src/components/inputmask/NumericInput';
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddUpdateSale) => void;
+  onSubmit: (formFields: IAddUpdatePurchase) => void;
   onClose: () => void;
 }
 
 /**
- * Sale product type to display in datagrid
+ * Purchase product type to display in datagrid
  */
-type AddSaleProductType = {
+type AddPurchaseProductType = {
   index: number;
   id: number;
   productDetail: MProductDetail;
-  productDetailPrice: MProductDetailPrice;
+  productDetailCost: MProductDetailCost;
   quantity: number;
   discount: number;
 };
 
 /**
- * Sale totals type to display
+ * Purchase totals type to display
  */
-type AddSaleTotalsType = {
+type AddPurchaseTotalsType = {
   currency: MCurrency,
   subtotal: number,
   discount: number,
@@ -74,45 +73,41 @@ type AddSaleTotalsType = {
 };
 
 /**
- * Sale edit dialog
+ * Purchase edit dialog
  * @param props component parameters
- * @returns Sale Edit Dialog component
+ * @returns Purchase Edit Dialog component
  */
-const SaleAddEditDialog = (props: IProps) => {
+const PurchaseAddEditDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
-  const { saleReducer: { currentSale }, customerReducer: { customers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
+  const { purchaseReducer: { currentPurchase }, supplierReducer: { suppliers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
   // ** Vars
   const [mountedProducts, setMountedProducts] = useState<boolean>(false);
   const [mountedPaymentTerm, setMountedPaymentTerm] = useState<boolean>(false);
   const [selectedProductCode, setSelectedProductCode] = useState<string>('');
   const [selectedProductByDescription, setSelectedProductByDescription] = useState<MProductDetail | null>(null);
-  const [selectedProducts, setSelectedProducts] = useState<AddSaleProductType[]>([]);
-  const [saleTotals, setSaleTotals] = useState<AddSaleTotalsType>({currency: currencies[0], subtotal: 0, discount: 0, total: 0});
+  const [selectedProducts, setSelectedProducts] = useState<AddPurchaseProductType[]>([]);
+  const [purchaseTotals, setPurchaseTotals] = useState<AddPurchaseTotalsType>({currency: currencies[0], subtotal: 0, discount: 0, total: 0});
   const [showPaymentsButton, setShowPaymentsButton] = useState<boolean>(true);
   const [showExpiresAtField, setShowExpiresAtField] = useState<boolean>(false);
   const [showInstalmentsButton, setShowInstalmentsButton] = useState<boolean>(false);
   const [openInstalmentsEditDialog, setOpenInstalmentsEditDialog] = useState<boolean>(false);
   const [openPaymentsEditDialog, setOpenPaymentsEditDialog] = useState<boolean>(false);
 
-  const pointsOfSale = establishments.map(establishment => establishment.pointsOfSale).flat();
-
-  const defaultValues: IAddUpdateSale = {
-    customer_id: currentSale?.customerId ?? 1,
-    currency_id:currentSale?.currencyId ?? 1,
-    establishment_id: currentSale?.establishment.id ?? 1,
-    point_of_sale_id: currentSale?.pointOfSaleId ?? 1,
-    warehouse_id: currentSale?.warehouseId ?? 1,
-    seller_id: currentSale?.sellerId ?? 1,
-    document_type_id: currentSale?.documentTypeId ?? 1,
-    payment_term_id: currentSale?.paymentTermId ?? 1,
-    billed_at: dayjs(currentSale?.billedAt) ?? dayjs(),
-    expires_at: currentSale?.expiresAt ? dayjs(currentSale?.expiresAt) : null,
-    comments: currentSale?.comments ?? '',
-    products: currentSale?.products.map(product => ({
+  const defaultValues: IAddUpdatePurchase = {
+    supplier_id: currentPurchase?.supplierId ?? 1,
+    currency_id:currentPurchase?.currencyId ?? 1,
+    establishment_id: currentPurchase?.establishment.id ?? 1,
+    warehouse_id: currentPurchase?.warehouseId ?? 1,
+    document_type_id: currentPurchase?.documentTypeId ?? 1,
+    payment_term_id: currentPurchase?.paymentTermId ?? 1,
+    purchased_at: dayjs(currentPurchase?.purchasedAt) ?? dayjs(),
+    expires_at: currentPurchase?.expiresAt ? dayjs(currentPurchase?.expiresAt) : null,
+    comments: currentPurchase?.comments ?? '',
+    products: currentPurchase?.products.map(product => ({
       id: product.id,
-      product_detail_price_id: product.price.id,
+      product_detail_cost_id: product.cost.id,
       measurement_unit_id: product.measurementUnitId,
       quantity: product.quantity,
       discount: product.discount,
@@ -123,7 +118,7 @@ const SaleAddEditDialog = (props: IProps) => {
       percentage_taxed: product.productDetail.product.percentageTaxed
 
     })) ?? [],
-    payments: currentSale?.payments.map(payment => ({
+    payments: currentPurchase?.payments.map(payment => ({
       id: payment.id,
       currency_id: payment.currencyId,
       payment_method_id: payment.paymentMethodId,
@@ -131,7 +126,7 @@ const SaleAddEditDialog = (props: IProps) => {
       amount: payment.amount,
       comments: payment.comments
     })) ?? [],
-    instalments: currentSale?.instalments.map(instalment => ({
+    instalments: currentPurchase?.instalments.map(instalment => ({
       id: instalment.id,
       number: instalment.number,
       expires_at: dayjs(instalment.expiresAt),
@@ -160,19 +155,19 @@ const SaleAddEditDialog = (props: IProps) => {
     {
       flex: 0.15,
       minWidth: 130,
-      field: 'price',
-      headerName: String(t('price')),
+      field: 'cost',
+      headerName: String(t('cost')),
       renderCell: ({ row }: GridRenderCellParams) => {
         return <Select
           fullWidth
           size='small'
-          id='select-price'
-          onChange={(e) => handleProductPriceChange(row.index, Number(e.target.value))}
-          value={row.productDetailPrice.id}
-          renderValue={(value) => formatMoney(row.productDetailPrice.amount, row.productDetailPrice.currency)}
+          id='select-cost'
+          onChange={(e) => handleProductCostChange(row.index, Number(e.target.value))}
+          value={row.productDetailCost.id}
+          renderValue={(value) => formatMoney(row.productDetailCost.amount, row.productDetailCost.currency)}
         >
-          {row.productDetail.prices.map((price: MProductDetailPrice) => (
-            <MenuItem key={price.id} value={price.id}>{`${price.type.name}: ${formatMoney(price.amount, price.currency)}`}</MenuItem>
+          {row.productDetail.costs.map((cost: MProductDetailCost) => (
+            <MenuItem key={cost.id} value={cost.id}>{`${cost.type.name}: ${formatMoney(cost.amount, cost.currency)}`}</MenuItem>
           ))}
         </Select>;
       }
@@ -213,13 +208,13 @@ const SaleAddEditDialog = (props: IProps) => {
     //   renderCell: ({ row }: GridRenderCellParams) => {
     //     return <TextField
     //       size='small'
-    //       value={row.productDetailPrice.amount * row.quantity - row.productDetailPrice.amount * row.quantity * row.discount}
+    //       value={row.productDetailCost.amount * row.quantity - row.productDetailCost.amount * row.quantity * row.discount}
     //       onChange={(e) => handleProductTotalChange(row.index, Number(e.target.value))}
     //       inputProps={{
     //         sx: { textAlign: 'right'}
     //       }}
     //       InputProps={{
-    //         endAdornment: <InputAdornment position='end'>{row.productDetailPrice.currency.abbreviation}</InputAdornment>,
+    //         endAdornment: <InputAdornment position='end'>{row.productDetailCost.currency.abbreviation}</InputAdornment>,
     //         inputComponent: CurrencyFormat as any
     //       }}
     //     />;
@@ -231,7 +226,7 @@ const SaleAddEditDialog = (props: IProps) => {
       field: 'total',
       headerName: String(t('total')),
       renderCell: ({ row }: GridRenderCellParams) => {
-        return <Typography sx={{ width: '100%', textAlign: 'right' }}>{formatMoney((row.productDetailPrice.amount * row.quantity - row.productDetailPrice.amount * row.quantity * row.discount), row.productDetailPrice.currency)}</Typography>;
+        return <Typography sx={{ width: '100%', textAlign: 'right' }}>{formatMoney((row.productDetailCost.amount * row.quantity - row.productDetailCost.amount * row.quantity * row.discount), row.productDetailCost.currency)}</Typography>;
       }
     },
     {
@@ -249,14 +244,12 @@ const SaleAddEditDialog = (props: IProps) => {
    * Form validation schema
    */
   const schema = yup.object().shape({
-    customer_id: yup.number().required(),
+    supplier_id: yup.number().required(),
     establishment_id: yup.number().required(),
-    point_of_sale_id: yup.number().required(),
     warehouse_id: yup.number().required(),
-    seller_id: yup.number().required(),
     document_type_id: yup.number().required(),
     payment_term_id: yup.number().required(),
-    billed_at: yup.string().required(),
+    purchased_at: yup.string().required(),
     expires_at: yup.string().nullable(),
     comments: yup.string().nullable()
   });
@@ -272,13 +265,13 @@ const SaleAddEditDialog = (props: IProps) => {
     getValues,
     watch,
     formState: { errors }
-  } = useForm<IAddUpdateSale>({
+  } = useForm<IAddUpdatePurchase>({
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
   });
 
-  let watchBilledAt = watch('billed_at');
+  let watchPurchasedAt = watch('purchased_at');
   let watchCurrency = watch('currency_id');
   let watchEstablishment = watch('establishment_id');
   let watchPaymentTerm = watch('payment_term_id');
@@ -297,9 +290,6 @@ const SaleAddEditDialog = (props: IProps) => {
   });
 
   const {
-    fields: paymentFields,
-    append: paymentAppend,
-    update: paymentUpdate,
     replace: paymentReplace,
     remove: paymentRemove
   } = useFieldArray({
@@ -341,16 +331,16 @@ const SaleAddEditDialog = (props: IProps) => {
       if(watchPaymentTerm !== 1) {
         instalmentReplace([{
           number: 1,
-          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
-          amount: saleTotals.total
+          expires_at: dayjs(getValues('purchased_at')).add(1, 'month'),
+          amount: purchaseTotals.total
         }]);
         paymentRemove();
       } else {
         paymentReplace([{
           payment_method_id: 1,
           currency_id: watchCurrency,
-          paid_at: dayjs(getValues('billed_at')),
-          amount: saleTotals.total,
+          paid_at: dayjs(getValues('purchased_at')),
+          amount: purchaseTotals.total,
           comments: null
         }]);
         instalmentRemove();
@@ -360,54 +350,49 @@ const SaleAddEditDialog = (props: IProps) => {
     }
   }, [watchPaymentTerm]);
 
-  useEffect(() => {
-    const newDefaultPointOfSale = establishments.find(establishment => establishment.id === watchEstablishment && establishment.id === defaultValues.establishment_id) ?? establishments.find(establishment => establishment.id === watchEstablishment);
-    setValue('point_of_sale_id', newDefaultPointOfSale!.id);
-  }, [watchEstablishment]);
-
   /**
    * Get the selected services
    */
   const getSelectedProducts = () => {
-    let saleTotals: AddSaleTotalsType = {
+    let purchaseTotals: AddPurchaseTotalsType = {
       currency: currencies.find(currency => currency.id == watchCurrency)!,
       subtotal: 0,
       discount: 0,
       total: 0
     };
     const selectedProducts = productFields.map((selectedProduct, index) => {
-      const productDetailPrice = productDetails.map(productDetail => productDetail.prices.find(productDetailPrice => productDetailPrice.id == selectedProduct.product_detail_price_id)).filter(product => product)[0];
-      const productDetail = productDetails.find(productDetail => productDetail.id == productDetailPrice?.productDetailId);
+      const productDetailCost = productDetails.map(productDetail => productDetail.costs.find(productDetailCost => productDetailCost.id == selectedProduct.product_detail_cost_id)).filter(product => product)[0];
+      const productDetail = productDetails.find(productDetail => productDetail.id == productDetailCost?.productDetailId);
 
-      saleTotals.subtotal += productDetailPrice!.amount * selectedProduct.quantity;
-      saleTotals.discount += productDetailPrice!.amount * selectedProduct.quantity * selectedProduct.discount;
-      saleTotals.total = saleTotals.subtotal - saleTotals.discount;
+      purchaseTotals.subtotal += productDetailCost!.amount * selectedProduct.quantity;
+      purchaseTotals.discount += productDetailCost!.amount * selectedProduct.quantity * selectedProduct.discount;
+      purchaseTotals.total = purchaseTotals.subtotal - purchaseTotals.discount;
       return {
         index: index,
         id: productDetail!.id,
         productDetail: productDetail!,
-        productDetailPrice: productDetailPrice!,
+        productDetailCost: productDetailCost!,
         quantity: selectedProduct.quantity,
         discount: selectedProduct.discount
       };
     });
     setSelectedProducts(selectedProducts);
-    setSaleTotals(saleTotals);
-    console.log('hola')
+    setPurchaseTotals(purchaseTotals);
+
     if (mountedProducts) {
       if(watchPaymentTerm !== 1) {
         instalmentReplace([{
           number: 1,
-          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
-          amount: saleTotals.total
+          expires_at: dayjs(getValues('purchased_at')).add(1, 'month'),
+          amount: purchaseTotals.total
         }]);
         paymentRemove();
       } else {
         paymentReplace([{
           payment_method_id: 1,
           currency_id: watchCurrency,
-          paid_at: dayjs(getValues('billed_at')),
-          amount: saleTotals.total,
+          paid_at: dayjs(getValues('purchased_at')),
+          amount: purchaseTotals.total,
           comments: null
         }]);
         instalmentRemove();
@@ -421,7 +406,7 @@ const SaleAddEditDialog = (props: IProps) => {
    * Payments add edit event submit handler
    * @param formFields form fields submitted by user
    */
-  const handlePaymentsEditSubmit = (payments: IAddUpdateSalePayment[]) => {
+  const handlePaymentsEditSubmit = (payments: IAddUpdatePurchasePayment[]) => {
     paymentReplace(payments);
     setOpenPaymentsEditDialog(false);
   };
@@ -430,7 +415,7 @@ const SaleAddEditDialog = (props: IProps) => {
    * Instalment add edit event submit handler
    * @param formFields form fields submitted by user
    */
-  const handleInstalmentsEditSubmit = (instalments: IUpdateSaleInstalment[]) => {
+  const handleInstalmentsEditSubmit = (instalments: IUpdatePurchaseInstalment[]) => {
     instalmentReplace(instalments);
     setOpenInstalmentsEditDialog(false);
   };
@@ -440,13 +425,13 @@ const SaleAddEditDialog = (props: IProps) => {
    */
   const handleProductSelect = () => {
     console.log(selectedProductByDescription);
-    const productDetailPriceId = selectedProductByDescription!.prices[0].id;
-    const index = productFields.map(productField => productField.product_detail_price_id).indexOf(productDetailPriceId);
+    const productDetailCostId = selectedProductByDescription!.costs[0].id;
+    const index = productFields.map(productField => productField.product_detail_cost_id).indexOf(productDetailCostId);
     if (index == -1) {
       const product = selectedProductByDescription!;
       productAppend({
         id: null,
-        product_detail_price_id: productDetailPriceId,
+        product_detail_cost_id: productDetailCostId,
         measurement_unit_id: product.product.measurementUnitId,
         quantity: 1,
         discount: 0,
@@ -460,7 +445,7 @@ const SaleAddEditDialog = (props: IProps) => {
       const product = productFields[index];
       productUpdate(index, {
         id: product.id,
-        product_detail_price_id: productDetailPriceId,
+        product_detail_cost_id: productDetailCostId,
         measurement_unit_id: product.measurement_unit_id,
         quantity: product.quantity + 1,
         discount: product.discount,
@@ -486,13 +471,13 @@ const SaleAddEditDialog = (props: IProps) => {
       toast.error(t('product_not_found'));
       return;
     }
-    const productDetailPriceId = selectedProductDetail.prices[0].id;
-    const index = productFields.map(productField => productField.product_detail_price_id).indexOf(productDetailPriceId);
+    const productDetailCostId = selectedProductDetail.costs[0].id;
+    const index = productFields.map(productField => productField.product_detail_cost_id).indexOf(productDetailCostId);
     if (index == -1) {
       const product = selectedProductDetail;
       productAppend({
         id: null,
-        product_detail_price_id: productDetailPriceId,
+        product_detail_cost_id: productDetailCostId,
         measurement_unit_id: product.product.measurementUnitId,
         quantity: 1,
         discount: 0,
@@ -506,7 +491,7 @@ const SaleAddEditDialog = (props: IProps) => {
       const product = productFields[index];
       productUpdate(index, {
         id: product.id,
-        product_detail_price_id: productDetailPriceId,
+        product_detail_cost_id: productDetailCostId,
         measurement_unit_id: product.measurement_unit_id,
         quantity: product.quantity + 1,
         discount: product.discount,
@@ -521,15 +506,15 @@ const SaleAddEditDialog = (props: IProps) => {
   };
 
   /**
-   * Product price change event handler
+   * Product cost change event handler
    * @param index index of product array
    * @param quantity new quantity
    */
-  const handleProductPriceChange = (index: number, detailPriceId: number) => {
+  const handleProductCostChange = (index: number, detailCostId: number) => {
     const product = productFields[index];
     productUpdate(index, {
       id: product.id,
-      product_detail_price_id: detailPriceId,
+      product_detail_cost_id: detailCostId,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
       discount: product.discount,
@@ -550,7 +535,7 @@ const SaleAddEditDialog = (props: IProps) => {
     const product = productFields[index];
     productUpdate(index, {
       id: product.id,
-      product_detail_price_id: product.product_detail_price_id,
+      product_detail_cost_id: product.product_detail_cost_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: quantity,
       discount: product.discount,
@@ -572,7 +557,7 @@ const SaleAddEditDialog = (props: IProps) => {
     const product = productFields[index];
     productUpdate(index, {
       id: product.id,
-      product_detail_price_id: product.product_detail_price_id,
+      product_detail_cost_id: product.product_detail_cost_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
       discount: discount,
@@ -591,13 +576,13 @@ const SaleAddEditDialog = (props: IProps) => {
    */
   const handleProductTotalChange = (index: number, total: number) => {
     const product = productFields[index];
-    const price = productDetails.find(productDetail => !productDetail.prices.find(productDetailPrice => productDetailPrice.id == product.product_detail_price_id))!.prices.find(productDetailPrice => productDetailPrice.id == product.product_detail_price_id)!.amount;
+    const cost = productDetails.find(productDetail => !productDetail.costs.find(productDetailCost => productDetailCost.id == product.product_detail_cost_id))!.costs.find(productDetailCost => productDetailCost.id == product.product_detail_cost_id)!.amount;
     productUpdate(index, {
       id: product.id,
-      product_detail_price_id: product.product_detail_price_id,
+      product_detail_cost_id: product.product_detail_cost_id,
       measurement_unit_id: product.measurement_unit_id,
       quantity: product.quantity,
-      discount: (product.quantity * price - total) / product.quantity * price,
+      discount: (product.quantity * cost - total) / product.quantity * cost,
       code: product.code,
       name: product.name,
       taxed: product.taxed,
@@ -658,7 +643,7 @@ const SaleAddEditDialog = (props: IProps) => {
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
             <Grid container sx={{ minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               <Grid item sx={{ position: 'relative', mb: 6, fontSize: '1.25rem' }}>
-                {currentSale ? t('edit_sale') : t('add_sale')}
+                {currentPurchase ? t('edit_purchase') : t('add_purchase')}
                 <IconButton
                   size='small'
                   onClick={handleClose}
@@ -674,7 +659,7 @@ const SaleAddEditDialog = (props: IProps) => {
                       <Grid item xs={12} md={3}>
                         <FormControl fullWidth>
                           <Controller
-                            name='billed_at'
+                            name='purchased_at'
                             control={control}
                             render={({ field: { value, onChange } }) => (
                               <DatePicker
@@ -686,35 +671,35 @@ const SaleAddEditDialog = (props: IProps) => {
                               />
                             )}
                           />
-                          {errors.billed_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.billed_at.message}`)}</FormHelperText>}
+                          {errors.purchased_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.purchased_at.message}`)}</FormHelperText>}
                         </FormControl>
                       </Grid>
 
                       <Grid item xs={12} md={9}>
                         <FormControl fullWidth>
                           <Controller
-                            name='customer_id'
+                            name='supplier_id'
                             control={control}
                             render={({ field: { value, onChange } }) => (
                               <Autocomplete
                                 openOnFocus
                                 disableClearable
                                 blurOnSelect
-                                options={customers}
+                                options={suppliers}
                                 getOptionLabel={option => `${option.identificationDocument} - ${option.name}`}
                                 onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={customers.find(customer => customer.id == value)!}
-                                renderInput={params => <TextField {...params} label={t('customer')} />}
+                                value={suppliers.find(supplier => supplier.id == value)!}
+                                renderInput={params => <TextField {...params} label={t('supplier')} />}
                               />
                             )}
                           />
-                          {errors.customer_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.customer_id.message}`)}</FormHelperText>}
+                          {errors.supplier_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.supplier_id.message}`)}</FormHelperText>}
                         </FormControl>
                       </Grid>
 
                       <Grid item xs={12}>
                         <Grid container spacing={3}>
-                          <Grid item xs={12} md={3}>
+                          <Grid item xs={12} md={2}>
                             <FormControl fullWidth size='small'>
                               <Controller
                                 name='currency_id'
@@ -735,24 +720,45 @@ const SaleAddEditDialog = (props: IProps) => {
                             </FormControl>
                           </Grid>
 
-                          <Grid item xs={12} md={3}>
+                          <Grid item xs={12} md={2}>
                             <FormControl fullWidth size='small'>
                               <Controller
-                                name='seller_id'
+                                name='establishment_id'
                                 control={control}
                                 render={({ field: { value, onChange } }) => (
                                   <Autocomplete
                                     openOnFocus
                                     disableClearable
-                                    options={users}
+                                    options={establishments}
                                     getOptionLabel={option => option.name}
                                     onChange={(event, newValue) => {onChange(newValue.id)}}
-                                    value={users.find(user => user.id == value)!}
-                                    renderInput={params => <TextField {...params} label={t('seller')} size='small' />}
+                                    value={establishments.find(establishment => establishment.id == value)!}
+                                    renderInput={params => <TextField {...params} label={t('establishment')} size='small' />}
                                   />
                                 )}
                               />
-                              {errors.payment_term_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.payment_term_id.message}`)}</FormHelperText>}
+                              {errors.establishment_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.establishment_id.message}`)}</FormHelperText>}
+                            </FormControl>
+                          </Grid>
+
+                          <Grid item xs={12} md={2}>
+                            <FormControl fullWidth size='small'>
+                              <Controller
+                                name='warehouse_id'
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                  <Autocomplete
+                                    openOnFocus
+                                    disableClearable
+                                    options={warehouses}
+                                    getOptionLabel={option => option.name}
+                                    onChange={(event, newValue) => {onChange(newValue.id)}}
+                                    value={warehouses.find(warehouse => warehouse.id == value)!}
+                                    renderInput={params => <TextField {...params} label={t('warehouse')} size='small' />}
+                                  />
+                                )}
+                              />
+                              {errors.warehouse_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.warehouse_id.message}`)}</FormHelperText>}
                             </FormControl>
                           </Grid>
 
@@ -815,69 +821,6 @@ const SaleAddEditDialog = (props: IProps) => {
                           }
                         </Grid>
                       </Grid>
-                      
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='establishment_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={establishments}
-                                getOptionLabel={option => option.name}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={establishments.find(establishment => establishment.id == value)!}
-                                renderInput={params => <TextField {...params} label={t('establishment')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.establishment_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.establishment_id.message}`)}</FormHelperText>}
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='point_of_sale_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={pointsOfSale.filter(pointsOfSale => pointsOfSale.establishmentId == watchEstablishment)}
-                                getOptionLabel={option => String(option.number)}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={pointsOfSale.find(pointOfSale => pointOfSale.id == value)}
-                                renderInput={params => <TextField {...params} label={t('point_of_sale')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.point_of_sale_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.point_of_sale_id.message}`)}</FormHelperText>}
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='warehouse_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={warehouses}
-                                getOptionLabel={option => option.name}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={warehouses.find(warehouse => warehouse.id == value)!}
-                                renderInput={params => <TextField {...params} label={t('warehouse')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.warehouse_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.warehouse_id.message}`)}</FormHelperText>}
-                        </FormControl>
-                      </Grid>
 
                       <Grid item xs={12} md={3}>
                         <FormControl fullWidth>
@@ -909,7 +852,7 @@ const SaleAddEditDialog = (props: IProps) => {
                                   <Grid item xs={12} md={8}><Typography variant='h6'>{option.name}</Typography></Grid>
                                   <Grid item xs={12} md={5}>{`${t('category')}: ${option.product.category.name} / ${option.product.subcategory.name}`}</Grid>
                                   <Grid item xs={12} md={3}>{`${t('brand')}: ${option.product.brand.name}`}</Grid>
-                                  <Grid item xs={12} md={2}>{`${t('price')}: ${formatMoney(option.prices[0].amount, option.prices[0].currency)}`}</Grid>
+                                  <Grid item xs={12} md={2}>{`${t('cost')}: ${formatMoney(option.costs[0].amount, option.costs[0].currency)}`}</Grid>
                                   <Grid item xs={12} md={2}>{`${t('stock')}: ${option.stock[0] ? option.stock[0].stock : 0}`}</Grid>
                                 </Grid>
                               </MenuItem>
@@ -949,19 +892,19 @@ const SaleAddEditDialog = (props: IProps) => {
                             <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('subtotal')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.subtotal, saleTotals.currency)}</Typography>
+                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(purchaseTotals.subtotal, purchaseTotals.currency)}</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('discount')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.discount, saleTotals.currency)}</Typography>
+                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(purchaseTotals.discount, purchaseTotals.currency)}</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{t('total')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.total, saleTotals.currency)}</Typography>
+                            <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(purchaseTotals.total, purchaseTotals.currency)}</Typography>
                           </Grid>
                         </Grid>
                       </Grid>
@@ -974,7 +917,7 @@ const SaleAddEditDialog = (props: IProps) => {
                   <CloseIcon /> {t('reset')}
                 </Button>
                 <LoadingButton type='submit' variant='contained' sx={{ height: 50, textTransform: 'capitalize' }} loading={loading} fullWidth>
-                  <ContentSaveIcon /> {t('finalize_sale')}
+                  <ContentSaveIcon /> {t('finalize_purchase')}
                 </LoadingButton>
               </Grid>
             </Grid>
@@ -983,7 +926,7 @@ const SaleAddEditDialog = (props: IProps) => {
       </Dialog>
 
       {openPaymentsEditDialog &&
-        <SalePaymentsAddEditDialog
+        <PurchasePaymentsAddEditDialog
           open={openPaymentsEditDialog}
           selectedPayments={watchPayments}
           onSubmit={handlePaymentsEditSubmit}
@@ -992,12 +935,12 @@ const SaleAddEditDialog = (props: IProps) => {
       }
 
       {openInstalmentsEditDialog &&
-        <SaleInstalmentEditDialog
+        <PurchaseInstalmentEditDialog
           open={openInstalmentsEditDialog}
-          date={watchBilledAt}
+          date={watchPurchasedAt}
           selectedInstalments={watchInstalments}
           currency={currencies.find((currency) => currency.id === watchCurrency)}
-          totalAmount={saleTotals.total}
+          totalAmount={purchaseTotals.total}
           onSubmit={handleInstalmentsEditSubmit}
           onClose={handleInstalmentsEditDialogClose}
         />
@@ -1006,4 +949,4 @@ const SaleAddEditDialog = (props: IProps) => {
   );
 };
 
-export default SaleAddEditDialog;
+export default PurchaseAddEditDialog;

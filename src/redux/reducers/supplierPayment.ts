@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { ICustomerPaymentState } from 'src/interfaces/sale/redux/customerPaymentState';
-import { getCustomerPaymentsAction } from '../actions/customerPayment';
-import { MSalePayment } from 'src/models/sale/payment';
+import { ISupplierPaymentState } from 'src/interfaces/purchase/redux/supplierPaymentState';
+import { getSupplierPaymentsAction } from '../actions/supplierPayment';
+import { MPurchasePayment } from 'src/models/purchase/payment';
 
-const initialState: ICustomerPaymentState = {
+const initialState: ISupplierPaymentState = {
     payments: [],
     filteredPayments: null,
     cursor: null,
@@ -12,7 +12,7 @@ const initialState: ICustomerPaymentState = {
 
 const slice = createSlice({
     initialState,
-    name: 'customerPayment',
+    name: 'supplierPayment',
     reducers: {
         resetFilteredPayments(state) {
             state.filteredPayments = null;
@@ -25,8 +25,8 @@ const slice = createSlice({
         }
     },
     extraReducers(builder) {
-        builder.addCase(getCustomerPaymentsAction.fulfilled, (state, action) => {
-            const payments = action.payload.data.map((payment) => new MSalePayment(payment));
+        builder.addCase(getSupplierPaymentsAction.fulfilled, (state, action) => {
+            const payments = action.payload.data.map((payment) => new MPurchasePayment(payment));
             state.payments = payments
         })
     },

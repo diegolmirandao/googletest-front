@@ -12,6 +12,9 @@
     "accounts_receivable": "Cuentas a cobrar",
     "customer_payments": "Pagos de clientes",
     "suppliers": "Proveedores",
+    "purchases": "Compras",
+    "accounts_payable": "Cuentas por pagar",
+    "supplier_payments": "Pagos a proveedores",
     "products": "Productos",
     "configuration": "Configuración",
     "currencies": "Monedas",
@@ -47,6 +50,10 @@
     "information": "Información",
     "number": "Número",
     "date": "Fecha",
+    "comments": "Comentarios",
+
+    "supplier": "Proveedor",
+    "cost": "Costo",
 
     "request_added_to_queue": "Solicitud agregada a la cola",
     "requests_processed_succesfully": "Solicitudes en cola procesadas correctamente",
@@ -173,6 +180,7 @@
     "balance": "Saldo",
     "generate_payment": "Generar Pago",
     "payment_method": "Método de pago",
+    "finalize_purchase": "Totalizar Compra",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",
@@ -396,5 +404,13 @@
     "contact_deleted_successfully": "Contacto eliminada correctamente",
     "no_contact_selected": "No se ha seleccionado ninguna contacto",
     "add_contact": "Agregar contacto",
-    "edit_contact": "Modificar contacto"
+    "edit_contact": "Modificar contacto",
+
+    "purchase_added_successfully": "Compra agregada correctamente",
+    "purchase_modified_successfully": "Compra modificada correctamente",
+    "purchase_deleted_successfully": "Compra eliminada correctamente",
+    "no_purchase_selected": "No se ha seleccionado ninguna compra",
+    "add_purchase": "Agregar compra",
+    "edit_purchase": "Editar compra",
+    "purchase_data": "Datos de la compra"
 }
