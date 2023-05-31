@@ -11,7 +11,6 @@ import { setCurrentSale, setFilteredCursor, resetFilteredSales, setCurrentSalePr
 import { ACLObj } from 'src/config/acl';
 import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
 import { IAddUpdateSale } from "src/interfaces/sale/addUpdate";
-import { IUpdateSale } from 'src/interfaces/sale/update';
 import { ISale } from 'src/interfaces/sale/sale';
 import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
 import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
@@ -53,7 +52,7 @@ import { getProductDetailsAction } from "src/redux/actions/product";
 const exportColumns: ITableExportColumn[] = [
   {
     field: 'billed_at',
-    text: 'billed_at'
+    text: 'date'
   },
   {
     field: 'identification_document',

@@ -6,7 +6,6 @@ import { RootState } from '..';
 import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
 import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
 import { IListQueryParam } from 'src/interfaces/listQueryParam';
-import { IUpdateSale } from 'src/interfaces/sale/update';
 import { IAddSaleProduct } from 'src/interfaces/sale/addProduct';
 import { IUpdateSaleProduct } from 'src/interfaces/sale/updateProduct';
 import { IResponseCursorPagination } from 'src/interfaces/responseCursorPagination';

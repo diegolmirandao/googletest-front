@@ -3,6 +3,8 @@ import HomeOutline from 'mdi-material-ui/HomeOutline';
 import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
 import FileAccountOutlineIcon from 'mdi-material-ui/FileAccountOutline';
 import AccountCashOutlineIcon from 'mdi-material-ui/AccountCashOutline';
+import TruckIcon from 'mdi-material-ui/Truck';
+import CartIcon from 'mdi-material-ui/Cart';
 import AccountCircleIcon from 'mdi-material-ui/AccountCircle';
 import WarehouseIcon from 'mdi-material-ui/Warehouse';
 import AccountIcon from 'mdi-material-ui/Account';
@@ -51,10 +53,31 @@ const navigation = (tenantDomain: string): VerticalNavItemsType => {
     },
     {
       title: i18n.t('suppliers'),
-      icon: AccountCircleIcon,
+      icon: TruckIcon,
       path: `/${tenantDomain}/suppliers`,
       action: 'view',
       subject: 'supplier'
+    },
+    {
+      title: i18n.t('purchases'),
+      icon: CartIcon,
+      path: `/${tenantDomain}/purchases`,
+      action: 'view',
+      subject: 'purchase'
+    },
+    {
+      title: i18n.t('accounts_payable'),
+      icon: FileAccountOutlineIcon,
+      path: `/${tenantDomain}/accounts-payable`,
+      action: 'view',
+      subject: 'purchase'
+    },
+    {
+      title: i18n.t('supplier_payments'),
+      icon: AccountCashOutlineIcon,
+      path: `/${tenantDomain}/supplier-payments`,
+      action: 'view',
+      subject: 'purchase_payment'
     },
     {
       title: i18n.t('products'),

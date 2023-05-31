@@ -22,6 +22,9 @@ import Sale from "./pages/sales";
 import AccountReceivable from "./pages/accounts-receivable";
 import CustomerPayment from "./pages/customer-payments";
 import Suppliers from "./pages/suppliers";
+import Purchase from "./pages/purchases";
+import AccountPayable from "./pages/accounts-payable";
+import SupplierPayment from "./pages/supplier-payments";
 
 const App = () => {
   return (
@@ -37,6 +40,9 @@ const App = () => {
           <Route path="accounts-receivable" element={ <AccountReceivable/> } />
           <Route path="customer-payments" element={ <CustomerPayment/> } />
           <Route path="suppliers" element={ <Suppliers/> } />
+          <Route path="purchases" element={ <Purchase/> } />
+          <Route path="accounts-payable" element={ <AccountPayable/> } />
+          <Route path="supplier-payments" element={ <SupplierPayment/> } />
           <Route path="products" element={ <Product/> } />
           <Route path="users" element={ <User/> } />
           <Route path="configuration/currencies" element={ <Currency/> } />

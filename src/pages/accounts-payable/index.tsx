@@ -4,22 +4,22 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 // ** Actions and Reducers Imports
-import { getAccountsReceivableAction } from "src/redux/actions/accountReceivable";
-import { addSalePaymentAction, deleteSaleAction, deleteSalePaymentAction, updateSaleAction, updateSalePaymentAction } from 'src/redux/actions/sale';
-import { setCurrentSale, setFilteredCursor, resetFilteredSales, setCurrentSaleProduct, setCurrentSalePayment } from 'src/redux/reducers/sale';
+import { getAccountsPayableAction } from "src/redux/actions/accountPayable";
+import { addPurchasePaymentAction, deletePurchaseAction, deletePurchasePaymentAction, updatePurchaseAction, updatePurchasePaymentAction } from 'src/redux/actions/purchase';
+import { setCurrentPurchase, setFilteredCursor, resetFilteredPurchases, setCurrentPurchaseProduct, setCurrentPurchasePayment } from 'src/redux/reducers/purchase';
 
 // ** Interfaces and Types Imports
 import { ACLObj } from 'src/config/acl';
 import { IResponseCursorPagination } from "src/interfaces/responseCursorPagination";
-import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
-import { ISale } from 'src/interfaces/sale/sale';
+import { IAddUpdatePurchase } from 'src/interfaces/purchase/addUpdate';
+import { IPurchase } from 'src/interfaces/purchase/purchase';
 import { ITableFilter, ITableFilterApplied } from 'src/interfaces/tableFilter';
 import { ITableExport, ITableExportColumn } from 'src/interfaces/tableExport';
 import FilterQueryType from "src/types/FilterQueryType";
 import SortQueryType from "src/types/SortQueryType";
 import { ITableState } from "src/interfaces/tableState";
-import { MSalePayment } from "src/models/sale/payment";
-import { IAddUpdateSalePayment } from "src/interfaces/sale/addUpdatePayment";
+import { MPurchasePayment } from "src/models/purchase/payment";
+import { IAddUpdatePurchasePayment } from "src/interfaces/purchase/addUpdatePayment";
 
 // ** MUI Imports
 import { GridColDef, GridSortModel, GridValueGetterParams, GridRowParams, GridColumnVisibilityModel, DataGridPro,  GridRowScrollEndParams, MuiEvent, GridCallbackDetails, GridValueFormatterParams, GridColumnOrderChangeParams, GridRenderCellParams } from '@mui/x-data-grid-pro';
@@ -28,6 +28,7 @@ import { Card, Grid, Box } from '@mui/material';
 // ** Third Party Imports
 import { t } from "i18next";
 import { toast } from 'react-toastify';
+import { AbilityContext } from 'src/components/layout/acl/Can';
 import { displayErrors, generateFilterQueryParams, generateSortQueryParams, setDataGridLocale } from 'src/utils/common';
 import { formatDate, formatMoney, formatNumber } from 'src/utils/format';
 import useRequestParam from "src/hooks/useRequestParams";
@@ -35,23 +36,23 @@ import useRequestParam from "src/hooks/useRequestParams";
 // ** Custom components Imports
 import TableHeader from 'src/components/table/TableHeader';
 import TableFilter from 'src/components/table/TableFilter';
-// import SaleEditDialog from './components/EditDialog';
-import SaleDetailDialog from '../sales/components/DetailDialog';
+// import PurchaseEditDialog from './components/EditDialog';
+import PurchaseDetailDialog from '../purchases/components/DetailDialog';
 import DeleteDialog from 'src/components/DeleteDialog';
 import TableExportDialog from 'src/components/table/TableExportDialog';
 import TableColumnVisibilityDialog from 'src/components/table/TableColumnVisibilityDialog';
 import Page from "src/components/Page";
 import useTableState from "src/hooks/useTableState";
-import SalePaymentAddEditDialog from "../sales/components/PaymentAddEditDialog";
-import SaleAddEditDialog from "../sales/components/AddEditDialog";
+import PurchasePaymentAddEditDialog from "../purchases/components/PaymentAddEditDialog";
+import PurchaseAddEditDialog from "../purchases/components/AddEditDialog";
 
 /**
  * Export columns definition
  */
 const exportColumns: ITableExportColumn[] = [
   {
-    field: 'billed_at',
-    text: 'billed_at'
+    field: 'purchased_at',
+    text: 'purchased_at'
   },
   {
     field: 'identification_document',
@@ -82,10 +83,6 @@ const exportColumns: ITableExportColumn[] = [
     text: 'establishment'
   },
   {
-    field: 'point_of_sale',
-    text: 'point_of_sale'
-  },
-  {
     field: 'warehouse',
     text: 'warehouse'
   },
@@ -98,10 +95,6 @@ const exportColumns: ITableExportColumn[] = [
     text: 'expires_at'
   },
   {
-    field: 'seller',
-    text: 'seller'
-  },
-  {
     field: 'created_at',
     text: 'created_at'
   },
@@ -112,16 +105,16 @@ const exportColumns: ITableExportColumn[] = [
 ];
 
 /**
- * Account receivable section index page
- * @returns Account receivable page component
+ * Account payable section index page
+ * @returns Account payable page component
  */
-const AccountReceivable = () => {
+const AccountPayable = () => {
   const dispatch = useAppDispatch();
-  const [tableState, setTableState] = useTableState('accounts-receivable');
-  const [accountsReceivableTableState, setAccountsReceivableTableState] = useState<ITableState>(tableState);
+  const [tableState, setTableState] = useTableState('accounts-payable');
+  const [accountsPayableTableState, setAccountsPayableTableState] = useState<ITableState>(tableState);
 
   // ** Reducers
-  const { accountReceivableReducer: { accountsReceivable, filteredAccountsReceivable, cursor, filteredCursor }, saleReducer: { currentSale, currentSalePayment }, userReducer: { users }, documentTypeReducer: { documentTypes }, paymentTermReducer: { paymentTerms }, warehouseReducer: { warehouses }, businessReducer: { businesses }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
+  const { accountPayableReducer: { accountsPayable, filteredAccountsPayable, cursor, filteredCursor }, purchaseReducer: { currentPurchase, currentPurchasePayment }, userReducer: { users }, documentTypeReducer: { documentTypes }, paymentTermReducer: { paymentTerms }, warehouseReducer: { warehouses }, businessReducer: { businesses }, establishmentReducer: { establishments } } = useAppSelector((state) => state);
 
   // ** Vars
 
@@ -132,7 +125,7 @@ const AccountReceivable = () => {
     {
       flex: 0.25,
       minWidth: 200,
-      field: 'billedAt',
+      field: 'purchasedAt',
       headerName: String(t('date')),
       valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
     },
@@ -183,13 +176,6 @@ const AccountReceivable = () => {
     {
       flex: 0.25,
       minWidth: 200,
-      field: 'pointOfSale',
-      headerName: String(t('point_of_sale')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.pointOfSale.name
-    },
-    {
-      flex: 0.25,
-      minWidth: 200,
       field: 'warehouse',
       headerName: String(t('warehouse')),
       valueGetter: ({ row }: GridValueGetterParams) => row.warehouse.name
@@ -207,13 +193,6 @@ const AccountReceivable = () => {
       field: 'expiresAt',
       headerName: String(t('expires_at')),
       valueFormatter: ({ value }: GridValueFormatterParams) => formatDate(value)
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'seller',
-      headerName: String(t('seller')),
-      valueGetter: ({ row }: GridValueGetterParams) => row.seller.name
     },
     {
       flex: 0.25,
@@ -261,8 +240,8 @@ const AccountReceivable = () => {
   /**
    * Datagrid default column visibility model
    */
-  const defaultColumnVisibility: GridColumnVisibilityModel = accountsReceivableTableState.visibility ?? {
-    billedAt: true,
+  const defaultColumnVisibility: GridColumnVisibilityModel = accountsPayableTableState.visibility ?? {
+    purchasedAt: true,
     identificationDocument: true,
     name: true,
     phone: false,
@@ -270,7 +249,6 @@ const AccountReceivable = () => {
     address: false,
     business: false,
     establishment: false,
-    pointOfSale: false,
     warehouse: false,
     documentType: false,
     expiresAt: false,
@@ -288,7 +266,7 @@ const AccountReceivable = () => {
   */
   const filtersFields: ITableFilter[] = [
     {
-      field: 'billed_at',
+      field: 'purchased_at',
       text: String(t('date')),
       type: 'date'
     },
@@ -335,15 +313,6 @@ const AccountReceivable = () => {
         text: establishment.name
       }))
     },
-    // {
-    //   field: 'point_of_sale',
-    //   text: String(t('point_of_sale')),
-    //   type: 'string',
-    //   options: pointsOfSale.map((warehouse) => ({
-    //     value: warehouse.id,
-    //     text: warehouse.name
-    //   }))
-    // },
     {
       field: 'warehouse',
       text: String(t('warehouse')),
@@ -400,10 +369,10 @@ const AccountReceivable = () => {
 
   // ** DataGrid Vars
   const [tableLoading, setTableLoading] = useState<boolean>(false);
-  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(accountsReceivableTableState.filters);
-  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(accountsReceivableTableState.sorts);
+  const [filters, setFilters] = useState<ITableFilterApplied[] | undefined>(accountsPayableTableState.filters);
+  const [sortModel, setSortModel] = useState<GridSortModel | undefined>(accountsPayableTableState.sorts);
   const [visibilityModel, setVisibilityModel] = useState<GridColumnVisibilityModel>(defaultColumnVisibility);
-  const [exportData, setExportData] = useState<ITableExport | undefined>(accountsReceivableTableState.export);
+  const [exportData, setExportData] = useState<ITableExport | undefined>(accountsPayableTableState.export);
 
   // ** Dialog open flags
   const [openTableExportDialog, setOpenTableExportDialog] = useState<boolean>(false);
@@ -422,16 +391,16 @@ const AccountReceivable = () => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!accountsReceivable.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
+    if (!accountsPayable.length || (filters && filters.length > 0) || (sortModel && sortModel.length > 0)) {
       getAccounts();
     } else {
       dispatch(setFilteredCursor(null));
-      dispatch(resetFilteredSales());
+      dispatch(resetFilteredPurchases());
     }
   }, [filters, sortModel]);
 
   useEffect(() => {
-    setAccountsReceivableTableState({
+    setAccountsPayableTableState({
       columns: undefined,
       filters: filters,
       sorts: sortModel,
@@ -441,8 +410,8 @@ const AccountReceivable = () => {
   }, [filters, sortModel, visibilityModel, exportData]);
 
   useEffect(() => {
-    setTableState('accounts-receivable', accountsReceivableTableState);
-  }, [accountsReceivableTableState]);
+    setTableState('accounts-payable', accountsPayableTableState);
+  }, [accountsPayableTableState]);
 
   /**
    * Get a list of accounts filtered, sorted and paginated
@@ -452,7 +421,7 @@ const AccountReceivable = () => {
     const appliedFilters: FilterQueryType | null = generateFilterQueryParams(filters);
     const appliedSortings: SortQueryType | null = generateSortQueryParams(sortModel) ?? generateSortQueryParams([{field: 'created_at', sort: 'desc'}]);
     try {
-      const accountResponse: IResponseCursorPagination<ISale> = await dispatch(getAccountsReceivableAction({
+      const accountResponse: IResponseCursorPagination<IPurchase> = await dispatch(getAccountsPayableAction({
         filters: appliedFilters,
         sorts: appliedSortings
       })).then(unwrapResult);
@@ -491,7 +460,7 @@ const AccountReceivable = () => {
    */
   const handleRowClick = (row: GridRowParams) => {
     console.log(row.row);
-    dispatch(setCurrentSale(row.row));
+    dispatch(setCurrentPurchase(row.row));
     setOpenDetailDialog(true);
   };
 
@@ -518,7 +487,7 @@ const AccountReceivable = () => {
     let changedColumns: GridColDef[] = [...columns];
     let movedColumn: GridColDef[] = changedColumns.splice(params.oldIndex, 1);
     changedColumns.splice(params.targetIndex, 0, movedColumn[0]);
-    // dispatch(setSaleColumns(changedColumns));
+    // dispatch(setPurchaseColumns(changedColumns));
   }
 
   /**
@@ -530,35 +499,35 @@ const AccountReceivable = () => {
    */
   const handleDetailsDialogClose = () => {
     setOpenDetailDialog(false);
-    dispatch(setCurrentSale(undefined));
-    dispatch(setCurrentSaleProduct(undefined));
-    dispatch(setCurrentSalePayment(undefined));
+    dispatch(setCurrentPurchase(undefined));
+    dispatch(setCurrentPurchaseProduct(undefined));
+    dispatch(setCurrentPurchasePayment(undefined));
   };
 
   /**
-   * Sale payment edit button click handler
-   * @param salePayment selected payment to edit
+   * Purchase payment edit button click handler
+   * @param purchasePayment selected payment to edit
    */
-  const handlePaymentEditClick = (salePayment: MSalePayment) => {
+  const handlePaymentEditClick = (purchasePayment: MPurchasePayment) => {
     setOpenPaymentAddEditDialog(true);
-    dispatch(setCurrentSalePayment(salePayment));
+    dispatch(setCurrentPurchasePayment(purchasePayment));
   };
 
   /**
-   * Sale payment add edit dialog close handler
+   * Purchase payment add edit dialog close handler
    */
   const handlePaymentAddEditDialogClose = () => {
     setOpenPaymentAddEditDialog(false);
-    dispatch(setCurrentSalePayment(undefined));
+    dispatch(setCurrentPurchasePayment(undefined));
   };
 
   /**
-   * Sale payment delete button click handler
-   * @param salePayment selected payment to edit
+   * Purchase payment delete button click handler
+   * @param purchasePayment selected payment to edit
    */
-  const handlePaymentDeleteClick = (salePayment: MSalePayment) => {
+  const handlePaymentDeleteClick = (purchasePayment: MPurchasePayment) => {
     setOpenPaymentDeleteDialog(true);
-    dispatch(setCurrentSalePayment(salePayment));
+    dispatch(setCurrentPurchasePayment(purchasePayment));
   };
 
   /**
@@ -566,63 +535,63 @@ const AccountReceivable = () => {
    */
   const handlePaymentDeleteDialogClose = () => {
     setOpenPaymentDeleteDialog(false);
-    dispatch(setCurrentSalePayment(undefined));
+    dispatch(setCurrentPurchasePayment(undefined));
   };
 
   /**
-   * Sales section handlers
+   * Purchases section handlers
    */
 
   /**
    * Form edit submit handler
    * @param formFields form fields submitted by user
    */
-  const handleEditSubmit = async (formFields: IAddUpdateSale) => {
+  const handleEditSubmit = async (formFields: IAddUpdatePurchase) => {
     setEditLoading(true);
     try {
-      await dispatch(updateSaleAction(formFields)).then(unwrapResult);
+      await dispatch(updatePurchaseAction(formFields)).then(unwrapResult);
       setOpenEditDialog(false);
-      toast.success(t('sale_modified_successfully'));
+      toast.success(t('purchase_modified_successfully'));
     } catch (error) {
-      console.error('EDIT SALE ERROR: ', error);
+      console.error('EDIT PURCHASE ERROR: ', error);
       displayErrors(error);
     }
     setEditLoading(false);
   }
 
   /**
-   * Sale payment add edit event submit handler
+   * Purchase payment add edit event submit handler
    * @param formFields form fields submitted by user
    */
-  const handlePaymentAddEditSubmit = async (formFields: IAddUpdateSalePayment) => {
+  const handlePaymentAddEditSubmit = async (formFields: IAddUpdatePurchasePayment) => {
     setPaymentAddEditLoading(true);
     try {
-      if (currentSalePayment) {
-        await dispatch(updateSalePaymentAction(formFields)).then(unwrapResult);
+      if (currentPurchasePayment) {
+        await dispatch(updatePurchasePaymentAction(formFields)).then(unwrapResult);
         handlePaymentAddEditDialogClose();
         toast.success(t('payment_modified_successfully'));
       } else {
-        await dispatch(addSalePaymentAction(formFields)).then(unwrapResult);
+        await dispatch(addPurchasePaymentAction(formFields)).then(unwrapResult);
         handlePaymentAddEditDialogClose();
         toast.success(t('payment_added_successfully'));
       }
     } catch (error) {
-      console.error('ADD/UPDATE SALE PAYMENT ERROR: ', error);
+      console.error('ADD/UPDATE PURCHASE PAYMENT ERROR: ', error);
       displayErrors(error);
     }
     setPaymentAddEditLoading(false);
   };
 
   /**
-   * Sale payment delete event submit handler
+   * Purchase payment delete event submit handler
    */
   const handlePaymentDeleteSubmit = async () => {
     setPaymentDeleteLoading(true);
-    if (currentSalePayment) {
+    if (currentPurchasePayment) {
       try {
-        await dispatch(deleteSalePaymentAction()).then(unwrapResult);
+        await dispatch(deletePurchasePaymentAction()).then(unwrapResult);
         setOpenPaymentDeleteDialog(false);
-        dispatch(setCurrentSalePayment(undefined));
+        dispatch(setCurrentPurchasePayment(undefined));
         toast.success(t('payment_deleted_successfully'));
       } catch (error) {
         displayErrors(error);
@@ -634,21 +603,21 @@ const AccountReceivable = () => {
   };
 
   /**
-   * Sale delete event submit handler
+   * Purchase delete event submit handler
    */
   const handleDeleteSubmit = async () => {
     setDeleteLoading(true);
-    if (currentSale) {
+    if (currentPurchase) {
       try {
-        await dispatch(deleteSaleAction()).then(unwrapResult);
+        await dispatch(deletePurchaseAction()).then(unwrapResult);
         handleDetailsDialogClose();
         setOpenDeleteDialog(false);
-        toast.success(t('sale_deleted_successfully'));
+        toast.success(t('purchase_deleted_successfully'));
       } catch (error) {
         displayErrors(error);
       }
     } else {
-      toast.error(t('no_sale_selected'));
+      toast.error(t('no_purchase_selected'));
     }
     setDeleteLoading(false);
   };
@@ -677,7 +646,7 @@ const AccountReceivable = () => {
           <Box sx={{ height: 500, width: '100%' }}>
             <DataGridPro
               columns={columns} 
-              rows={filteredAccountsReceivable ?? accountsReceivable} 
+              rows={filteredAccountsPayable ?? accountsPayable} 
               localeText={setDataGridLocale()}
               loading={tableLoading}
               onRowClick={handleRowClick}
@@ -698,7 +667,7 @@ const AccountReceivable = () => {
       </Grid>
 
       {openDetailDialog &&
-        <SaleDetailDialog
+        <PurchaseDetailDialog
           open={openDetailDialog}
           onEditClick={() => setOpenEditDialog(true)}
           onPaymentAddClick={() => setOpenPaymentAddEditDialog(true)}
@@ -709,7 +678,7 @@ const AccountReceivable = () => {
         />
       }
       {openEditDialog &&
-        <SaleAddEditDialog
+        <PurchaseAddEditDialog
           open={openEditDialog}
           loading={editLoading}
           onSubmit={handleEditSubmit}
@@ -717,7 +686,7 @@ const AccountReceivable = () => {
         />
       }
       {openPaymentAddEditDialog &&
-        <SalePaymentAddEditDialog
+        <PurchasePaymentAddEditDialog
           open={openPaymentAddEditDialog}
           loading={paymentAddEditLoading}
           onSubmit={handlePaymentAddEditSubmit}
@@ -763,9 +732,9 @@ const AccountReceivable = () => {
   )
 };
 
-AccountReceivable.acl = {
+AccountPayable.acl = {
   action: 'view',
-  subject: 'sale'
+  subject: 'purchase'
 } as ACLObj;
 
-export default Page(AccountReceivable);
+export default Page(AccountPayable);
