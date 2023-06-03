@@ -1,8 +1,8 @@
 import { MSale } from 'src/models/sale/sale';
 
 export interface IAccountReceivableState {
-    accounts: MSale[],
-    filteredAccounts: MSale[] | null;
+    accountsReceivable: MSale[],
+    filteredAccountsReceivable: MSale[] | null;
     cursor: string | null;
     filteredCursor: string | null;
 }
