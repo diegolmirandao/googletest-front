@@ -34,15 +34,13 @@ const Page = (Component: PageType) => {
                         return (
                             <ThemeComponent settings={settings}>
                                 <ProtectedPage>
-                                    <AppLogout>
-                                        <OfflineWrapper>
-                                            <WindowWrapper>
-                                                <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                                                    {getLayout(<Component {...props} />)}
-                                                </AclGuard>
-                                            </WindowWrapper>
-                                        </OfflineWrapper>
-                                    </AppLogout>
+                                    <OfflineWrapper>
+                                        <WindowWrapper>
+                                            <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                                                {getLayout(<Component {...props} />)}
+                                            </AclGuard>
+                                        </WindowWrapper>
+                                    </OfflineWrapper>
                                 </ProtectedPage>
                             </ThemeComponent>
                         )
