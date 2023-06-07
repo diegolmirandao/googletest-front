@@ -14,6 +14,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs'
 import NotificationWrapper from './components/NotificationWrapper';
 import { injectStore } from './config/axios';
+import AppLogout from 'src/components/auth/AppLogout';
 
 injectStore(store);
 import { LicenseInfo } from '@mui/x-license-pro';
@@ -31,7 +32,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               <AuthProvider>
                 <NotificationWrapper>
                   <BrowserRouter>
-                    <App/>
+                    <AppLogout>
+                      <App/>
+                    </AppLogout>
                   </BrowserRouter>
                 </NotificationWrapper>
               </AuthProvider>

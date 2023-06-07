@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import { logoutAction } from "../../redux/actions/auth";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const events = [
     "load",
@@ -20,6 +20,7 @@ const AppLogout = ({ children }: IProps) => {
     const { authReducer } = useAppSelector((state) => state)
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
+    const { tenantDomain } = useParams()
 
     let timer: number | undefined
 
@@ -27,7 +28,7 @@ const AppLogout = ({ children }: IProps) => {
         timer = window.setTimeout(() => {
           resetTimer();
           for (const item of events) {
-            window.removeEventListener(item, resetTimer);
+            window.removeEventListener(item, eventsHandlerCallback);
           }
           logout();
         }, 1000 * 60 * 60 * 4);
@@ -37,22 +38,24 @@ const AppLogout = ({ children }: IProps) => {
         if (timer) clearTimeout(timer);
     };
 
+    const eventsHandlerCallback = useCallback(() => {
+        resetTimer();
+        handleLogoutTimer();
+    }, [])
+
     const logout = async () => {
         await dispatch(logoutAction())
         
-        navigate('/login')
+        navigate(`/${tenantDomain}/login`)
     };
 
     useEffect(() => {
         if (authReducer.user) {
             for (const item of events) {
-                window.addEventListener(item, () => {
-                    resetTimer();
-                    handleLogoutTimer();
-                });
+                window.addEventListener(item, eventsHandlerCallback);
             }
         }
-      }, [authReducer.user]);
+    }, [authReducer.user]);
 
     return children
 }
