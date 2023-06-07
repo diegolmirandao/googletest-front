@@ -9,6 +9,7 @@
     "users": "Usuarios",
     "customers": "Clientes",
     "sales": "Ventas",
+    "sale_orders": "Órdenes de venta",
     "accounts_receivable": "Cuentas a cobrar",
     "customer_payments": "Pagos de clientes",
     "suppliers": "Proveedores",
@@ -181,6 +182,14 @@
     "generate_payment": "Generar Pago",
     "payment_method": "Método de pago",
     "finalize_purchase": "Totalizar Compra",
+    "pending": "Pendiente",
+    "processed": "Procesada",
+    "partially_processed": "Procesada parcialmente",
+    "canceled": "Cancelada",
+    
+    "finalize_sale_order": "Finalizar pedido",
+    "billed_quantity": "Cantidad facturada",
+    "canceled_quantity": "Cantidad cancelada",
 
     "currency_added_successfully": "Moneda agregada correctamente",
     "currency_modified_successfully": "Moneda modificada correctamente",
@@ -412,5 +421,21 @@
     "no_purchase_selected": "No se ha seleccionado ninguna compra",
     "add_purchase": "Agregar compra",
     "edit_purchase": "Editar compra",
-    "purchase_data": "Datos de la compra"
+    "purchase_data": "Datos de la compra",
+
+    "sale_order_added_successfully": "Órden de venta agregada correctamente",
+    "sale_order_modified_successfully": "Órden de venta modificada correctamente",
+    "sale_order_deleted_successfully": "Órden de venta eliminada correctamente",
+    "sale_order_canceled_successfully": "Órden de venta cancelada correctamente",
+    "products_canceled_successfully": "Productos cancelados correctamente",
+    "product_canceled_successfully": "Producto cancelado correctamente",
+    "no_sale_order_selected": "No se ha seleccionado ninguna órden",
+    "cancel_order": "Cancelar órden",
+    "add_sale_order": "Agregar órden",
+    "edit_sale_order": "Editar órden",
+    "sale_order_data": "Datos de la órden",
+    "add_products": "Agregar productos",
+    "cancel_products": "Cancelar productos",
+    "cancel_product": "Cancelar productos",
+    "cancel_order_confirmation_message": "Estás seguro de que desea cancelar la órden?"
 }
