@@ -42,6 +42,9 @@ import purchaseSlice from './purchase';
 import accountPayableSlice from './accountPayable';
 import supplierPaymentSlice from './supplierPayment';
 
+import saleOrderStatusSlice from './saleOrderStatus';
+import saleOrderSlice from './saleOrder';
+
 export default combineReducers({
     authReducer: authSlice.reducer,
     offlineReducer: offline.reducer,
@@ -85,4 +88,7 @@ export default combineReducers({
     purchaseReducer: purchaseSlice.reducer,
     accountPayableReducer: accountPayableSlice.reducer,
     supplierPaymentReducer: supplierPaymentSlice.reducer,
+
+    saleOrderStatusReducer: saleOrderStatusSlice.reducer,
+    saleOrderReducer: saleOrderSlice.reducer,
 });

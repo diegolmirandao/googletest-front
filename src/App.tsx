@@ -25,6 +25,7 @@ import Suppliers from "./pages/suppliers";
 import Purchase from "./pages/purchases";
 import AccountPayable from "./pages/accounts-payable";
 import SupplierPayment from "./pages/supplier-payments";
+import SaleOrder from "./pages/sale-orders";
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="login" element={ <Login/> } />
           <Route path="customers" element={ <Customer/> } />
           <Route path="sales" element={ <Sale/> } />
+          <Route path="sale-orders" element={ <SaleOrder/> } />
           <Route path="accounts-receivable" element={ <AccountReceivable/> } />
           <Route path="customer-payments" element={ <CustomerPayment/> } />
           <Route path="suppliers" element={ <Suppliers/> } />

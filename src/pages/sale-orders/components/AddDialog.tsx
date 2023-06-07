@@ -1,43 +1,36 @@
 // ** React Imports
-import { SyntheticEvent, forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from 'src/hooks/redux';
 
 // ** Interfaces and Models Imports
-import { IAddUpdateSale } from 'src/interfaces/sale/addUpdate';
+import { IAddSaleOrder } from 'src/interfaces/sale-order/add';
 import { formatMoney } from 'src/utils/format';
 import { MProductDetail } from 'src/models/product/detail';
 import { MProductDetailPrice } from 'src/models/product/detailPrice';
 import { MCurrency } from 'src/models/currency';
-import { IUpdateSaleInstalment } from 'src/interfaces/sale/updateInstalment';
 
 // ** MUI Imports
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { GridColDef, GridValueGetterParams, GridRenderCellParams, GridActionsCellItem, GridRowParams } from '@mui/x-data-grid-pro';
-import { Dialog, DialogContent, DialogActions, FormControl, FormControlLabel, FormHelperText, DialogTitle, Box, Typography, styled, Grid, InputLabel, Select, MenuItem, InputAdornment, Autocomplete, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-import { Button, IconButton, Checkbox, TextField } from '@mui/material';
-import { LoadingButton, TabContext, TabList, TabPanel } from '@mui/lab';
+import { Dialog, DialogContent, FormControl, FormHelperText, Typography, styled, Grid, InputLabel, Select, MenuItem, InputAdornment, Autocomplete, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { Button, IconButton, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 
 // ** Icons Imports
 import CloseIcon from 'mdi-material-ui/Close';
 import ContentSaveIcon from 'mdi-material-ui/ContentSave';
 import DeleteOutlineIcon from 'mdi-material-ui/DeleteOutline';
-import CalendarOutlineIcon from 'mdi-material-ui/CalendarOutline';
-import CashMultipleIcon from 'mdi-material-ui/CashMultiple';
 import InformationOutlineIcon from 'mdi-material-ui/InformationOutline';
 
 // ** Third Party Imports
 import dayjs, { Dayjs } from 'dayjs';
 import { toast } from 'react-toastify';
-import { NumericFormat, NumericFormatProps } from 'react-number-format';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller, useFieldArray, ControllerRenderProps } from 'react-hook-form';
-import SaleInstalmentEditDialog from './InstalmentsEditDialog';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { t } from 'i18next';
 import { setDataGridLocale } from 'src/utils/common';
-import SalePaymentsAddEditDialog from './PaymentsEditDialog';
-import { IAddUpdateSalePayment } from 'src/interfaces/sale/addUpdatePayment';
 import DecimalPercentageInput from 'src/components/inputmask/DecimalPercentageInput';
 import NumericInput from 'src/components/inputmask/NumericInput';
 
@@ -47,14 +40,14 @@ import NumericInput from 'src/components/inputmask/NumericInput';
 interface IProps {
   open: boolean;
   loading: boolean;
-  onSubmit: (formFields: IAddUpdateSale) => void;
+  onSubmit: (formFields: IAddSaleOrder) => void;
   onClose: () => void;
 }
 
 /**
- * Sale product type to display in datagrid
+ * SaleOrder product type to display in datagrid
  */
-type AddSaleProductType = {
+type AddSaleOrderProductType = {
   index: number;
   id: number;
   productDetail: MProductDetail;
@@ -64,9 +57,9 @@ type AddSaleProductType = {
 };
 
 /**
- * Sale totals type to display
+ * SaleOrder totals type to display
  */
-type AddSaleTotalsType = {
+type AddSaleOrderTotalsType = {
   currency: MCurrency,
   subtotal: number,
   discount: number,
@@ -74,43 +67,34 @@ type AddSaleTotalsType = {
 };
 
 /**
- * Sale edit dialog
+ * SaleOrder edit dialog
  * @param props component parameters
- * @returns Sale Edit Dialog component
+ * @returns SaleOrder Edit Dialog component
  */
-const SaleAddEditDialog = (props: IProps) => {
+const SaleOrderAddDialog = (props: IProps) => {
   // ** Props
   const { open, loading, onSubmit, onClose } = props;
   // ** Reducers
-  const { saleReducer: { currentSale }, customerReducer: { customers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
+  const { saleOrderReducer: { currentSaleOrder }, customerReducer: { customers }, productReducer: { products, productDetails }, establishmentReducer: { establishments }, warehouseReducer: { warehouses }, measurementUnitReducer: { measurementUnits }, paymentTermReducer: { paymentTerms }, currencyReducer: { currencies }, userReducer: { users } } = useAppSelector((state) => state);
   // ** Vars
-  const [mountedProducts, setMountedProducts] = useState<boolean>(false);
-  const [mountedPaymentTerm, setMountedPaymentTerm] = useState<boolean>(false);
   const [selectedProductCode, setSelectedProductCode] = useState<string>('');
   const [selectedProductByDescription, setSelectedProductByDescription] = useState<MProductDetail | null>(null);
-  const [selectedProducts, setSelectedProducts] = useState<AddSaleProductType[]>([]);
-  const [saleTotals, setSaleTotals] = useState<AddSaleTotalsType>({currency: currencies[0], subtotal: 0, discount: 0, total: 0});
-  const [showPaymentsButton, setShowPaymentsButton] = useState<boolean>(true);
-  const [showExpiresAtField, setShowExpiresAtField] = useState<boolean>(false);
-  const [showInstalmentsButton, setShowInstalmentsButton] = useState<boolean>(false);
-  const [openInstalmentsEditDialog, setOpenInstalmentsEditDialog] = useState<boolean>(false);
-  const [openPaymentsEditDialog, setOpenPaymentsEditDialog] = useState<boolean>(false);
+  const [selectedProducts, setSelectedProducts] = useState<AddSaleOrderProductType[]>([]);
+  const [saleOrderTotals, setSaleOrderTotals] = useState<AddSaleOrderTotalsType>({currency: currencies[0], subtotal: 0, discount: 0, total: 0});
 
-  const pointsOfSale = establishments.map(establishment => establishment.pointsOfSale).flat();
+  const pointsOrSale = establishments.map(establishment => establishment.pointsOfSale).flat();
 
-  const defaultValues: IAddUpdateSale = {
-    customer_id: currentSale?.customerId ?? 1,
-    currency_id:currentSale?.currencyId ?? 1,
-    establishment_id: currentSale?.establishment.id ?? 1,
-    point_of_sale_id: currentSale?.pointOfSaleId ?? 1,
-    warehouse_id: currentSale?.warehouseId ?? 1,
-    seller_id: currentSale?.sellerId ?? 1,
-    document_type_id: currentSale?.documentTypeId ?? 1,
-    payment_term_id: currentSale?.paymentTermId ?? 1,
-    billed_at: dayjs(currentSale?.billedAt) ?? dayjs(),
-    expires_at: currentSale?.expiresAt ? dayjs(currentSale?.expiresAt) : null,
-    comments: currentSale?.comments ?? '',
-    products: currentSale?.products.map(product => ({
+  const defaultValues: IAddSaleOrder = {
+    customer_id: currentSaleOrder?.customerId ?? 1,
+    currency_id: currentSaleOrder?.currencyId ?? 1,
+    establishment_id: currentSaleOrder?.establishment.id ?? 1,
+    point_of_sale_id: currentSaleOrder?.pointOfSaleId ?? 1,
+    warehouse_id: currentSaleOrder?.warehouseId ?? 1,
+    seller_id: currentSaleOrder?.sellerId ?? 1,
+    ordered_at: dayjs(currentSaleOrder?.orderedAt) ?? dayjs(),
+    expires_at: currentSaleOrder?.expiresAt ? dayjs(currentSaleOrder?.expiresAt) : null,
+    comments: currentSaleOrder?.comments ?? '',
+    products: currentSaleOrder?.products.map(product => ({
       id: product.id,
       product_detail_price_id: product.price.id,
       measurement_unit_id: product.measurementUnitId,
@@ -122,20 +106,6 @@ const SaleAddEditDialog = (props: IProps) => {
       tax: product.tax,
       percentage_taxed: product.productDetail.product.percentageTaxed
 
-    })) ?? [],
-    payments: currentSale?.payments.map(payment => ({
-      id: payment.id,
-      currency_id: payment.currencyId,
-      payment_method_id: payment.paymentMethodId,
-      paid_at: dayjs(payment.paidAt),
-      amount: payment.amount,
-      comments: payment.comments
-    })) ?? [],
-    instalments: currentSale?.instalments.map(instalment => ({
-      id: instalment.id,
-      number: instalment.number,
-      expires_at: dayjs(instalment.expiresAt),
-      amount: instalment.amount
     })) ?? []
   };
 
@@ -254,9 +224,7 @@ const SaleAddEditDialog = (props: IProps) => {
     point_of_sale_id: yup.number().required(),
     warehouse_id: yup.number().required(),
     seller_id: yup.number().required(),
-    document_type_id: yup.number().required(),
-    payment_term_id: yup.number().required(),
-    billed_at: yup.string().required(),
+    ordered_at: yup.string().required(),
     expires_at: yup.string().nullable(),
     comments: yup.string().nullable()
   });
@@ -272,18 +240,14 @@ const SaleAddEditDialog = (props: IProps) => {
     getValues,
     watch,
     formState: { errors }
-  } = useForm<IAddUpdateSale>({
+  } = useForm<IAddSaleOrder>({
     defaultValues,
     mode: 'onChange',
     resolver: yupResolver(schema)
   });
 
-  let watchBilledAt = watch('billed_at');
   let watchCurrency = watch('currency_id');
   let watchEstablishment = watch('establishment_id');
-  let watchPaymentTerm = watch('payment_term_id');
-  let watchPayments = watch('payments');
-  let watchInstalments = watch('instalments');
 
   const {
     fields: productFields,
@@ -293,27 +257,6 @@ const SaleAddEditDialog = (props: IProps) => {
   } = useFieldArray({
     control,
     name: "products",
-    keyName: "key"
-  });
-
-  const {
-    fields: paymentFields,
-    append: paymentAppend,
-    update: paymentUpdate,
-    replace: paymentReplace,
-    remove: paymentRemove
-  } = useFieldArray({
-    control,
-    name: "payments",
-    keyName: "key"
-  });
-
-  const {
-    replace: instalmentReplace,
-    remove: instalmentRemove
-  } = useFieldArray({
-    control,
-    name: "instalments",
     keyName: "key"
   });
 
@@ -328,39 +271,6 @@ const SaleAddEditDialog = (props: IProps) => {
   }, [productFields]);
 
   useEffect(() => {
-    if(watchPaymentTerm !== 1) {
-      setShowPaymentsButton(false);
-      setShowExpiresAtField(true);
-      setShowInstalmentsButton(true);
-    } else {
-      setShowPaymentsButton(true);
-      setShowExpiresAtField(false);
-      setShowInstalmentsButton(false);
-    }
-    if (mountedPaymentTerm) {
-      if(watchPaymentTerm !== 1) {
-        instalmentReplace([{
-          number: 1,
-          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
-          amount: saleTotals.total
-        }]);
-        paymentRemove();
-      } else {
-        paymentReplace([{
-          payment_method_id: 1,
-          currency_id: watchCurrency,
-          paid_at: dayjs(getValues('billed_at')),
-          amount: saleTotals.total,
-          comments: null
-        }]);
-        instalmentRemove();
-      }
-    } else {
-      setMountedPaymentTerm(true);
-    }
-  }, [watchPaymentTerm]);
-
-  useEffect(() => {
     const newDefaultPointOfSale = establishments.find(establishment => establishment.id === watchEstablishment && establishment.id === defaultValues.establishment_id) ?? establishments.find(establishment => establishment.id === watchEstablishment);
     setValue('point_of_sale_id', newDefaultPointOfSale!.id);
   }, [watchEstablishment]);
@@ -369,7 +279,7 @@ const SaleAddEditDialog = (props: IProps) => {
    * Get the selected services
    */
   const getSelectedProducts = () => {
-    let saleTotals: AddSaleTotalsType = {
+    let saleOrderTotals: AddSaleOrderTotalsType = {
       currency: currencies.find(currency => currency.id == watchCurrency)!,
       subtotal: 0,
       discount: 0,
@@ -379,9 +289,9 @@ const SaleAddEditDialog = (props: IProps) => {
       const productDetailPrice = productDetails.map(productDetail => productDetail.prices.find(productDetailPrice => productDetailPrice.id == selectedProduct.product_detail_price_id)).filter(product => product)[0];
       const productDetail = productDetails.find(productDetail => productDetail.id == productDetailPrice?.productDetailId);
 
-      saleTotals.subtotal += productDetailPrice!.amount * selectedProduct.quantity;
-      saleTotals.discount += productDetailPrice!.amount * selectedProduct.quantity * selectedProduct.discount;
-      saleTotals.total = saleTotals.subtotal - saleTotals.discount;
+      saleOrderTotals.subtotal += productDetailPrice!.amount * selectedProduct.quantity;
+      saleOrderTotals.discount += productDetailPrice!.amount * selectedProduct.quantity * selectedProduct.discount;
+      saleOrderTotals.total = saleOrderTotals.subtotal - saleOrderTotals.discount;
       return {
         index: index,
         id: productDetail!.id,
@@ -392,47 +302,7 @@ const SaleAddEditDialog = (props: IProps) => {
       };
     });
     setSelectedProducts(selectedProducts);
-    setSaleTotals(saleTotals);
-    console.log('hola')
-    if (mountedProducts) {
-      if(watchPaymentTerm !== 1) {
-        instalmentReplace([{
-          number: 1,
-          expires_at: dayjs(getValues('billed_at')).add(1, 'month'),
-          amount: saleTotals.total
-        }]);
-        paymentRemove();
-      } else {
-        paymentReplace([{
-          payment_method_id: 1,
-          currency_id: watchCurrency,
-          paid_at: dayjs(getValues('billed_at')),
-          amount: saleTotals.total,
-          comments: null
-        }]);
-        instalmentRemove();
-      }
-    } else {
-      setMountedProducts(true);
-    }
-  };
-
-  /**
-   * Payments add edit event submit handler
-   * @param formFields form fields submitted by user
-   */
-  const handlePaymentsEditSubmit = (payments: IAddUpdateSalePayment[]) => {
-    paymentReplace(payments);
-    setOpenPaymentsEditDialog(false);
-  };
-
-  /**
-   * Instalment add edit event submit handler
-   * @param formFields form fields submitted by user
-   */
-  const handleInstalmentsEditSubmit = (instalments: IUpdateSaleInstalment[]) => {
-    instalmentReplace(instalments);
-    setOpenInstalmentsEditDialog(false);
+    setSaleOrderTotals(saleOrderTotals);
   };
 
   /**
@@ -611,20 +481,6 @@ const SaleAddEditDialog = (props: IProps) => {
    */
 
   /**
-   * Payments add edit dialog close handler
-   */
-  const handlePaymentsEditDialogClose = () => {
-    setOpenPaymentsEditDialog(false);
-  };
-
-  /**
-   * Instalment add edit dialog close handler
-   */
-  const handleInstalmentsEditDialogClose = () => {
-    setOpenInstalmentsEditDialog(false);
-  };
-
-  /**
    * Handler when the dialog requests to be closed
    * @param event The event source of the callback
    * @param reason Can be: "escapeKeyDown", "backdropClick"
@@ -658,7 +514,7 @@ const SaleAddEditDialog = (props: IProps) => {
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
             <Grid container sx={{ minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               <Grid item sx={{ position: 'relative', mb: 6, fontSize: '1.25rem' }}>
-                {currentSale ? t('edit_sale') : t('add_sale')}
+                {t('add_sale_order')}
                 <IconButton
                   size='small'
                   onClick={handleClose}
@@ -674,7 +530,7 @@ const SaleAddEditDialog = (props: IProps) => {
                       <Grid item xs={12} md={3}>
                         <FormControl fullWidth>
                           <Controller
-                            name='billed_at'
+                            name='ordered_at'
                             control={control}
                             render={({ field: { value, onChange } }) => (
                               <DatePicker
@@ -686,7 +542,7 @@ const SaleAddEditDialog = (props: IProps) => {
                               />
                             )}
                           />
-                          {errors.billed_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.billed_at.message}`)}</FormHelperText>}
+                          {errors.ordered_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.ordered_at.message}`)}</FormHelperText>}
                         </FormControl>
                       </Grid>
 
@@ -714,7 +570,7 @@ const SaleAddEditDialog = (props: IProps) => {
 
                       <Grid item xs={12}>
                         <Grid container spacing={3}>
-                          <Grid item xs={12} md={3}>
+                          <Grid item xs={12} md={2}>
                             <FormControl fullWidth size='small'>
                               <Controller
                                 name='currency_id'
@@ -735,7 +591,7 @@ const SaleAddEditDialog = (props: IProps) => {
                             </FormControl>
                           </Grid>
 
-                          <Grid item xs={12} md={3}>
+                          <Grid item xs={12} md={2}>
                             <FormControl fullWidth size='small'>
                               <Controller
                                 name='seller_id'
@@ -756,127 +612,88 @@ const SaleAddEditDialog = (props: IProps) => {
                             </FormControl>
                           </Grid>
 
-                          <Grid item xs>
+                          <Grid item xs={12} md={2}>
                             <FormControl fullWidth size='small'>
                               <Controller
-                                name='payment_term_id'
+                                name='establishment_id'
                                 control={control}
                                 render={({ field: { value, onChange } }) => (
                                   <Autocomplete
                                     openOnFocus
                                     disableClearable
-                                    options={paymentTerms}
+                                    options={establishments}
                                     getOptionLabel={option => option.name}
                                     onChange={(event, newValue) => {onChange(newValue.id)}}
-                                    value={paymentTerms.find(paymentTerm => paymentTerm.id == value)!}
-                                    renderInput={params => <TextField {...params} label={t('payment_term')} size='small' />}
+                                    value={establishments.find(establishment => establishment.id == value)!}
+                                    renderInput={params => <TextField {...params} label={t('establishment')} size='small' />}
                                   />
                                 )}
                               />
-                              {errors.payment_term_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.payment_term_id.message}`)}</FormHelperText>}
+                              {errors.establishment_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.establishment_id.message}`)}</FormHelperText>}
                             </FormControl>
                           </Grid>
 
-                          {showPaymentsButton &&
-                            <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                              <Button variant='outlined' color='primary' size='small' onClick={() => setOpenPaymentsEditDialog(true)}>
-                                <CashMultipleIcon /> {t('payments')}
-                              </Button>
-                            </Grid>
-                          }
+                          <Grid item xs={12} md={2}>
+                            <FormControl fullWidth size='small'>
+                              <Controller
+                                name='point_of_sale_id'
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                  <Autocomplete
+                                    openOnFocus
+                                    disableClearable
+                                    options={pointsOrSale.filter(pointsOrSale => pointsOrSale.establishmentId == watchEstablishment)}
+                                    getOptionLabel={option => String(option.number)}
+                                    onChange={(event, newValue) => {onChange(newValue.id)}}
+                                    value={pointsOrSale.find(pointOfSaleOrder => pointOfSaleOrder.id == value)}
+                                    renderInput={params => <TextField {...params} label={t('point_of_sale')} size='small' />}
+                                  />
+                                )}
+                              />
+                              {errors.point_of_sale_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.point_of_sale_id.message}`)}</FormHelperText>}
+                            </FormControl>
+                          </Grid>
 
-                          {showExpiresAtField && 
-                            <Grid item xs>
-                              <FormControl fullWidth>
-                                <Controller
-                                  name='expires_at'
-                                  control={control}
-                                  render={({ field: { value, onChange } }) => (
-                                    <DatePicker
-                                      label={t('expires_at')}
-                                      value={value}
-                                      format='DD-MM-YYYY'
-                                      onChange={onChange}
-                                      slotProps={{ textField: { size: 'small' } }}
-                                    />
-                                  )}
-                                />
-                                {errors.expires_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.expires_at.message}`)}</FormHelperText>}
-                              </FormControl>
-                            </Grid>
-                          }
-
-                          {showInstalmentsButton &&
-                            <Grid item alignItems="stretch" style={{ display: "flex" }}>
-                              <Button variant='outlined' color='primary' size='small' onClick={() => setOpenInstalmentsEditDialog(true)}>
-                                <CalendarOutlineIcon /> {t('instalments')}
-                              </Button>
-                            </Grid>
-                          }
+                          <Grid item xs={12} md={2}>
+                            <FormControl fullWidth size='small'>
+                              <Controller
+                                name='warehouse_id'
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                  <Autocomplete
+                                    openOnFocus
+                                    disableClearable
+                                    options={warehouses}
+                                    getOptionLabel={option => option.name}
+                                    onChange={(event, newValue) => {onChange(newValue.id)}}
+                                    value={warehouses.find(warehouse => warehouse.id == value)!}
+                                    renderInput={params => <TextField {...params} label={t('warehouse')} size='small' />}
+                                  />
+                                )}
+                              />
+                              {errors.warehouse_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.warehouse_id.message}`)}</FormHelperText>}
+                            </FormControl>
+                          </Grid>
+                          
+                          <Grid item xs>
+                            <FormControl fullWidth>
+                              <Controller
+                                name='expires_at'
+                                control={control}
+                                render={({ field: { value, onChange } }) => (
+                                  <DatePicker
+                                    label={t('expires_at')}
+                                    value={value}
+                                    format='DD-MM-YYYY'
+                                    onChange={onChange}
+                                    slotProps={{ textField: { size: 'small' } }}
+                                  />
+                                )}
+                              />
+                              {errors.expires_at && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.expires_at.message}`)}</FormHelperText>}
+                            </FormControl>
+                          </Grid>
                         </Grid>
-                      </Grid>
-                      
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='establishment_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={establishments}
-                                getOptionLabel={option => option.name}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={establishments.find(establishment => establishment.id == value)!}
-                                renderInput={params => <TextField {...params} label={t('establishment')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.establishment_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.establishment_id.message}`)}</FormHelperText>}
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='point_of_sale_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={pointsOfSale.filter(pointsOfSale => pointsOfSale.establishmentId == watchEstablishment)}
-                                getOptionLabel={option => String(option.number)}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={pointsOfSale.find(pointOfSale => pointOfSale.id == value)}
-                                renderInput={params => <TextField {...params} label={t('point_of_sale')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.point_of_sale_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.point_of_sale_id.message}`)}</FormHelperText>}
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size='small'>
-                          <Controller
-                            name='warehouse_id'
-                            control={control}
-                            render={({ field: { value, onChange } }) => (
-                              <Autocomplete
-                                openOnFocus
-                                disableClearable
-                                options={warehouses}
-                                getOptionLabel={option => option.name}
-                                onChange={(event, newValue) => {onChange(newValue.id)}}
-                                value={warehouses.find(warehouse => warehouse.id == value)!}
-                                renderInput={params => <TextField {...params} label={t('warehouse')} size='small' />}
-                              />
-                            )}
-                          />
-                          {errors.warehouse_id && <FormHelperText sx={{ color: 'error.main' }}>{t(`${errors.warehouse_id.message}`)}</FormHelperText>}
-                        </FormControl>
                       </Grid>
 
                       <Grid item xs={12} md={3}>
@@ -949,19 +766,19 @@ const SaleAddEditDialog = (props: IProps) => {
                             <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('subtotal')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.subtotal, saleTotals.currency)}</Typography>
+                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleOrderTotals.subtotal, saleOrderTotals.currency)}</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{t('discount')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.discount, saleTotals.currency)}</Typography>
+                            <Typography variant='h5' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleOrderTotals.discount, saleOrderTotals.currency)}</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{t('total')}:</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
-                            <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleTotals.total, saleTotals.currency)}</Typography>
+                            <Typography variant='h4' sx={{ width: '100%', textAlign: 'right' }}>{formatMoney(saleOrderTotals.total, saleOrderTotals.currency)}</Typography>
                           </Grid>
                         </Grid>
                       </Grid>
@@ -974,36 +791,15 @@ const SaleAddEditDialog = (props: IProps) => {
                   <CloseIcon /> {t('reset')}
                 </Button>
                 <LoadingButton type='submit' variant='contained' sx={{ height: 50, textTransform: 'capitalize' }} loading={loading} fullWidth>
-                  <ContentSaveIcon /> {t('finalize_sale')}
+                  <ContentSaveIcon /> {t('finalize_sale_order')}
                 </LoadingButton>
               </Grid>
             </Grid>
           </form>
         </DialogContent>
       </Dialog>
-
-      {openPaymentsEditDialog &&
-        <SalePaymentsAddEditDialog
-          open={openPaymentsEditDialog}
-          selectedPayments={watchPayments}
-          onSubmit={handlePaymentsEditSubmit}
-          onClose={handlePaymentsEditDialogClose}
-        />
-      }
-
-      {openInstalmentsEditDialog &&
-        <SaleInstalmentEditDialog
-          open={openInstalmentsEditDialog}
-          date={watchBilledAt}
-          selectedInstalments={watchInstalments}
-          currency={currencies.find((currency) => currency.id === watchCurrency)}
-          totalAmount={saleTotals.total}
-          onSubmit={handleInstalmentsEditSubmit}
-          onClose={handleInstalmentsEditDialogClose}
-        />
-      }
     </>
   );
 };
 
-export default SaleAddEditDialog;
+export default SaleOrderAddDialog;

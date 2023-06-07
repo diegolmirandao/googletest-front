@@ -186,7 +186,7 @@ const Product = () => {
       field: 'status',
       headerName: String(t('status')),
       renderCell: ({ row }: GridRenderCellParams) => (
-        row.status ? <Chip label='ACTIVO' skin='light' color='success' /> : <Chip label='INACTIVO' skin='light' color='error' />
+        row.status ? <Chip label={t('active')} skin='light' color='success' /> : <Chip label={t('inactive')} skin='light' color='error' />
       )
     },
     {
