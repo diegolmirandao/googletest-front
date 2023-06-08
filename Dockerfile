@@ -1,6 +1,13 @@
-FROM node:18-alpine as build
+FROM node:18 as build
 WORKDIR /app
-COPY . /app
-RUN yarn install
 
-CMD ["yarn", "run", "dev"]
+COPY package.json .
+COPY yarn.lock .
+RUN yarn install
+COPY . .
+
+RUN yarn run build
+
+FROM nginx:1.19
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist /usr/share/nginx/html
