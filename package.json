@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:staging": "env-cmd -f .env.staging npm run build"
   },
   "dependencies": {
     "@casl/ability": "^6.4.0",
