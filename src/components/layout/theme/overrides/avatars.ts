@@ -1,14 +1,14 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const Avatar = () => {
+const Avatar = (theme: Theme) => {
   return {
     MuiAvatar: {
       styleOverrides: {
-        colorDefault: ({ theme }: OwnerStateThemeType) => ({
+        colorDefault: {
           color: theme.palette.text.secondary,
-          backgroundColor: theme.palette.customColors.avatarBg
-        }),
+          backgroundColor: theme.palette.action.selected
+        },
         rounded: {
           borderRadius: 8
         }
@@ -16,23 +16,12 @@ const Avatar = () => {
     },
     MuiAvatarGroup: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '&.pull-up': {
-            '& .MuiAvatar-root': {
-              cursor: 'pointer',
-              transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-              '&:hover': {
-                zIndex: 2,
-                boxShadow: theme.shadows[3],
-                transform: 'translateY(-4px)'
-              }
-            }
-          },
+        root: {
           justifyContent: 'flex-end',
           '.MuiCard-root & .MuiAvatar-root': {
             borderColor: theme.palette.background.paper
           }
-        })
+        }
       }
     }
   }

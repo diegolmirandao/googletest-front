@@ -7,15 +7,19 @@ import { AxiosResponse } from 'axios';
 import axios from '../../config/axios';
 import { IResponseCursorPagination } from '../../interfaces/responseCursorPagination';
 import { RootState } from '..';
+import requestParamConfig from 'src/config/requestParam';
 
 export const getUsersAction = createAsyncThunk(
     'user/get',
-    async (params: IListQueryParam, {rejectWithValue}) => {
+    async (params: IListQueryParam, {getState, rejectWithValue}) => {
         try {
+            const { userReducer: { cursor, filteredCursor } } = getState() as RootState;
+            const usedCursor = params.filters || params.sorts ? filteredCursor : cursor;
+
             const {data: userResponse}: AxiosResponse<IResponseCursorPagination<IUser>> = await axios.get(`/users`, {
                 params: {
-                    cursor: params.cursor,
-                    page_size: params.pageSize,
+                    cursor: usedCursor,
+                    page_size: requestParamConfig['users'].pageSize,
                     ...params.filters,
                     ...params.sorts
                 }

@@ -1,7 +1,7 @@
 import { IProductState } from '../../interfaces/product/redux/productState';
 import { createSlice } from '@reduxjs/toolkit';
 import { getProductsAction, addProductAction, updateProductAction, deleteProductAction, getProductDetailsAction, deleteProductDetailPriceAction, updateProductDetailPriceAction, addProductDetailPriceAction, addProductDetailCostAction, updateProductDetailCostAction, deleteProductDetailCostAction } from '../actions/product';
-import { addProductDetailAction, updateProductDetailAction, deleteProductDetailAction } from '../actions/product';
+import { addProductDetailAction, deleteProductDetailAction } from '../actions/product';
 import { MProduct } from 'src/models/product/product';
 import { MProductDetail } from 'src/models/product/detail';
 
@@ -72,13 +72,6 @@ const slice = createSlice({
             const addPayload = new MProduct(action.payload);
             state.products = state.products.map(product => product.id == addPayload.id ? addPayload : product);
             state.currentProduct = addPayload;
-        })
-        builder.addCase(updateProductDetailAction.fulfilled, (state, action) => {
-            const updatePayload = new MProduct(action.payload);
-            const productDetailId = state.currentProductDetail?.id;
-            state.products = state.products.map(product => product.id == updatePayload.id ? updatePayload : product);
-            state.currentProduct = updatePayload;
-            state.currentProductDetail = updatePayload.details?.find(detail => detail.id == productDetailId);
         })
         builder.addCase(deleteProductDetailAction.fulfilled, (state, action) => {
           const deletePayload = new MProduct(action.payload);

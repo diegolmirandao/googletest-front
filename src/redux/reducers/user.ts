@@ -8,6 +8,7 @@ const initialState: IUserState = {
     users: [],
     filteredUsers: null,
     cursor: null,
+    filteredCursor: null,
     currentUser: undefined
 }
 
@@ -15,11 +16,17 @@ const slice = createSlice({
     initialState,
     name: 'user',
     reducers: {
+        resetFilteredUsers(state) {
+            state.filteredUsers = null;
+        },
         setCurrentUser(state, action) {
             state.currentUser = action.payload
         },
         setCursor(state, action) {
             state.cursor = action.payload
+        },
+        setFilteredCursor(state, action) {
+            state.filteredCursor = action.payload
         }
     },
     extraReducers(builder) {
@@ -27,10 +34,12 @@ const slice = createSlice({
             const params = action.meta.arg
             const users = action.payload.data.map((user) => new MUser(user));
 
-            if (params.filters) {
-                state.filteredUsers = users
+            if (params.filters || (JSON.stringify(params.sorts) !== JSON.stringify({'f_params[orderBy][field]': "created_at", 'f_params[orderBy][type]': "desc"}))) {
+                state.filteredUsers = users;
+                state.filteredCursor = action.payload.next_cursor;
             } else {
-                state.users = state.users.length ? [...state.users, ...users] : users
+                state.users = state.users.length && state.cursor ? [...state.users, ...users] : users;
+                state.cursor = action.payload.next_cursor;
             }
         })
         builder.addCase(showUserAction.fulfilled, (state, action) => {
@@ -48,8 +57,10 @@ const slice = createSlice({
             state.currentUser = user;
         })
         builder.addCase(updateUserAction.fulfilled, (state, action) => {
+            const user = new MUser(action.payload);
             const updatePayload = new MUser(action.payload);
             state.users = state.users.map(user => user.id == updatePayload.id ? updatePayload : user);
+            state.filteredUsers = state.filteredUsers ? [user, ...state.filteredUsers] : null;
             state.currentUser = updatePayload;
         })
         builder.addCase(deleteUserAction.fulfilled, (state, action) => {
@@ -74,6 +85,6 @@ const slice = createSlice({
     },
 })
 
-export const { setCursor, setCurrentUser } = slice.actions
+export const { resetFilteredUsers, setFilteredCursor, setCursor, setCurrentUser } = slice.actions
 
 export default slice

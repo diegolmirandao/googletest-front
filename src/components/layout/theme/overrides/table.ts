@@ -1,14 +1,14 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const Table = () => {
+const Table = (theme: Theme) => {
   return {
     MuiTableContainer: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           boxShadow: theme.shadows[0],
           borderTopColor: theme.palette.divider
-        })
+        }
       }
     },
     MuiTableHead: {
@@ -26,7 +26,7 @@ const Table = () => {
     },
     MuiTableBody: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           '& .MuiTableCell-body': {
             fontWeight: 400,
             fontSize: '0.875rem',
@@ -37,45 +37,45 @@ const Table = () => {
               paddingBottom: theme.spacing(4)
             }
           }
-        })
+        }
       }
     },
     MuiTableRow: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '& .MuiTableCell-head:not(.MuiTableCell-paddingCheckbox):first-of-type, & .MuiTableCell-root:not(.MuiTableCell-paddingCheckbox):first-of-type ':
-            {
-              paddingLeft: theme.spacing(5)
-            },
+        root: {
+          '& .MuiTableCell-head:first-child, & .MuiTableCell-root:first-child ': {
+            paddingLeft: theme.spacing(5)
+          },
           '& .MuiTableCell-head:last-child, & .MuiTableCell-root:last-child': {
             paddingRight: theme.spacing(5)
           }
-        })
+        }
       }
     },
     MuiTableCell: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          borderBottom: `1px solid ${theme.palette.divider}`
-        }),
-        paddingCheckbox: ({ theme }: OwnerStateThemeType) => ({
-          paddingLeft: theme.spacing(2)
-        }),
-        stickyHeader: ({ theme }: OwnerStateThemeType) => ({
+        root: {
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          '& .MuiButton-root': {
+            textTransform: 'uppercase',
+            color: theme.palette.text.secondary
+          }
+        },
+        stickyHeader: {
           backgroundColor: theme.palette.customColors.tableHeaderBg
-        })
+        }
       }
     },
     MuiTablePagination: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           '& .MuiIconButton-root.Mui-disabled': {
             color: theme.palette.action.active
           }
-        }),
-        displayedRows: ({ theme }: OwnerStateThemeType) => ({
+        },
+        displayedRows: {
           color: theme.palette.text.primary
-        })
+        }
       }
     }
   }

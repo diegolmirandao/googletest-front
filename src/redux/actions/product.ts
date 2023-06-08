@@ -4,7 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosResponse } from 'axios';
 import axios from 'src/config/axios';
 import { RootState } from '..';
-import { IAddUpdateProductDetail } from 'src/interfaces/product/addUpdateDetail';
+import { IAddProductDetail } from 'src/interfaces/product/addDetail';
 import { IAddProduct } from 'src/interfaces/product/add';
 import { IListQueryParam } from 'src/interfaces/listQueryParam';
 import { IProductDetail } from 'src/interfaces/product/detail';
@@ -88,24 +88,10 @@ export const getProductDetailsAction = createAsyncThunk(
 
 export const addProductDetailAction = createAsyncThunk(
     'productDetail/add',
-    async (addData: IAddUpdateProductDetail, {getState, rejectWithValue}) => {
+    async (addData: IAddProductDetail, {getState, rejectWithValue}) => {
         try {
             const { productReducer: { currentProduct } } = getState() as RootState;
             const {data: productDetailResponse}: AxiosResponse<IProduct> = await axios.post(`/products/${currentProduct?.id}/details/`, addData);
-
-            return productDetailResponse;
-        } catch (error) {
-            return rejectWithValue(error)
-        }
-    }
-);
-
-export const updateProductDetailAction = createAsyncThunk(
-    'productDetail/update',
-    async (updateData: IAddUpdateProductDetail, {getState, rejectWithValue}) => {
-        try {
-            const { productReducer: { currentProduct, currentProductDetail } } = getState() as RootState;
-            const {data: productDetailResponse}: AxiosResponse<IProduct> = await axios.put(`/products/${currentProduct?.id}/details/${currentProductDetail?.id}`, updateData);
 
             return productDetailResponse;
         } catch (error) {

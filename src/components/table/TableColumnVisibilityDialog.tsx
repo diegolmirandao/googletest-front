@@ -47,7 +47,7 @@ const TableColumnVisibilityDialog = (props: IProps) => {
   });
 
   useEffect(() => {
-    const subscription = watch(handleSubmit(handleFormSubmit));
+    const subscription = watch(() => handleSubmit(handleFormSubmit));
     return () => subscription.unsubscribe();
   }, [handleSubmit, watch]);
 

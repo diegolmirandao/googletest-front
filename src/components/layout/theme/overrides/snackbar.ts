@@ -1,21 +1,22 @@
-// ** Type Imports
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
+
+// ** Theme Type Import
 import { Skin } from 'src/types/Layout'
 
-const Snackbar = (skin: Skin) => {
+const Snackbar = (theme: Theme, skin: Skin) => {
   return {
     MuiSnackbarContent: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           borderRadius: 8,
           padding: theme.spacing(1.75, 4),
           ...(skin === 'bordered' && { boxShadow: 'none' }),
-          backgroundColor: `rgb(${theme.palette.customColors.main})`,
-          color: theme.palette.common[theme.palette.mode === 'light' ? 'white' : 'black'],
+          backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[900] : theme.palette.grey[100],
           '& .MuiSnackbarContent-message': {
             lineHeight: 1.429
           }
-        })
+        }
       }
     }
   }

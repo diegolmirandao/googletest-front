@@ -1,24 +1,21 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
 // ** Theme Config Imports
 import themeConfig from 'src/config/themeConfig'
 
 // ** Util Import
-import { hexToRGBA } from 'src/utils/hex-to-rgba'
+import { hexToRGBA } from 'src//utils/hex-to-rgba'
 
-const Button = () => {
+const Button = (theme: Theme) => {
   return {
     MuiButton: {
       styleOverrides: {
-        root: ({ ownerState, theme }: OwnerStateThemeType) => ({
+        root: {
           fontWeight: 500,
           borderRadius: 8,
           lineHeight: 1.715,
-          ...(ownerState.size === 'medium' &&
-            ownerState.variant === 'text' && {
-              padding: `${theme.spacing(1.75, 3)}`
-            }),
+          padding: `${theme.spacing(1.75, 3)}`,
           '&.MuiButton-textPrimary:hover': {
             backgroundColor: hexToRGBA(theme.palette.primary.main, 0.08)
           },
@@ -37,12 +34,12 @@ const Button = () => {
           '&.MuiButton-textInfo:hover': {
             backgroundColor: hexToRGBA(theme.palette.info.main, 0.08)
           }
-        }),
-        contained: ({ theme }: OwnerStateThemeType) => ({
+        },
+        contained: {
           boxShadow: theme.shadows[3],
           padding: `${theme.spacing(1.75, 5.5)}`
-        }),
-        outlined: ({ theme }: OwnerStateThemeType) => ({
+        },
+        outlined: {
           lineHeight: 1.572,
           padding: `${theme.spacing(1.75, 5.25)}`,
           '&.MuiButton-outlinedPrimary:hover': {
@@ -63,33 +60,29 @@ const Button = () => {
           '&.MuiButton-outlinedInfo:hover': {
             backgroundColor: hexToRGBA(theme.palette.info.main, 0.08)
           }
-        }),
-        sizeSmall: ({ ownerState, theme }: OwnerStateThemeType) => ({
+        },
+        sizeSmall: {
           lineHeight: 1.693,
-          ...(ownerState.variant === 'text' && {
-            padding: `${theme.spacing(1, 2.25)}`
-          }),
-          ...(ownerState.variant === 'contained' && {
+          padding: `${theme.spacing(1, 2.25)}`,
+          '&.MuiButton-contained': {
             padding: `${theme.spacing(1, 3.25)}`
-          }),
-          ...(ownerState.variant === 'outlined' && {
+          },
+          '&.MuiButton-outlined': {
             lineHeight: 1.539,
             padding: `${theme.spacing(1, 3)}`
-          })
-        }),
-        sizeLarge: ({ ownerState, theme }: OwnerStateThemeType) => ({
+          }
+        },
+        sizeLarge: {
           lineHeight: 1.734,
-          ...(ownerState.variant === 'text' && {
-            padding: `${theme.spacing(2, 5.5)}`
-          }),
-          ...(ownerState.variant === 'contained' && {
+          padding: `${theme.spacing(2, 5.5)}`,
+          '&.MuiButton-contained': {
             padding: `${theme.spacing(2, 6.5)}`
-          }),
-          ...(ownerState.variant === 'outlined' && {
+          },
+          '&.MuiButton-outlined': {
             lineHeight: 1.6,
             padding: `${theme.spacing(2, 6.25)}`
-          })
-        })
+          }
+        }
       }
     },
     MuiButtonBase: {

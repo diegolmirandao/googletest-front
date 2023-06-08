@@ -1,14 +1,14 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
 // ** Util Import
-import { hexToRGBA } from 'src/utils/hex-to-rgba'
+import { hexToRGBA } from 'src//utils/hex-to-rgba'
 
-const Progress = () => {
+const Progress = (theme: Theme) => {
   return {
     MuiLinearProgress: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           height: 6,
           borderRadius: theme.shape.borderRadius,
           '&.MuiLinearProgress-colorPrimary': {
@@ -29,10 +29,10 @@ const Progress = () => {
           '&.MuiLinearProgress-colorInfo': {
             backgroundColor: hexToRGBA(theme.palette.info.main, 0.12)
           }
-        }),
-        bar: ({ theme }: OwnerStateThemeType) => ({
+        },
+        bar: {
           borderRadius: theme.shape.borderRadius
-        })
+        }
       }
     }
   }

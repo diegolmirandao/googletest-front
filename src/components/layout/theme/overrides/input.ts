@@ -1,18 +1,18 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const input = () => {
+const input = (theme: Theme) => {
   return {
     MuiInputLabel: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           color: theme.palette.text.secondary
-        })
+        }
       }
     },
     MuiInput: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           lineHeight: '1.5rem',
           '&:before': {
             borderBottom: `1px solid rgba(${theme.palette.customColors.main}, 0.22)`
@@ -23,12 +23,12 @@ const input = () => {
           '&.Mui-disabled:before': {
             borderBottomStyle: 'solid'
           }
-        })
+        }
       }
     },
     MuiFilledInput: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           backgroundColor: `rgba(${theme.palette.customColors.main}, 0.05)`,
@@ -47,14 +47,14 @@ const input = () => {
               borderBottomStyle: 'solid'
             }
           }
-        })
+        }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           borderRadius: 8,
-          '&:hover:not(.Mui-focused):not(.Mui-disabled):not(.Mui-error) .MuiOutlinedInput-notchedOutline': {
+          '&:hover:not(.Mui-focused):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': {
             borderColor: `rgba(${theme.palette.customColors.main}, 0.32)`
           },
           '&:hover.Mui-error .MuiOutlinedInput-notchedOutline': {
@@ -66,7 +66,7 @@ const input = () => {
           '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.text.disabled
           }
-        })
+        }
       }
     }
   }

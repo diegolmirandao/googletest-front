@@ -268,12 +268,10 @@ const User = () => {
    */
   const getUsers = async () => {
     setTableLoading(true);
-    const appliedFilters: FilterQueryType = generateFilterQueryParams(filters);
-    const appliedSortings: SortQueryType = generateSortQueryParams(sortModel);
+    const appliedFilters: FilterQueryType | null = generateFilterQueryParams(filters);
+    const appliedSortings: SortQueryType | null = generateSortQueryParams(sortModel);
     try {
-      const userResponse: IResponseCursorPagination<IUser> = await dispatch(getUsersAction({cursor: cursor, pageSize: pageSize, filters: appliedFilters, sorts: appliedSortings})).then(unwrapResult);
-
-      dispatch(setCursor(userResponse.next_cursor));
+      const userResponse: IResponseCursorPagination<IUser> = await dispatch(getUsersAction({filters: appliedFilters, sorts: appliedSortings})).then(unwrapResult);
     } catch (error) {
       console.error('LIST ERROR:', error);
       displayErrors(error);

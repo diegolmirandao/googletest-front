@@ -1,28 +1,31 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const DataGrid = () => {
+const DataGrid = (theme: Theme) => {
   return {
     MuiDataGrid: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           border: 0,
           color: theme.palette.text.primary,
           '& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader:focus-within': {
             outline: 'none'
           }
-        }),
-        toolbarContainer: ({ theme }: OwnerStateThemeType) => ({
+        },
+        toolbarContainer: {
           paddingRight: `${theme.spacing(5)} !important`,
           paddingLeft: `${theme.spacing(3.25)} !important`
-        }),
-        columnHeaders: ({ theme }: OwnerStateThemeType) => ({
+        },
+        columnHeaders: {
+          maxHeight: '54px !important',
+          minHeight: '54px !important',
+          lineHeight: '24px !important',
           backgroundColor: theme.palette.customColors.tableHeaderBg
-        }),
-        columnHeader: ({ theme }: OwnerStateThemeType) => ({
+        },
+        columnHeader: {
+          height: '54px',
           '&:not(.MuiDataGrid-columnHeaderCheckbox)': {
-            paddingLeft: theme.spacing(4),
-            paddingRight: theme.spacing(4),
+            padding: theme.spacing(4),
             '&:first-of-type': {
               paddingLeft: theme.spacing(5)
             }
@@ -30,7 +33,7 @@ const DataGrid = () => {
           '&:last-of-type': {
             paddingRight: theme.spacing(5)
           }
-        }),
+        },
         columnHeaderCheckbox: {
           maxWidth: '58px !important',
           minWidth: '58px !important'
@@ -43,9 +46,18 @@ const DataGrid = () => {
           letterSpacing: '0.17px',
           textTransform: 'uppercase'
         },
-        columnSeparator: ({ theme }: OwnerStateThemeType) => ({
+        columnSeparator: {
           color: theme.palette.divider
-        }),
+        },
+        virtualScroller: {
+          marginTop: '54px !important'
+        },
+        virtualScrollerRenderZone: {
+          '& .MuiDataGrid-row': {
+            maxHeight: '50px !important',
+            minHeight: '50px !important'
+          }
+        },
         row: {
           '&:last-child': {
             '& .MuiDataGrid-cell': {
@@ -53,11 +65,13 @@ const DataGrid = () => {
             }
           }
         },
-        cell: ({ theme }: OwnerStateThemeType) => ({
+        cell: {
+          maxHeight: '50px !important',
+          minHeight: '50px !important',
+          lineHeight: '20px !important',
           borderColor: theme.palette.divider,
           '&:not(.MuiDataGrid-cellCheckbox)': {
-            paddingLeft: theme.spacing(4),
-            paddingRight: theme.spacing(4),
+            padding: theme.spacing(4),
             '&:first-of-type': {
               paddingLeft: theme.spacing(5)
             }
@@ -68,33 +82,32 @@ const DataGrid = () => {
           '&:focus, &:focus-within': {
             outline: 'none'
           }
-        }),
+        },
         cellCheckbox: {
           maxWidth: '58px !important',
           minWidth: '58px !important'
         },
-        editInputCell: ({ theme }: OwnerStateThemeType) => ({
+        editInputCell: {
           padding: 0,
           color: theme.palette.text.primary,
           '& .MuiInputBase-input': {
             padding: 0
           }
-        }),
-        footerContainer: ({ theme }: OwnerStateThemeType) => ({
+        },
+        footerContainer: {
+          minHeight: '50px !important',
           borderTop: `1px solid ${theme.palette.divider}`,
           '& .MuiTablePagination-toolbar': {
-            paddingLeft: `${theme.spacing(4)} !important`,
-            paddingRight: `${theme.spacing(4)} !important`
+            minHeight: '50px !important'
           },
           '& .MuiTablePagination-select': {
             color: theme.palette.text.primary
           }
-        }),
-        selectedRowCount: ({ theme }: OwnerStateThemeType) => ({
-          margin: 0,
-          paddingLeft: theme.spacing(4),
-          paddingRight: theme.spacing(4)
-        })
+        }
+      },
+      defaultProps: {
+        rowHeight: 50,
+        headerHeight: 54
       }
     }
   }

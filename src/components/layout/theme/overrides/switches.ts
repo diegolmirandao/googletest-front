@@ -1,11 +1,11 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const Switch = () => {
+const Switch = (theme: Theme) => {
   return {
     MuiSwitch: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           '& .MuiSwitch-track': {
             borderRadius: theme.shape.borderRadius
           },
@@ -20,7 +20,7 @@ const Switch = () => {
           '& .Mui-disabled + .MuiSwitch-track': {
             backgroundColor: `rgb(${theme.palette.customColors.main})`
           }
-        })
+        }
       }
     }
   }

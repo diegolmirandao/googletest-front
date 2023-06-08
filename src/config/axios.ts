@@ -1,10 +1,10 @@
-import { StoreType } from './../redux';
 import axios from 'axios';
 import config from '.';
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 
-let store: StoreType;
+let store: ToolkitStore;
 
-export const injectStore = (_store: StoreType) => {
+export const injectStore = (_store: ToolkitStore) => {
   store = _store
 }
 

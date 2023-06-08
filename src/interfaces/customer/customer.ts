@@ -1,4 +1,3 @@
-import { IPhone } from "../phone/phone";
 import { IAcquisitionChannel } from "./acquisitionChannel";
 import { ICustomerAddress } from "./address";
 import { ICustomerBillingAddress } from "./billingAddress";
@@ -18,7 +17,7 @@ export interface ICustomer {
     updated_at: string;
     category: ICustomerCategory;
     acquisition_channel: IAcquisitionChannel;
-    phones: IPhone[];
+    phones: string[];
     billing_addresses: ICustomerBillingAddress[];
     references: ICustomerReference[];
     addresses: ICustomerAddress[];

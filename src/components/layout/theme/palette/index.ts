@@ -1,8 +1,8 @@
 // ** Type Imports
-import { Palette } from '@mui/material'
+import { PaletteMode } from '@mui/material'
 import { Skin } from 'src/types/Layout'
 
-const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
+const DefaultPalette = (mode: PaletteMode, skin: Skin) => {
   // ** Vars
   const whiteColor = '#FFF'
   const lightColor = '76, 78, 100'
@@ -104,11 +104,15 @@ const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
       hover: `rgba(${mainColor}, 0.05)`,
       hoverOpacity: 0.05,
       selected: `rgba(${mainColor}, 0.08)`,
+      selectedOpacity: 0.08,
       disabled: `rgba(${mainColor}, 0.26)`,
+      disabledOpacity: 0.26,
       disabledBackground: `rgba(${mainColor}, 0.12)`,
-      focus: `rgba(${mainColor}, 0.12)`
+      focus: `rgba(${mainColor}, 0.12)`,
+      focusOpacity: 0.12,
+      activatedOpacity: 0.54
     }
-  } as Palette
+  }
 }
 
 export default DefaultPalette

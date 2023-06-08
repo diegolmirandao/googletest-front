@@ -1,14 +1,8 @@
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
-import { ComponentsPropsList } from '@mui/material'
 
 // ** Type Import
-import { Settings } from 'src/context/settingsContext'
-
-export type OwnerStateThemeType = {
-  theme: Theme
-  ownerState: ComponentsPropsList[keyof ComponentsPropsList] & Record<string, unknown>
-}
+import { Settings } from 'src//context/settingsContext'
 
 // ** Overrides Imports
 import MuiFab from './fab'
@@ -39,40 +33,42 @@ import MuiTimeline from './timeline'
 import MuiAccordion from './accordion'
 import MuiPagination from './pagination'
 import MuiTypography from './typography'
-import MuiBreadcrumb from './breadcrumbs'
+import MuiBreadcrumbs from './breadcrumbs'
 import MuiButtonGroup from './buttonGroup'
 import MuiAutocomplete from './autocomplete'
 import MuiToggleButton from './toggleButton'
+import MuiDateTimePicker from './dateTimePicker'
 
-const Overrides = (settings: Settings) => {
-  const { skin, mode } = settings
+const Overrides = (theme: Theme, settings: Settings) => {
+  const { skin } = settings
 
-  const fab = MuiFab()
-  const chip = MuiChip()
-  const list = MuiList()
-  const tabs = MuiTabs()
-  const input = MuiInput()
-  const tables = MuiTable()
-  const menu = MuiMenu(skin)
-  const button = MuiButton()
-  const rating = MuiRating()
-  const select = MuiSelect()
-  const cards = MuiCard(skin)
-  const avatars = MuiAvatar()
-  const progress = Progress()
-  const divider = MuiDivider()
-  const tooltip = MuiTooltip()
-  const alerts = MuiAlerts(mode)
-  const dialog = MuiDialog(skin)
-  const backdrop = MuiBackdrop()
-  const dataGrid = MuiDataGrid()
-  const switches = MuiSwitches()
-  const timeline = MuiTimeline()
-  const popover = MuiPopover(skin)
-  const accordion = MuiAccordion()
-  const snackbar = MuiSnackbar(skin)
-  const pagination = MuiPagination()
-  const autocomplete = MuiAutocomplete(skin)
+  const fab = MuiFab(theme)
+  const chip = MuiChip(theme)
+  const list = MuiList(theme)
+  const tabs = MuiTabs(theme)
+  const input = MuiInput(theme)
+  const tables = MuiTable(theme)
+  const alerts = MuiAlerts(theme)
+  const button = MuiButton(theme)
+  const rating = MuiRating(theme)
+  const select = MuiSelect(theme)
+  const avatars = MuiAvatar(theme)
+  const progress = Progress(theme)
+  const divider = MuiDivider(theme)
+  const menu = MuiMenu(theme, skin)
+  const tooltip = MuiTooltip(theme)
+  const cards = MuiCard(theme, skin)
+  const backdrop = MuiBackdrop(theme)
+  const dataGrid = MuiDataGrid(theme)
+  const switches = MuiSwitches(theme)
+  const timeline = MuiTimeline(theme)
+  const accordion = MuiAccordion(theme)
+  const dialog = MuiDialog(theme, skin)
+  const pagination = MuiPagination(theme)
+  const popover = MuiPopover(theme, skin)
+  const snackbar = MuiSnackbar(theme, skin)
+  const dateTimePicker = MuiDateTimePicker(theme)
+  const autocomplete = MuiAutocomplete(theme, skin)
 
   return Object.assign(
     fab,
@@ -104,7 +100,8 @@ const Overrides = (settings: Settings) => {
     pagination,
     autocomplete,
     MuiTypography,
-    MuiBreadcrumb,
+    dateTimePicker,
+    MuiBreadcrumbs,
     MuiButtonGroup,
     MuiToggleButton
   )

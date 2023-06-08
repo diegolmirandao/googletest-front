@@ -1,26 +1,13 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const Divider = () => {
+const Divider = (theme: Theme) => {
   return {
     MuiDivider: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
-          '.MuiStack-root &:not(.MuiDivider-vertical)': {
-            marginTop: theme.spacing(2),
-            marginBottom: theme.spacing(2)
-          }
-        }),
-        middle: ({ theme }: OwnerStateThemeType) => ({
-          '&:not(.MuiDivider-vertical)': {
-            marginLeft: theme.spacing(5),
-            marginRight: theme.spacing(5)
-          },
-          '&.MuiDivider-vertical': {
-            marginTop: theme.spacing(2),
-            marginBottom: theme.spacing(2)
-          }
-        })
+        root: {
+          margin: `${theme.spacing(2)} 0`
+        }
       }
     }
   }

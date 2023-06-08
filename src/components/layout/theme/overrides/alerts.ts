@@ -1,20 +1,17 @@
 // ** MUI Imports
+import { Theme } from '@mui/material/styles'
 import { lighten, darken } from '@mui/material/styles'
-
-// ** Type Import
-import { OwnerStateThemeType } from './'
-import { Mode } from 'src/types/Layout'
 
 // ** Util Import
 import { hexToRGBA } from 'src/utils/hex-to-rgba'
 
-const Alert = (mode: Mode) => {
-  const getColor = mode === 'dark' ? lighten : darken
+const Alert = (theme: Theme) => {
+  const getColor = theme.palette.mode === 'light' ? darken : lighten
 
   return {
     MuiAlert: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           borderRadius: 8,
           '& .MuiAlertTitle-root': {
             marginBottom: theme.spacing(1)
@@ -23,8 +20,8 @@ const Alert = (mode: Mode) => {
             fontWeight: 500,
             color: 'inherit'
           }
-        }),
-        standardSuccess: ({ theme }: OwnerStateThemeType) => ({
+        },
+        standardSuccess: {
           color: getColor(theme.palette.success.main, 0.1),
           backgroundColor: hexToRGBA(theme.palette.success.main, 0.12),
           '& .MuiAlertTitle-root': {
@@ -33,8 +30,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: getColor(theme.palette.success.main, 0.1)
           }
-        }),
-        standardInfo: ({ theme }: OwnerStateThemeType) => ({
+        },
+        standardInfo: {
           color: getColor(theme.palette.info.main, 0.1),
           backgroundColor: hexToRGBA(theme.palette.info.main, 0.12),
           '& .MuiAlertTitle-root': {
@@ -43,8 +40,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: getColor(theme.palette.info.main, 0.1)
           }
-        }),
-        standardWarning: ({ theme }: OwnerStateThemeType) => ({
+        },
+        standardWarning: {
           color: getColor(theme.palette.warning.main, 0.1),
           backgroundColor: hexToRGBA(theme.palette.warning.main, 0.12),
           '& .MuiAlertTitle-root': {
@@ -53,8 +50,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: getColor(theme.palette.warning.main, 0.1)
           }
-        }),
-        standardError: ({ theme }: OwnerStateThemeType) => ({
+        },
+        standardError: {
           color: getColor(theme.palette.error.main, 0.1),
           backgroundColor: hexToRGBA(theme.palette.error.main, 0.12),
           '& .MuiAlertTitle-root': {
@@ -63,8 +60,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: getColor(theme.palette.error.main, 0.1)
           }
-        }),
-        outlinedSuccess: ({ theme }: OwnerStateThemeType) => ({
+        },
+        outlinedSuccess: {
           borderColor: theme.palette.success.main,
           color: getColor(theme.palette.success.main, 0.1),
           '& .MuiAlertTitle-root': {
@@ -73,8 +70,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: theme.palette.success.main
           }
-        }),
-        outlinedInfo: ({ theme }: OwnerStateThemeType) => ({
+        },
+        outlinedInfo: {
           borderColor: theme.palette.info.main,
           color: getColor(theme.palette.info.main, 0.1),
           '& .MuiAlertTitle-root': {
@@ -83,8 +80,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: theme.palette.info.main
           }
-        }),
-        outlinedWarning: ({ theme }: OwnerStateThemeType) => ({
+        },
+        outlinedWarning: {
           borderColor: theme.palette.warning.main,
           color: getColor(theme.palette.warning.main, 0.1),
           '& .MuiAlertTitle-root': {
@@ -93,8 +90,8 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: theme.palette.warning.main
           }
-        }),
-        outlinedError: ({ theme }: OwnerStateThemeType) => ({
+        },
+        outlinedError: {
           borderColor: theme.palette.error.main,
           color: getColor(theme.palette.error.main, 0.1),
           '& .MuiAlertTitle-root': {
@@ -103,11 +100,10 @@ const Alert = (mode: Mode) => {
           '& .MuiAlert-icon': {
             color: theme.palette.error.main
           }
-        }),
-        filled: ({ theme }: OwnerStateThemeType) => ({
-          fontWeight: 400,
-          color: theme.palette.common.white
-        })
+        },
+        filled: {
+          fontWeight: 400
+        }
       }
     }
   }

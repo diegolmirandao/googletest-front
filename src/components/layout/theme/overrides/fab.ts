@@ -1,13 +1,13 @@
-// ** Type Import
-import { OwnerStateThemeType } from './'
+// ** MUI Imports
+import { Theme } from '@mui/material/styles'
 
-const Button = () => {
+const Button = (theme: Theme) => {
   return {
     MuiFab: {
       styleOverrides: {
-        root: ({ theme }: OwnerStateThemeType) => ({
+        root: {
           boxShadow: theme.shadows[5]
-        })
+        }
       }
     }
   }

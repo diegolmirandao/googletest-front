@@ -8,7 +8,7 @@ import { HorizontalNavItemsType } from '../../../../../src/types/Layout'
 import themeConfig from '../../../../config/themeConfig'
 
 // ** Utils
-// import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
+// import { hexToRGBA } from 'src//utils/hex-to-rgba'
 
 // ** Menu Components
 import HorizontalNavItems from './HorizontalNavItems'

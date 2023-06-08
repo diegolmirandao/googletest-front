@@ -4,5 +4,6 @@ export interface IUserState {
     users: MUser[];
     filteredUsers: MUser[] | null;
     cursor: string | null;
+    filteredCursor: string | null;
     currentUser: MUser | undefined;
 };
