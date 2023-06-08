@@ -6,7 +6,7 @@ COPY yarn.lock .
 RUN yarn install
 COPY . .
 
-RUN yarn run build
+RUN yarn run build:staging
 
 FROM nginx:1.19
 COPY ./nginx.conf /etc/nginx/nginx.conf
